@@ -28,13 +28,13 @@ Then open <http://localhost:8081>.
 
 This example reuses the stylesheet embedded in the library, which already
 contains every class the components use. In your own project you would run the
-[Tailwind CLI](https://tailwindcss.com/) over your templates **and** the
-library source so that any extra utility classes you add are included:
+[Tailwind CLI](https://tailwindcss.com/) (v4) over your templates **and** the
+library source so that any extra utility classes you add are included. Tailwind
+v4 is configured CSS-first, so point it at both with `@source` in your CSS:
 
-```js
-// tailwind.config.js
-content: [
-  "./**/*.templ",
-  "./vendor/github.com/davidbudnick/shadcn-templ/**/*.templ",
-],
+```css
+/* app.css */
+@import "tailwindcss";
+@source "./**/*.templ";
+@source "./vendor/github.com/davidbudnick/shadcn-templ/**/*.templ";
 ```

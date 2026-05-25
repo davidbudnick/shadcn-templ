@@ -157,11 +157,11 @@ name as the base path automatically.
 
 ## Development
 
-The Tailwind standalone CLI compiles the CSS. Download it once (git-ignored) — pick your platform from the [releases](https://github.com/tailwindlabs/tailwindcss/releases/tag/v3.4.17):
+Styling uses **Tailwind CSS v4**, configured CSS-first in `static/css/input.css` (there is no `tailwind.config.js`). The Tailwind standalone CLI compiles it. Download the CLI once (git-ignored) — pick your platform from the [releases](https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.3.0):
 
 ```sh
 curl -sL -o tailwindcss \
-	https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.17/tailwindcss-macos-arm64
+	https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.0/tailwindcss-macos-arm64
 chmod +x tailwindcss
 ```
 
