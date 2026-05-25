@@ -1,0 +1,90 @@
+package ui
+
+import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	contextMenuContentBaseClass   = "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+	contextMenuItemBaseClass      = "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+	contextMenuSeparatorBaseClass = "-mx-1 my-1 h-px bg-muted"
+	contextMenuShortcutBaseClass  = "ml-auto text-xs tracking-widest opacity-60"
+	contextMenuLabelBaseClass     = "px-2 py-1.5 text-sm font-semibold text-foreground"
+)
+
+templ ContextMenu(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge("relative", classes) }
+		{ attrs... }
+		x-data="{ shadcntempl_open: false, shadcntempl_x: 0, shadcntempl_y: 0 }"
+		x-on:contextmenu.prevent="shadcntempl_x = $event.clientX; shadcntempl_y = $event.clientY; shadcntempl_open = true"
+		x-on:keydown.esc.window="shadcntempl_open = false"
+	>
+		{ children... }
+	</div>
+}
+
+templ ContextMenuTrigger(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ ContextMenuContent(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(contextMenuContentBaseClass, classes) }
+		{ attrs... }
+		x-cloak
+		x-show="shadcntempl_open"
+		x-on:mousedown.outside="shadcntempl_open = false"
+		x-trap.inert.noscroll="shadcntempl_open"
+		x-on:keydown.down.prevent="$focus.wrap().next()"
+		x-on:keydown.up.prevent="$focus.wrap().previous()"
+		x-transition
+		role="menu"
+		:style="`position:fixed; left:${shadcntempl_x}px; top:${shadcntempl_y}px;`"
+	>
+		{ children... }
+	</div>
+}
+
+templ ContextMenuItem(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(contextMenuItemBaseClass, classes) }
+		{ attrs... }
+		x-data
+		x-on:click="shadcntempl_open = false"
+		tabindex="0"
+		x-on:keydown.enter="$el.click()"
+		role="menuitem"
+	>
+		{ children... }
+	</div>
+}
+
+templ ContextMenuSeparator(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(contextMenuSeparatorBaseClass, classes) }
+		{ attrs... }
+		role="separator"
+	></div>
+}
+
+templ ContextMenuShortcut(classes string, attrs templ.Attributes) {
+	<span
+		class={ twmerge.Merge(contextMenuShortcutBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</span>
+}
+
+templ ContextMenuLabel(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(contextMenuLabelBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}

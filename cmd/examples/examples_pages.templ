@@ -1,0 +1,764 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// =====================================================================
+// Cards
+// =====================================================================
+
+templ CardsExample() {
+	<div class="p-8">
+		<div class="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
+			@createAccountCard()
+			@cardsNotifications()
+			@cookieSettingsCard()
+			@teamMembersCard()
+			@reportIssueCard()
+			@shareCard()
+		</div>
+	</div>
+}
+
+templ createAccountCard() {
+	@ui.Card("", nil) {
+		@ui.CardHeader("space-y-1", nil) {
+			@ui.CardTitle("text-2xl", nil) {
+				Create an account
+			}
+			@ui.CardDescription("", nil) {
+				Enter your email below to create your account.
+			}
+		}
+		@ui.CardContent("grid gap-4", nil) {
+			<div class="grid grid-cols-2 gap-4">
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+					@icons.Github(icons.Props{Class: "mr-2 h-4 w-4"})
+					GitHub
+				}
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+					@icons.Google(icons.Props{Class: "mr-2 h-4 w-4"})
+					Google
+				}
+			</div>
+			<div class="relative">
+				<div class="absolute inset-0 flex items-center">
+					<span class="w-full border-t"></span>
+				</div>
+				<div class="relative flex justify-center text-xs uppercase">
+					<span class="bg-card px-2 text-muted-foreground">Or continue with</span>
+				</div>
+			</div>
+			<div class="grid gap-2">
+				@ui.Label("", templ.Attributes{"for": "card-acc-email"}) {
+					Email
+				}
+				@ui.Input("email", ui.InputTypeEmail, "", templ.Attributes{"id": "card-acc-email", "placeholder": "m@example.com"})
+			</div>
+			<div class="grid gap-2">
+				@ui.Label("", templ.Attributes{"for": "card-acc-pass"}) {
+					Password
+				}
+				@ui.Input("password", ui.InputTypePassword, "", templ.Attributes{"id": "card-acc-pass"})
+			</div>
+		}
+		@ui.CardFooter("", nil) {
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "w-full", nil) {
+				Create account
+			}
+		}
+	}
+}
+
+templ cardsNotifications() {
+	@ui.Card("", nil) {
+		@ui.CardHeader("", nil) {
+			@ui.CardTitle("", nil) {
+				Notifications
+			}
+			@ui.CardDescription("", nil) {
+				Choose what you want to be notified about.
+			}
+		}
+		@ui.CardContent("grid gap-1", nil) {
+			@notifyRow(icons.Bell(icons.Props{Class: "mt-px h-5 w-5"}), "Everything", "Email digest, mentions & all activity.")
+			@notifyRow(icons.User(icons.Props{Class: "mt-px h-5 w-5"}), "Available", "Only mentions and comments.")
+			@notifyRow(icons.PlusCircle(icons.Props{Class: "mt-px h-5 w-5"}), "Ignoring", "Turn off all notifications.")
+		}
+		@ui.CardFooter("", nil) {
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "w-full", nil) {
+				@icons.Check(icons.Props{Class: "mr-2 h-4 w-4"})
+				Mark all as read
+			}
+		}
+	}
+}
+
+templ notifyRow(icon templ.Component, title, desc string) {
+	<div class="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
+		@icon
+		<div class="space-y-1">
+			<p class="text-sm font-medium leading-none">{ title }</p>
+			<p class="text-sm text-muted-foreground">{ desc }</p>
+		</div>
+	</div>
+}
+
+templ cookieSettingsCard() {
+	@ui.Card("", nil) {
+		@ui.CardHeader("", nil) {
+			@ui.CardTitle("", nil) {
+				Cookie Settings
+			}
+			@ui.CardDescription("", nil) {
+				Manage your cookie settings here.
+			}
+		}
+		@ui.CardContent("grid gap-6", nil) {
+			@cookieRow("necessary", "Strictly Necessary", "These cookies are essential in order to use the website.", true)
+			@cookieRow("functional", "Functional Cookies", "These cookies allow the website to provide personalized functionality.", false)
+			@cookieRow("performance", "Performance Cookies", "These cookies help to improve the performance of the website.", false)
+		}
+		@ui.CardFooter("", nil) {
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "w-full", nil) {
+				Save preferences
+			}
+		}
+	}
+}
+
+templ cookieRow(name, title, desc string, on bool) {
+	<div class="flex items-center justify-between space-x-4">
+		<div class="flex flex-col space-y-1">
+			@ui.Label("", templ.Attributes{"for": name}) {
+				{ title }
+			}
+			<span class="text-xs leading-snug text-muted-foreground">{ desc }</span>
+		</div>
+		@ui.Switch(name, on, false, "", templ.Attributes{"id": name})
+	</div>
+}
+
+templ teamMembersCard() {
+	@ui.Card("", nil) {
+		@ui.CardHeader("", nil) {
+			@ui.CardTitle("", nil) {
+				Team Members
+			}
+			@ui.CardDescription("", nil) {
+				Invite your team members to collaborate.
+			}
+		}
+		@ui.CardContent("grid gap-6", nil) {
+			@memberRow("SD", "Sofia Davis", "m@example.com", "Owner")
+			@memberRow("JL", "Jackson Lee", "p@example.com", "Member")
+			@memberRow("IN", "Isabella Nguyen", "i@example.com", "Member")
+		}
+	}
+}
+
+templ memberRow(initials, name, email, role string) {
+	<div class="flex items-center justify-between space-x-4">
+		<div class="flex items-center space-x-4">
+			@ui.Avatar("", nil) {
+				@ui.AvatarFallback("", nil) {
+					{ initials }
+				}
+			}
+			<div>
+				<p class="text-sm font-medium leading-none">{ name }</p>
+				<p class="text-sm text-muted-foreground">{ email }</p>
+			</div>
+		</div>
+		@ui.Badge(ui.BadgeVariantOutline, "", nil) {
+			{ role }
+		}
+	</div>
+}
+
+templ reportIssueCard() {
+	@ui.Card("", nil) {
+		@ui.CardHeader("", nil) {
+			@ui.CardTitle("", nil) {
+				Report an issue
+			}
+			@ui.CardDescription("", nil) {
+				What area are you having problems with?
+			}
+		}
+		@ui.CardContent("grid gap-4", nil) {
+			<div class="grid grid-cols-2 gap-4">
+				<div class="grid gap-2">
+					@ui.Label("", templ.Attributes{"for": "issue-area"}) {
+						Area
+					}
+					@nativeSelect("area", []string{"Billing", "Team", "Account", "Deployments", "Support"})
+				</div>
+				<div class="grid gap-2">
+					@ui.Label("", templ.Attributes{"for": "issue-severity"}) {
+						Severity
+					}
+					@nativeSelect("severity", []string{"Severity 1", "Severity 2", "Severity 3", "Severity 4"})
+				</div>
+			</div>
+			<div class="grid gap-2">
+				@ui.Label("", templ.Attributes{"for": "issue-subject"}) {
+					Subject
+				}
+				@ui.Input("subject", ui.InputTypeText, "", templ.Attributes{"id": "issue-subject", "placeholder": "I need help with..."})
+			</div>
+			<div class="grid gap-2">
+				@ui.Label("", templ.Attributes{"for": "issue-desc"}) {
+					Description
+				}
+				@ui.Textarea("description", "", templ.Attributes{"id": "issue-desc", "placeholder": "Please include all information relevant to your issue."})
+			</div>
+		}
+		@ui.CardFooter("justify-between space-x-2", nil) {
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantGhost, ui.ButtonSizeDefault, "", nil) {
+				Cancel
+			}
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+				Submit
+			}
+		}
+	}
+}
+
+templ shareCard() {
+	@ui.Card("", nil) {
+		@ui.CardHeader("", nil) {
+			@ui.CardTitle("", nil) {
+				Share this document
+			}
+			@ui.CardDescription("", nil) {
+				Anyone with the link can view this document.
+			}
+		}
+		@ui.CardContent("", nil) {
+			<div class="flex space-x-2">
+				@ui.Input("link", ui.InputTypeText, "", templ.Attributes{"value": "https://example.com/link/to/document", "readonly": true})
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantSecondary, ui.ButtonSizeDefault, "shrink-0", nil) {
+					Copy Link
+				}
+			</div>
+			@ui.Separator(ui.SeparatorOrientationHorizontal, false, "my-4", nil)
+			<div class="space-y-4">
+				<h4 class="text-sm font-medium">People with access</h4>
+				@memberRow("OM", "Olivia Martin", "m@example.com", "Can edit")
+				@memberRow("IN", "Isabella Nguyen", "b@example.com", "Can view")
+			</div>
+		}
+	}
+}
+
+// =====================================================================
+// Settings / Forms
+// =====================================================================
+
+templ SettingsExample() {
+	<div class="space-y-6 p-10 pb-16" x-data="{ tab: 'profile' }">
+		<div class="space-y-0.5">
+			<h2 class="text-2xl font-bold tracking-tight">Settings</h2>
+			<p class="text-muted-foreground">Manage your account settings and set e-mail preferences.</p>
+		</div>
+		@ui.Separator(ui.SeparatorOrientationHorizontal, false, "my-6", nil)
+		<div class="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+			<aside class="lg:w-1/5">
+				<nav class="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
+					@settingsNavLink("profile", "Profile")
+					@settingsNavLink("account", "Account")
+					@settingsNavLink("appearance", "Appearance")
+					@settingsNavLink("notifications", "Notifications")
+					@settingsNavLink("display", "Display")
+				</nav>
+			</aside>
+			<div class="flex-1 lg:max-w-2xl">
+				<div x-show="tab === 'profile'">
+					@settingsProfile()
+				</div>
+				<div x-show="tab === 'account'" x-cloak>
+					@settingsAccount()
+				</div>
+				<div x-show="tab === 'appearance'" x-cloak>
+					@settingsAppearance()
+				</div>
+				<div x-show="tab === 'notifications'" x-cloak>
+					@settingsNotifications()
+				</div>
+				<div x-show="tab === 'display'" x-cloak>
+					@settingsDisplay()
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ settingsNavLink(id, label string) {
+	<button
+		type="button"
+		x-on:click={ "tab = '" + id + "'" }
+		x-bind:class={ "tab === '" + id + "' ? 'bg-muted' : 'text-muted-foreground hover:underline'" }
+		class="inline-flex h-9 items-center justify-start rounded-md px-4 py-2 text-sm font-medium transition-colors"
+	>{ label }</button>
+}
+
+templ settingsSection(title, desc string) {
+	<div class="space-y-1">
+		<h3 class="text-lg font-medium">{ title }</h3>
+		<p class="text-sm text-muted-foreground">{ desc }</p>
+	</div>
+	@ui.Separator(ui.SeparatorOrientationHorizontal, false, "my-6", nil)
+}
+
+templ settingsProfile() {
+	@settingsSection("Profile", "This is how others will see you on the site.")
+	<form class="space-y-8">
+		@ui.Field("", nil) {
+			@ui.Label("", templ.Attributes{"for": "set-username"}) {
+				Username
+			}
+			@ui.Input("username", ui.InputTypeText, "", templ.Attributes{"id": "set-username", "value": "shadcn"})
+			@ui.FieldDescription("", nil) {
+				This is your public display name. It can be your real name or a pseudonym.
+			}
+		}
+		@ui.Field("", nil) {
+			@ui.Label("", templ.Attributes{"for": "set-email"}) {
+				Email
+			}
+			@nativeSelect("email", []string{"m@example.com", "m@google.com", "m@support.com"})
+			@ui.FieldDescription("", nil) {
+				You can manage verified email addresses in your email settings.
+			}
+		}
+		@ui.Field("", nil) {
+			@ui.Label("", templ.Attributes{"for": "set-bio"}) {
+				Bio
+			}
+			@ui.Textarea("bio", "", templ.Attributes{"id": "set-bio", "placeholder": "Tell us a little bit about yourself"})
+			@ui.FieldDescription("", nil) {
+				You can mention other users and organizations to link to them.
+			}
+		}
+		@ui.Button(ui.ButtonTypeSubmit, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+			Update profile
+		}
+	</form>
+}
+
+templ settingsAccount() {
+	@settingsSection("Account", "Update your account settings. Set your preferred language and timezone.")
+	<form class="space-y-8">
+		@ui.Field("", nil) {
+			@ui.Label("", templ.Attributes{"for": "acc-name"}) {
+				Name
+			}
+			@ui.Input("name", ui.InputTypeText, "", templ.Attributes{"id": "acc-name", "placeholder": "Your name"})
+			@ui.FieldDescription("", nil) {
+				This is the name that will be displayed on your profile and in emails.
+			}
+		}
+		@ui.Field("", nil) {
+			@ui.Label("", templ.Attributes{"for": "acc-dob"}) {
+				Date of birth
+			}
+			@ui.Input("dob", ui.InputTypeDate, "", templ.Attributes{"id": "acc-dob"})
+			@ui.FieldDescription("", nil) {
+				Your date of birth is used to calculate your age.
+			}
+		}
+		@ui.Field("", nil) {
+			@ui.Label("", templ.Attributes{"for": "acc-lang"}) {
+				Language
+			}
+			@nativeSelect("language", []string{"English", "French", "German", "Spanish", "Portuguese", "Japanese"})
+			@ui.FieldDescription("", nil) {
+				This is the language that will be used in the dashboard.
+			}
+		}
+		@ui.Button(ui.ButtonTypeSubmit, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+			Update account
+		}
+	</form>
+}
+
+templ settingsAppearance() {
+	@settingsSection("Appearance", "Customize the appearance of the app. Automatically switch between day and night themes.")
+	<form class="space-y-8" x-data="{ theme: 'light' }">
+		@ui.Field("", nil) {
+			@ui.Label("", templ.Attributes{"for": "appr-font"}) {
+				Font
+			}
+			@nativeSelect("font", []string{"Inter", "Manrope", "System"})
+			@ui.FieldDescription("", nil) {
+				Set the font you want to use in the dashboard.
+			}
+		}
+		<div class="space-y-2">
+			@ui.Label("", nil) {
+				Theme
+			}
+			<p class="text-sm text-muted-foreground">Select the theme for the dashboard.</p>
+			<div class="grid max-w-md grid-cols-2 gap-8 pt-2">
+				@appearanceTheme("light", "Light")
+				@appearanceTheme("dark", "Dark")
+			</div>
+		</div>
+		@ui.Button(ui.ButtonTypeSubmit, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+			Update preferences
+		}
+	</form>
+}
+
+templ appearanceTheme(value, label string) {
+	<button type="button" x-on:click={ "theme = '" + value + "'" } class="space-y-2 text-center">
+		<div
+			x-bind:class={ "theme === '" + value + "' ? 'border-primary' : 'border-muted hover:border-accent'" }
+			class="items-center rounded-md border-2 p-1"
+		>
+			if value == "light" {
+				<div class="space-y-2 rounded-sm bg-[#ecedef] p-2">
+					<div class="space-y-2 rounded-md bg-white p-2 shadow-sm">
+						<div class="h-2 w-20 rounded-lg bg-[#ecedef]"></div>
+						<div class="h-2 w-24 rounded-lg bg-[#ecedef]"></div>
+					</div>
+					<div class="flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm">
+						<div class="h-4 w-4 rounded-full bg-[#ecedef]"></div>
+						<div class="h-2 w-24 rounded-lg bg-[#ecedef]"></div>
+					</div>
+				</div>
+			} else {
+				<div class="space-y-2 rounded-sm bg-slate-950 p-2">
+					<div class="space-y-2 rounded-md bg-slate-800 p-2 shadow-sm">
+						<div class="h-2 w-20 rounded-lg bg-slate-400"></div>
+						<div class="h-2 w-24 rounded-lg bg-slate-400"></div>
+					</div>
+					<div class="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">
+						<div class="h-4 w-4 rounded-full bg-slate-400"></div>
+						<div class="h-2 w-24 rounded-lg bg-slate-400"></div>
+					</div>
+				</div>
+			}
+		</div>
+		<span class="block w-full p-2 text-center text-sm font-normal">{ label }</span>
+	</button>
+}
+
+templ settingsNotifications() {
+	@settingsSection("Notifications", "Configure how you receive notifications.")
+	<form class="space-y-8">
+		<div class="space-y-3">
+			<p class="text-base font-medium">Notify me about...</p>
+			@ui.RadioGroup("{ notify: 'mentions' }", "space-y-1", nil) {
+				@notifyOption("all", "All new messages")
+				@notifyOption("mentions", "Direct messages and mentions")
+				@notifyOption("none", "Nothing")
+			}
+		</div>
+		<div class="space-y-4">
+			<p class="text-base font-medium">Email Notifications</p>
+			@notifySwitch("comm", "Communication emails", "Receive emails about your account activity.", false)
+			@notifySwitch("marketing", "Marketing emails", "Receive emails about new products, features, and more.", false)
+			@notifySwitch("social", "Social emails", "Receive emails for friend requests, follows, and more.", true)
+			@notifySwitch("security", "Security emails", "Receive emails about your account activity and security.", true)
+		</div>
+		@ui.Button(ui.ButtonTypeSubmit, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+			Update notifications
+		}
+	</form>
+}
+
+templ notifyOption(value, label string) {
+	<div class="flex items-center space-x-3">
+		@ui.RadioGroupItem("notify", value, "notify", "", templ.Attributes{"id": "notify-" + value})
+		@ui.Label("font-normal", templ.Attributes{"for": "notify-" + value}) {
+			{ label }
+		}
+	</div>
+}
+
+templ notifySwitch(name, title, desc string, on bool) {
+	<div class="flex flex-row items-center justify-between rounded-lg border p-4">
+		<div class="space-y-0.5">
+			<p class="text-sm font-medium">{ title }</p>
+			<p class="text-sm text-muted-foreground">{ desc }</p>
+		</div>
+		@ui.Switch(name, on, false, "", templ.Attributes{"id": "notify-sw-" + name})
+	</div>
+}
+
+templ settingsDisplay() {
+	@settingsSection("Display", "Turn items on or off to control what's displayed in the app.")
+	<form class="space-y-8">
+		<div class="space-y-1">
+			<p class="text-base font-medium">Sidebar</p>
+			<p class="text-sm text-muted-foreground">Select the items you want to display in the sidebar.</p>
+			<div class="space-y-3 pt-2">
+				@displayItem("recents", "Recents", true)
+				@displayItem("home", "Home", true)
+				@displayItem("apps", "Applications", false)
+				@displayItem("desktop", "Desktop", false)
+				@displayItem("downloads", "Downloads", false)
+				@displayItem("documents", "Documents", false)
+			</div>
+		</div>
+		@ui.Button(ui.ButtonTypeSubmit, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+			Update display
+		}
+	</form>
+}
+
+templ displayItem(name, label string, on bool) {
+	<div class="flex items-center space-x-3">
+		@ui.Checkbox(name, "", templ.Attributes{"id": "display-" + name, "checked": on})
+		@ui.Label("font-normal", templ.Attributes{"for": "display-" + name}) {
+			{ label }
+		}
+	</div>
+}
+
+// =====================================================================
+// Music
+// =====================================================================
+
+templ MusicExample() {
+	<div class="grid lg:grid-cols-5">
+		<aside class="hidden border-r lg:block">
+			<div class="space-y-4 py-4">
+				@musicGroup("Discover", []string{"Listen Now", "Browse", "Radio"})
+				@musicGroup("Library", []string{"Playlists", "Songs", "Made for You", "Artists", "Albums"})
+				@musicGroup("Playlists", []string{"Recently Added", "Recently Played", "Top Songs", "Top Albums", "Logic Discography", "Bedtime Beats"})
+			</div>
+		</aside>
+		<div class="col-span-3 lg:col-span-4 lg:border-l">
+			<div class="px-4 py-6 lg:px-8">
+				@ui.Tabs("music", "", nil) {
+					<div class="flex items-center justify-between">
+						@ui.TabsList("", nil) {
+							@ui.TabsTrigger("music", "", nil) {
+								Music
+							}
+							@ui.TabsTrigger("podcasts", "", nil) {
+								Podcasts
+							}
+						}
+						@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeSmall, "", nil) {
+							@icons.PlusCircle(icons.Props{Class: "mr-2 h-4 w-4"})
+							Add music
+						}
+					</div>
+					@ui.TabsContent("music", "border-none p-0 outline-none", nil) {
+						<div class="mt-6 flex items-center justify-between">
+							<div class="space-y-1">
+								<h2 class="text-2xl font-semibold tracking-tight">Listen Now</h2>
+								<p class="text-sm text-muted-foreground">Top picks for you. Updated daily.</p>
+							</div>
+						</div>
+						@ui.Separator(ui.SeparatorOrientationHorizontal, false, "my-4", nil)
+						<div class="flex gap-6 overflow-x-auto pb-4">
+							@albumCard("React Rendezvous", "Ethan Byte", "from-indigo-500 to-purple-600", "h-[330px] w-[250px]", "h-[250px] w-[250px]")
+							@albumCard("Async Awakenings", "Nina Netcode", "from-sky-500 to-emerald-500", "h-[330px] w-[250px]", "h-[250px] w-[250px]")
+							@albumCard("The Art of Reusability", "Lena Logic", "from-rose-500 to-orange-400", "h-[330px] w-[250px]", "h-[250px] w-[250px]")
+							@albumCard("Thinking Components", "Lena Logic", "from-fuchsia-500 to-pink-600", "h-[330px] w-[250px]", "h-[250px] w-[250px]")
+						</div>
+						<div class="mt-6 space-y-1">
+							<h2 class="text-2xl font-semibold tracking-tight">Made for You</h2>
+							<p class="text-sm text-muted-foreground">Your personal playlists. Updated daily.</p>
+						</div>
+						@ui.Separator(ui.SeparatorOrientationHorizontal, false, "my-4", nil)
+						<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+							@albumCard("Thinking Components", "Lena Logic", "from-cyan-500 to-blue-600", "", "aspect-square w-full")
+							@albumCard("Functional Fury", "Beth Binary", "from-amber-500 to-red-500", "", "aspect-square w-full")
+							@albumCard("Stateful Symphony", "Beth Binary", "from-violet-500 to-indigo-600", "", "aspect-square w-full")
+							@albumCard("Async Awakenings", "Nina Netcode", "from-emerald-500 to-teal-600", "", "aspect-square w-full")
+							@albumCard("The Art of Reusability", "Lena Logic", "from-pink-500 to-rose-600", "", "aspect-square w-full")
+							@albumCard("Recursive Reflections", "Beth Binary", "from-lime-500 to-green-600", "", "aspect-square w-full")
+						</div>
+					}
+					@ui.TabsContent("podcasts", "border-none p-0 outline-none", nil) {
+						<div class="mt-6 space-y-1">
+							<h2 class="text-2xl font-semibold tracking-tight">New Episodes</h2>
+							<p class="text-sm text-muted-foreground">Your favorite podcasts. Updated daily.</p>
+						</div>
+						@ui.Separator(ui.SeparatorOrientationHorizontal, false, "my-4", nil)
+						<div class="flex h-[300px] items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
+							No episodes added yet.
+						</div>
+					}
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ musicGroup(title string, items []string) {
+	<div class="px-3 py-2">
+		<h2 class="mb-2 px-4 text-lg font-semibold tracking-tight">{ title }</h2>
+		<div class="space-y-1">
+			for i, item := range items {
+				<button
+					if i == 0 && title == "Discover" {
+						class="flex w-full items-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground"
+					} else {
+						class="flex w-full items-center rounded-md px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+					}
+				>
+					@icons.ListMusic(icons.Props{Class: "mr-2 h-4 w-4"})
+					{ item }
+				</button>
+			}
+		</div>
+	</div>
+}
+
+templ albumCard(name, artist, gradient, outer, cover string) {
+	<div class={ "space-y-3 shrink-0", outer }>
+		<div class={ "relative overflow-hidden rounded-md bg-gradient-to-br", gradient, cover }>
+			<div class="absolute inset-0 flex items-center justify-center p-4 text-center text-sm font-semibold text-white/90">
+				{ name }
+			</div>
+		</div>
+		<div class="space-y-1 text-sm">
+			<h3 class="font-medium leading-none">{ name }</h3>
+			<p class="text-xs text-muted-foreground">{ artist }</p>
+		</div>
+	</div>
+}
+
+// =====================================================================
+// Mail
+// =====================================================================
+
+templ MailExample() {
+	<div class="grid h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-[220px_1fr] lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1.5fr)]">
+		<nav class="hidden flex-col gap-1 border-r p-3 md:flex">
+			@mailFolder(icons.Inbox(icons.Props{Class: "mr-2 h-4 w-4"}), "Inbox", "128", true)
+			@mailFolder(icons.File(icons.Props{Class: "mr-2 h-4 w-4"}), "Drafts", "9", false)
+			@mailFolder(icons.Send(icons.Props{Class: "mr-2 h-4 w-4"}), "Sent", "", false)
+			@mailFolder(icons.Archive(icons.Props{Class: "mr-2 h-4 w-4"}), "Archive", "", false)
+			@mailFolder(icons.Trash(icons.Props{Class: "mr-2 h-4 w-4"}), "Trash", "", false)
+		</nav>
+		<div class="flex flex-col border-r">
+			<div class="flex items-center justify-between px-4 py-3">
+				<h1 class="text-xl font-bold">Inbox</h1>
+				@ui.Tabs("all", "", nil) {
+					@ui.TabsList("", nil) {
+						@ui.TabsTrigger("all", "", nil) {
+							All mail
+						}
+						@ui.TabsTrigger("unread", "", nil) {
+							Unread
+						}
+					}
+				}
+			</div>
+			@ui.Separator(ui.SeparatorOrientationHorizontal, false, "", nil)
+			<div class="p-4">
+				<div class="relative">
+					<span class="absolute left-2 top-2.5 text-muted-foreground">
+						@icons.Search(icons.Props{Class: "h-4 w-4"})
+					</span>
+					@ui.Input("search", ui.InputTypeSearch, "pl-8", templ.Attributes{"placeholder": "Search"})
+				</div>
+			</div>
+			<div class="flex flex-col gap-2 overflow-auto px-4 pb-4">
+				@mailItem("William Smith", "Meeting Tomorrow", "Hi, let's have a meeting tomorrow to discuss the project. I've been reviewing the details...", "over 1 year ago", true, []string{"meeting", "work"})
+				@mailItem("Alice Smith", "Re: Project Update", "Thank you for the project update. It looks great! I've gone through the report and...", "over 1 year ago", true, []string{"work", "important"})
+				@mailItem("Bob Johnson", "Weekend Plans", "Any plans for the weekend? I was thinking of going hiking in the nearby mountains...", "almost 2 years ago", false, []string{"personal"})
+				@mailItem("Emily Davis", "Re: Question about Budget", "I have a question about the budget for the upcoming project. It seems like there's a...", "almost 2 years ago", false, []string{"work", "budget"})
+			</div>
+		</div>
+		<div class="hidden flex-col lg:flex">
+			<div class="flex items-center gap-2 p-2">
+				@mailToolBtn(icons.Archive(icons.Props{Class: "h-4 w-4"}))
+				@mailToolBtn(icons.Trash(icons.Props{Class: "h-4 w-4"}))
+				<div class="ml-auto"></div>
+				@mailToolBtn(icons.MoreHorizontal(icons.Props{Class: "h-4 w-4"}))
+			</div>
+			@ui.Separator(ui.SeparatorOrientationHorizontal, false, "", nil)
+			<div class="flex items-start p-4">
+				@ui.Avatar("", nil) {
+					@ui.AvatarFallback("", nil) {
+						WS
+					}
+				}
+				<div class="ml-4 grid gap-1">
+					<div class="font-semibold">William Smith</div>
+					<div class="text-xs">Meeting Tomorrow</div>
+					<div class="text-xs text-muted-foreground">Reply-To: williamsmith@example.com</div>
+				</div>
+				<div class="ml-auto text-xs text-muted-foreground">Oct 22, 2023, 9:00 AM</div>
+			</div>
+			@ui.Separator(ui.SeparatorOrientationHorizontal, false, "", nil)
+			<div class="flex-1 whitespace-pre-wrap p-4 text-sm leading-relaxed">
+				Hi, let's have a meeting tomorrow to discuss the project. I've been reviewing the
+				project details and have some ideas I'd like to share. It's crucial that we align
+				on our next steps to ensure the project's success.
+
+				Please come prepared with any questions or insights you may have. Looking forward
+				to our meeting!
+
+				Best regards, William
+			</div>
+			@ui.Separator(ui.SeparatorOrientationHorizontal, false, "", nil)
+			<div class="p-4">
+				@ui.Textarea("reply", "", templ.Attributes{"placeholder": "Reply William Smith..."})
+				<div class="mt-2 flex items-center">
+					@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeSmall, "ml-auto", nil) {
+						Send
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ mailFolder(icon templ.Component, label, count string, active bool) {
+	<button
+		if active {
+			class="flex items-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+		} else {
+			class="flex items-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+		}
+	>
+		@icon
+		{ label }
+		if count != "" {
+			<span class="ml-auto text-xs">{ count }</span>
+		}
+	</button>
+}
+
+templ mailItem(sender, subject, preview, time string, unread bool, tags []string) {
+	<button class="flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent">
+		<div class="flex w-full flex-col gap-1">
+			<div class="flex items-center">
+				<div class="flex items-center gap-2">
+					<span class="font-semibold">{ sender }</span>
+					if unread {
+						<span class="flex h-2 w-2 rounded-full bg-blue-600"></span>
+					}
+				</div>
+				<span class="ml-auto text-xs text-muted-foreground">{ time }</span>
+			</div>
+			<div class="text-xs font-medium">{ subject }</div>
+		</div>
+		<div class="line-clamp-2 text-xs text-muted-foreground">{ preview }</div>
+		<div class="flex items-center gap-2">
+			for _, t := range tags {
+				@ui.Badge(ui.BadgeVariantSecondary, "", nil) {
+					{ t }
+				}
+			}
+		</div>
+	</button>
+}
+
+templ mailToolBtn(icon templ.Component) {
+	<button class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+		@icon
+	</button>
+}

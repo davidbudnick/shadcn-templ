@@ -1,0 +1,70 @@
+package ui
+
+import (
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+const (
+	alertBaseClass            = "[&>svg]:text-foreground relative w-full rounded-lg border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7"
+	alertTitleBaseClass       = "mb-1 font-medium leading-none tracking-tight"
+	alertDescriptionBaseClass = "text-sm [&_p]:leading-relaxed"
+)
+
+type AlertVariant int
+
+const (
+	AlertVariantDefault AlertVariant = iota
+	AlertVariantDestructive
+)
+
+func (v AlertVariant) Class() string {
+	switch v {
+	case AlertVariantDestructive:
+		return "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive"
+	default:
+		return "bg-background text-foreground"
+	}
+}
+
+func (v AlertVariant) Icon() templ.Component {
+	switch v {
+	case AlertVariantDestructive:
+		return icons.CircleX(icons.Props{
+			Class: "h-4 w-4",
+		})
+	default:
+		return icons.CircleCheck(icons.Props{
+			Class: "h-4 w-4",
+		})
+	}
+}
+
+templ Alert(variant AlertVariant, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(alertBaseClass, variant.Class(), classes) }
+		role="alert"
+		{ attrs... }
+	>
+		@variant.Icon()
+		{ children... }
+	</div>
+}
+
+templ AlertTitle(classes string, attrs templ.Attributes) {
+	<h5
+		class={ twmerge.Merge(alertTitleBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h5>
+}
+
+templ AlertDescription(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(alertDescriptionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}

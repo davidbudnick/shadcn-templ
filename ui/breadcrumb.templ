@@ -1,0 +1,90 @@
+package ui
+
+import (
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+const (
+	breadcrumbListBaseClass      = "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5"
+	breadcrumbItemBaseClass      = "inline-flex items-center gap-1.5"
+	breadcrumbSeparatorBaseClass = "[&>svg]:size-3.5"
+	breadcrumbLinkBaseClass      = "transition-colors hover:text-foreground"
+)
+
+templ Breadcrumb(classes string, attrs templ.Attributes) {
+	<nav
+		aria-label="breadcrumb"
+		class={ twmerge.Merge(classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</nav>
+}
+
+templ BreadcrumbList(classes string, attrs templ.Attributes) {
+	<ol
+		class={ twmerge.Merge(breadcrumbListBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</ol>
+}
+
+templ BreadcrumbItem(classes string, attrs templ.Attributes) {
+	<li
+		class={ twmerge.Merge(breadcrumbItemBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</li>
+}
+
+templ BreadcrumbSeparator(classes string, attrs templ.Attributes) {
+	<li
+		role="presentation"
+		aria-hidden="true"
+		class={ twmerge.Merge(breadcrumbSeparatorBaseClass, classes) }
+		{ attrs... }
+	>
+		@icons.ChevronRight(icons.Props{
+			Class: "h-4 w-4",
+		})
+	</li>
+}
+
+templ BreadcrumbLink(href templ.SafeURL, classes string, attrs templ.Attributes) {
+	<a
+		class={ twmerge.Merge(breadcrumbLinkBaseClass, classes) }
+		href={ href }
+		{ attrs... }
+	>
+		{ children... }
+	</a>
+}
+
+// BreadcrumbPage is the current (non-link) page in the trail.
+templ BreadcrumbPage(classes string, attrs templ.Attributes) {
+	<span
+		role="link"
+		aria-disabled="true"
+		aria-current="page"
+		class={ twmerge.Merge("font-normal text-foreground", classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</span>
+}
+
+// BreadcrumbEllipsis collapses a long trail.
+templ BreadcrumbEllipsis(classes string, attrs templ.Attributes) {
+	<span
+		role="presentation"
+		aria-hidden="true"
+		class={ twmerge.Merge("flex h-9 w-9 items-center justify-center", classes) }
+		{ attrs... }
+	>
+		@icons.MoreHorizontal(icons.Props{Class: "h-4 w-4"})
+		<span class="sr-only">More</span>
+	</span>
+}

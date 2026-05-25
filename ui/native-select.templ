@@ -1,0 +1,30 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	nativeSelectBaseClass        = "flex h-9 w-full appearance-none rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+	nativeSelectOptionBaseClass  = ""
+)
+
+// NativeSelect renders a styled native <select> element.
+templ NativeSelect(name string, classes string, attrs templ.Attributes) {
+	<select
+		name={ name }
+		class={ twmerge.Merge(nativeSelectBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</select>
+}
+
+// NativeSelectOption renders an <option> inside a NativeSelect.
+templ NativeSelectOption(value string, classes string, attrs templ.Attributes) {
+	<option
+		value={ value }
+		class={ twmerge.Merge(nativeSelectOptionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</option>
+}

@@ -1,0 +1,12 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+// Direction sets the text direction ("ltr" or "rtl") for its subtree, the
+// templ/HTML equivalent of shadcn/ui's DirectionProvider. Components inside
+// respect the direction via logical CSS properties.
+templ Direction(dir, classes string, attrs templ.Attributes) {
+	<div dir={ dir } class={ twmerge.Merge(classes) } { attrs... }>
+		{ children... }
+	</div>
+}

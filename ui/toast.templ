@@ -1,0 +1,117 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+// Toast — the older shadcn toast component.
+// Place @ui.ToastViewport("", nil) once in the page body.
+// Trigger with the Alpine store: $store.toast.add({ title: '...', description: '...', variant: 'default' })
+// Supported variants: default | destructive
+
+const (
+	toastBaseClass        = "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl border p-6 pr-8 shadow-lg transition-all"
+	toastDefaultClass     = "border bg-background text-foreground"
+	toastDestructiveClass = "destructive border-destructive bg-destructive text-destructive-foreground"
+	toastTitleClass       = "text-sm font-semibold"
+	toastDescriptionClass = "text-sm opacity-90"
+	toastActionClass      = "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium transition-colors hover:bg-secondary focus:outline-none focus:ring-1 focus:ring-ring"
+	toastCloseClass       = "absolute right-2 top-2 rounded-md p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted focus:opacity-100 focus:outline-none focus:ring-1"
+)
+
+// ToastViewport is the fixed container for toasts. Place it once per page.
+// It registers Alpine.store('toast') for triggering toasts programmatically.
+templ ToastViewport(classes string, attrs templ.Attributes) {
+	<div
+		x-data
+		x-init={ `
+  if (!Alpine.store('toast')) {
+    Alpine.store('toast', {
+      toasts: [],
+      nextId: 1,
+      add(t) {
+        const id = this.nextId++;
+        this.toasts.push({ id, title: t.title||'', description: t.description||'', variant: t.variant||'default', action: t.action||null });
+        setTimeout(() => this.remove(id), 5000);
+      },
+      remove(id) { this.toasts = this.toasts.filter(t => t.id !== id); }
+    });
+  }` }
+		class={ twmerge.Merge("fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]", classes) }
+		{ attrs... }
+	>
+		<template x-for="t in $store.toast.toasts" :key="t.id">
+			<div
+				class={ toastBaseClass }
+				:class="t.variant === 'destructive' ? 'border-destructive bg-destructive text-destructive-foreground' : 'border bg-background text-foreground'"
+				x-transition:enter="transition ease-out duration-300"
+				x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+				x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+				x-transition:leave="transition ease-in duration-200"
+				x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+				x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+			>
+				<div class="grid gap-1">
+					<p class={ toastTitleClass } x-show="t.title" x-text="t.title"></p>
+					<p class={ toastDescriptionClass } x-show="t.description" x-text="t.description"></p>
+				</div>
+				<button
+					type="button"
+					class={ toastCloseClass }
+					x-on:click="$store.toast.remove(t.id)"
+					aria-label="Close"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+				</button>
+			</div>
+		</template>
+	</div>
+}
+
+// Toast renders a single standalone toast element (non-managed variant).
+templ Toast(variant string, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(toastBaseClass, func() string {
+			if variant == "destructive" {
+				return toastDestructiveClass
+			}
+			return toastDefaultClass
+		}(), classes) }
+		{ attrs... }
+	>
+		{ children... }
+		<button
+			type="button"
+			class={ toastCloseClass }
+			aria-label="Close"
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+		</button>
+	</div>
+}
+
+templ ToastTitle(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(toastTitleClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+templ ToastDescription(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(toastDescriptionClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+templ ToastAction(classes string, attrs templ.Attributes) {
+	<button
+		type="button"
+		class={ twmerge.Merge(toastActionClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</button>
+}

@@ -1,0 +1,358 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// --- Menubar ---
+
+templ MenubarDemo() {
+	@ui.Menubar("", nil) {
+		@ui.MenubarMenu("", nil) {
+			@ui.MenubarTrigger("", nil) {
+				File
+			}
+			@ui.MenubarContent("", nil) {
+				@ui.MenubarItem("", nil) {
+					New Tab
+					@ui.MenubarShortcut("", nil) {
+						{ "⌘T" }
+					}
+				}
+				@ui.MenubarItem("", nil) {
+					New Window
+					@ui.MenubarShortcut("", nil) {
+						{ "⌘N" }
+					}
+				}
+				@ui.MenubarSeparator("", nil)
+				@ui.MenubarItem("", nil) {
+					Print...
+					@ui.MenubarShortcut("", nil) {
+						{ "⌘P" }
+					}
+				}
+			}
+		}
+		@ui.MenubarMenu("", nil) {
+			@ui.MenubarTrigger("", nil) {
+				Edit
+			}
+			@ui.MenubarContent("", nil) {
+				@ui.MenubarItem("", nil) {
+					Undo
+					@ui.MenubarShortcut("", nil) {
+						{ "⌘Z" }
+					}
+				}
+				@ui.MenubarItem("", nil) {
+					Redo
+					@ui.MenubarShortcut("", nil) {
+						{ "⇧⌘Z" }
+					}
+				}
+				@ui.MenubarSeparator("", nil)
+				@ui.MenubarItem("", nil) {
+					Cut
+				}
+				@ui.MenubarItem("", nil) {
+					Copy
+				}
+				@ui.MenubarItem("", nil) {
+					Paste
+				}
+			}
+		}
+		@ui.MenubarMenu("", nil) {
+			@ui.MenubarTrigger("", nil) {
+				View
+			}
+			@ui.MenubarContent("", nil) {
+				@ui.MenubarItem("", nil) {
+					Always Show Bookmarks Bar
+				}
+				@ui.MenubarItem("", nil) {
+					Always Show Full URLs
+				}
+				@ui.MenubarSeparator("", nil)
+				@ui.MenubarLabel("", nil) {
+					Developer
+				}
+				@ui.MenubarSeparator("", nil)
+				@ui.MenubarItem("", nil) {
+					Reload
+					@ui.MenubarShortcut("", nil) {
+						{ "⌘R" }
+					}
+				}
+				@ui.MenubarItem("", nil) {
+					Force Reload
+					@ui.MenubarShortcut("", nil) {
+						{ "⇧⌘R" }
+					}
+				}
+			}
+		}
+		@ui.MenubarMenu("", nil) {
+			@ui.MenubarTrigger("", nil) {
+				Help
+			}
+			@ui.MenubarContent("", nil) {
+				@ui.MenubarItem("", nil) {
+					Search Menu
+				}
+				@ui.MenubarSeparator("", nil)
+				@ui.MenubarItem("", nil) {
+					Learn More
+				}
+				@ui.MenubarItem("", nil) {
+					About
+				}
+			}
+		}
+	}
+}
+
+// --- Navigation Menu ---
+
+templ NavigationMenuDemo() {
+	@ui.NavigationMenu("", nil) {
+		@ui.NavigationMenuList("", nil) {
+			<li class="relative" x-data="{ open: false }" x-on:keydown.esc.window="open = false">
+				<button
+					type="button"
+					aria-haspopup="true"
+					x-bind:aria-expanded="open"
+					x-bind:data-state="open ? 'open' : 'closed'"
+					class="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none data-[state=open]:bg-accent/50"
+					x-on:click="open = !open"
+					x-on:mouseenter="open = true"
+					x-on:mouseleave="open = false"
+				>
+					Getting started
+					<svg class="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+				</button>
+				<div
+					class="absolute left-0 top-full z-50 mt-1.5 w-[400px] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg"
+					x-show="open"
+					x-transition
+					x-cloak
+					x-on:mouseenter="open = true"
+					x-on:mouseleave="open = false"
+					x-on:mousedown.outside="open = false"
+				>
+					<ul class="grid gap-3 p-4 md:grid-cols-2">
+						<li class="row-span-3">
+							<a href="#" class="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md hover:bg-accent">
+								<div class="mb-2 mt-4 text-lg font-medium">shadcn-templ</div>
+								<p class="text-sm leading-tight text-muted-foreground">Beautifully designed components built with Templ and Alpine.js.</p>
+							</a>
+						</li>
+						@navMenuListItem("Introduction", "Re-usable components built using Templ and Alpine.js.", "#")
+						@navMenuListItem("Installation", "How to install dependencies and structure your app.", "#")
+						@navMenuListItem("Typography", "Styles for headings, paragraphs, lists...etc", "#")
+					</ul>
+				</div>
+			</li>
+			<li class="relative" x-data="{ open: false }" x-on:keydown.esc.window="open = false">
+				<button
+					type="button"
+					aria-haspopup="true"
+					x-bind:aria-expanded="open"
+					x-bind:data-state="open ? 'open' : 'closed'"
+					class="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none data-[state=open]:bg-accent/50"
+					x-on:click="open = !open"
+					x-on:mouseenter="open = true"
+					x-on:mouseleave="open = false"
+				>
+					Components
+					<svg class="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+				</button>
+				<div
+					class="absolute left-0 top-full z-50 mt-1.5 w-[500px] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg"
+					x-show="open"
+					x-transition
+					x-cloak
+					x-on:mouseenter="open = true"
+					x-on:mouseleave="open = false"
+					x-on:mousedown.outside="open = false"
+				>
+					<ul class="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+						@navMenuListItem("Alert Dialog", "A modal dialog that interrupts the user.", "#")
+						@navMenuListItem("Hover Card", "For sighted users to preview content available behind a link.", "#")
+						@navMenuListItem("Progress", "Displays an indicator showing the completion progress.", "#")
+						@navMenuListItem("Scroll-area", "Visually or semantically separates content.", "#")
+						@navMenuListItem("Tabs", "A set of layered sections of content.", "#")
+						@navMenuListItem("Tooltip", "A popup that displays info when element receives focus.", "#")
+					</ul>
+				</div>
+			</li>
+			<li>
+				<a
+					href="#"
+					class="inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+				>
+					Documentation
+				</a>
+			</li>
+		}
+	}
+}
+
+templ navMenuListItem(title, description, href string) {
+	<li>
+		<a
+			href={ templ.SafeURL(href) }
+			class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+		>
+			<div class="text-sm font-medium leading-none">{ title }</div>
+			<p class="line-clamp-2 text-sm leading-snug text-muted-foreground">{ description }</p>
+		</a>
+	</li>
+}
+
+// --- Command ---
+
+templ CommandDemo() {
+	<div class="w-full max-w-sm overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md">
+		@ui.Command("", nil) {
+			@ui.CommandInput("Type a command or search...", "", nil)
+			@ui.CommandList("", nil) {
+				@ui.CommandEmpty("", nil) {
+					No results found.
+				}
+				@ui.CommandGroup("Suggestions", "", nil) {
+					@ui.CommandItem("Calendar", "", templ.Attributes{"x-on:click": "console.log('Calendar')"}) {
+						@icons.Calendar(icons.Props{Class: "mr-2 h-4 w-4"})
+						<span>Calendar</span>
+					}
+					@ui.CommandItem("Search Emoji", "", templ.Attributes{"x-on:click": "console.log('Search Emoji')"}) {
+						@icons.Search(icons.Props{Class: "mr-2 h-4 w-4"})
+						<span>Search Emoji</span>
+					}
+					@ui.CommandItem("Calculator", "", templ.Attributes{"x-on:click": "console.log('Calculator')"}) {
+						@icons.Settings(icons.Props{Class: "mr-2 h-4 w-4"})
+						<span>Calculator</span>
+					}
+				}
+				@ui.CommandSeparator("", nil)
+				@ui.CommandGroup("Settings", "", nil) {
+					@ui.CommandItem("Profile", "", templ.Attributes{"x-on:click": "console.log('Profile')"}) {
+						@icons.User(icons.Props{Class: "mr-2 h-4 w-4"})
+						<span>Profile</span>
+					}
+					@ui.CommandItem("Billing", "", templ.Attributes{"x-on:click": "console.log('Billing')"}) {
+						@icons.CreditCard(icons.Props{Class: "mr-2 h-4 w-4"})
+						<span>Billing</span>
+					}
+					@ui.CommandItem("Settings", "", templ.Attributes{"x-on:click": "console.log('Settings')"}) {
+						@icons.Settings(icons.Props{Class: "mr-2 h-4 w-4"})
+						<span>Settings</span>
+					}
+				}
+			}
+		}
+	</div>
+}
+
+// --- Combobox ---
+
+templ ComboboxDemo() {
+	<div class="flex items-center justify-center">
+		@ui.Combobox(
+			"Select framework...",
+			[]ui.ComboboxOption{
+				{Value: "next.js", Label: "Next.js"},
+				{Value: "sveltekit", Label: "SvelteKit"},
+				{Value: "nuxt.js", Label: "Nuxt.js"},
+				{Value: "remix", Label: "Remix"},
+				{Value: "astro", Label: "Astro"},
+			},
+			"w-[200px]",
+			nil,
+		)
+	</div>
+}
+
+// --- Sidebar ---
+
+templ SidebarDemo() {
+	<div class="relative flex h-[500px] w-full max-w-3xl overflow-hidden rounded-md border">
+		@ui.SidebarProvider(true, "h-full", nil) {
+			@ui.Sidebar("border-r", nil) {
+				@ui.SidebarHeader("", nil) {
+					<div class="flex items-center gap-2 px-2 py-1">
+						@icons.Package(icons.Props{Class: "h-6 w-6"})
+						<span class="font-semibold text-sm">Acme Inc</span>
+					</div>
+				}
+				@ui.SidebarContent("", nil) {
+					@ui.SidebarGroup("", nil) {
+						@ui.SidebarGroupLabel("", nil) {
+							Platform
+						}
+						@ui.SidebarMenu("", nil) {
+							@ui.SidebarMenuItem("", nil) {
+								@ui.SidebarMenuButtonLink("#", true, "", nil) {
+									@icons.Home(icons.Props{Class: "h-4 w-4"})
+									<span>Home</span>
+								}
+							}
+							@ui.SidebarMenuItem("", nil) {
+								@ui.SidebarMenuButtonLink("#", false, "", nil) {
+									@icons.Inbox(icons.Props{Class: "h-4 w-4"})
+									<span>Inbox</span>
+								}
+							}
+							@ui.SidebarMenuItem("", nil) {
+								@ui.SidebarMenuButtonLink("#", false, "", nil) {
+									@icons.Calendar(icons.Props{Class: "h-4 w-4"})
+									<span>Calendar</span>
+								}
+							}
+							@ui.SidebarMenuItem("", nil) {
+								@ui.SidebarMenuButtonLink("#", false, "", nil) {
+									@icons.Search(icons.Props{Class: "h-4 w-4"})
+									<span>Search</span>
+								}
+							}
+							@ui.SidebarMenuItem("", nil) {
+								@ui.SidebarMenuButtonLink("#", false, "", nil) {
+									@icons.Settings(icons.Props{Class: "h-4 w-4"})
+									<span>Settings</span>
+								}
+							}
+						}
+					}
+				}
+				@ui.SidebarFooter("", nil) {
+					@ui.SidebarMenu("", nil) {
+						@ui.SidebarMenuItem("", nil) {
+							@ui.SidebarMenuButton(false, "", nil) {
+								@icons.User(icons.Props{Class: "h-4 w-4"})
+								<span>shadcn</span>
+							}
+						}
+					}
+				}
+			}
+			@ui.SidebarInset("", nil) {
+				<header class="flex h-12 items-center gap-2 border-b px-4">
+					@ui.SidebarTrigger("", nil)
+					<span class="text-sm font-medium">Dashboard</span>
+				</header>
+				<div class="flex flex-1 flex-col gap-4 p-4">
+					<div class="grid auto-rows-min gap-4 md:grid-cols-3">
+						<div class="aspect-video rounded-xl bg-muted/50"></div>
+						<div class="aspect-video rounded-xl bg-muted/50"></div>
+						<div class="aspect-video rounded-xl bg-muted/50"></div>
+					</div>
+					<div class="flex-1 rounded-xl bg-muted/50 p-4">
+						<p class="text-sm text-muted-foreground">Main content area</p>
+					</div>
+				</div>
+			}
+		}
+	</div>
+}

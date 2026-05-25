@@ -1,0 +1,586 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// Each templ below mirrors the corresponding demo in the shadcn/ui docs.
+
+// --- Accordion ---
+
+templ AccordionDemo() {
+	@ui.Accordion("max-w-md", nil) {
+		@ui.AccordionItem("", nil) {
+			@ui.AccordionTrigger("", nil) {
+				Is it accessible?
+			}
+			@ui.AccorionContent("", nil) {
+				Yes. It adheres to the WAI-ARIA design pattern.
+			}
+		}
+		@ui.AccordionItem("", nil) {
+			@ui.AccordionTrigger("", nil) {
+				Is it styled?
+			}
+			@ui.AccorionContent("", nil) {
+				Yes. It comes with default styles that match the other components' aesthetic.
+			}
+		}
+		@ui.AccordionItem("", nil) {
+			@ui.AccordionTrigger("", nil) {
+				Is it animated?
+			}
+			@ui.AccorionContent("", nil) {
+				Yes. It's animated by default, but you can disable it if you prefer.
+			}
+		}
+	}
+}
+
+// --- Alert ---
+
+templ AlertDemo() {
+	@ui.Alert(ui.AlertVariantDefault, "max-w-md", nil) {
+		@ui.AlertTitle("", nil) {
+			Success! Your changes have been saved
+		}
+		@ui.AlertDescription("", nil) {
+			This is an alert with an icon, a title and a description.
+		}
+	}
+}
+
+templ AlertDestructive() {
+	@ui.Alert(ui.AlertVariantDestructive, "max-w-md", nil) {
+		@ui.AlertTitle("", nil) {
+			Unable to process your payment
+		}
+		@ui.AlertDescription("", nil) {
+			Please verify your billing information and try again.
+		}
+	}
+}
+
+// --- Avatar ---
+
+templ AvatarDemo() {
+	@ui.Avatar("", nil) {
+		@ui.AvatarImage("https://github.com/shadcn.png", "@shadcn", "", nil)
+		@ui.AvatarFallback("", nil) {
+			CN
+		}
+	}
+}
+
+// --- Badge ---
+
+templ BadgeDemo() {
+	<div class="flex flex-wrap gap-2">
+		@ui.Badge(ui.BadgeVariantDefault, "", nil) {
+			Badge
+		}
+		@ui.Badge(ui.BadgeVariantSecondary, "", nil) {
+			Secondary
+		}
+		@ui.Badge(ui.BadgeVariantDestructive, "", nil) {
+			Destructive
+		}
+		@ui.Badge(ui.BadgeVariantOutline, "", nil) {
+			Outline
+		}
+	</div>
+}
+
+// --- Breadcrumb ---
+
+templ BreadcrumbDemo() {
+	@ui.Breadcrumb("", nil) {
+		@ui.BreadcrumbList("", nil) {
+			@ui.BreadcrumbItem("", nil) {
+				@ui.BreadcrumbLink("/", "", nil) {
+					Home
+				}
+			}
+			@ui.BreadcrumbSeparator("", nil)
+			@ui.BreadcrumbItem("", nil) {
+				@ui.BreadcrumbLink("/components", "", nil) {
+					Components
+				}
+			}
+			@ui.BreadcrumbSeparator("", nil)
+			@ui.BreadcrumbItem("", nil) {
+				<span class="font-normal text-foreground" aria-current="page">Breadcrumb</span>
+			}
+		}
+	}
+}
+
+// --- Button ---
+
+templ ButtonDemo() {
+	@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+		Button
+	}
+}
+
+templ ButtonVariants() {
+	<div class="flex flex-wrap items-center gap-2">
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+			Default
+		}
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantSecondary, ui.ButtonSizeDefault, "", nil) {
+			Secondary
+		}
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDestructive, ui.ButtonSizeDefault, "", nil) {
+			Destructive
+		}
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+			Outline
+		}
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantGhost, ui.ButtonSizeDefault, "", nil) {
+			Ghost
+		}
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantLink, ui.ButtonSizeDefault, "", nil) {
+			Link
+		}
+	</div>
+}
+
+templ ButtonSizes() {
+	<div class="flex flex-wrap items-center gap-2">
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeSmall, "", nil) {
+			Small
+		}
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+			Default
+		}
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeLarge, "", nil) {
+			Large
+		}
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeIcon, "", templ.Attributes{"aria-label": "Next"}) {
+			@icons.ChevronRight(icons.Props{Class: "h-4 w-4"})
+		}
+	</div>
+}
+
+templ ButtonWithIcon() {
+	@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+		@icons.Mail(icons.Props{Class: "mr-2 h-4 w-4"})
+		Login with Email
+	}
+}
+
+templ ButtonLoading() {
+	@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", templ.Attributes{"disabled": true}) {
+		@icons.Loader(icons.Props{Class: "mr-2 h-4 w-4 animate-spin"})
+		Please wait
+	}
+}
+
+// --- Card ---
+
+templ CardDemo() {
+	@ui.Card("w-[350px]", nil) {
+		@ui.CardHeader("", nil) {
+			@ui.CardTitle("", nil) {
+				Create project
+			}
+			@ui.CardDescription("", nil) {
+				Deploy your new project in one-click.
+			}
+		}
+		@ui.CardContent("", nil) {
+			<form>
+				<div class="grid w-full items-center gap-4">
+					<div class="flex flex-col space-y-1.5">
+						@ui.Label("", templ.Attributes{"for": "card-name"}) {
+							Name
+						}
+						@ui.Input("name", ui.InputTypeText, "", templ.Attributes{"id": "card-name", "placeholder": "Name of your project"})
+					</div>
+					<div class="flex flex-col space-y-1.5">
+						@ui.Label("", templ.Attributes{"for": "card-framework"}) {
+							Framework
+						}
+						@ui.Input("framework", ui.InputTypeText, "", templ.Attributes{"id": "card-framework", "placeholder": "Next.js"})
+					</div>
+				</div>
+			</form>
+		}
+		@ui.CardFooter("flex justify-between", nil) {
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+				Cancel
+			}
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+				Deploy
+			}
+		}
+	}
+}
+
+// --- Checkbox ---
+
+templ CheckboxDemo() {
+	<div class="flex items-center space-x-2">
+		@ui.Checkbox("terms", "", templ.Attributes{"id": "terms"})
+		@ui.Label("", templ.Attributes{"for": "terms"}) {
+			Accept terms and conditions
+		}
+	</div>
+}
+
+// --- Collapsible ---
+
+templ CollapsibleDemo() {
+	@ui.Collapsible(false, "w-[350px] space-y-2", nil) {
+		<div class="flex items-center justify-between space-x-4 px-4">
+			<h4 class="text-sm font-semibold">{ "@peduarte starred 3 repositories" }</h4>
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantGhost, ui.ButtonSizeIcon, "", ui.CollapsibleTriggerAttrs) {
+				@icons.ChevronsUpDown(icons.Props{Class: "h-4 w-4"})
+				<span class="sr-only">Toggle</span>
+			}
+		</div>
+		<div class="rounded-md border px-4 py-3 font-mono text-sm">{ "@radix-ui/primitives" }</div>
+		@ui.CollapsibleContent("space-y-2", nil) {
+			<div class="rounded-md border px-4 py-3 font-mono text-sm">{ "@radix-ui/colors" }</div>
+			<div class="rounded-md border px-4 py-3 font-mono text-sm">{ "@stitches/react" }</div>
+		}
+	}
+}
+
+// --- Dialog ---
+
+templ DialogDemo() {
+	@ui.Dialog("", nil) {
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", ui.DialogTriggerAttrs) {
+			Edit Profile
+		}
+		@ui.DialogContent("sm:max-w-[425px]", nil) {
+			@ui.DialogHeader("", nil) {
+				@ui.DialogTitle("", nil) {
+					Edit profile
+				}
+				@ui.DialogDescription("", nil) {
+					Make changes to your profile here. Click save when you're done.
+				}
+			}
+			<div class="grid gap-4 py-4">
+				<div class="grid grid-cols-4 items-center gap-4">
+					@ui.Label("text-right", templ.Attributes{"for": "dlg-name"}) {
+						Name
+					}
+					@ui.Input("name", ui.InputTypeText, "col-span-3", templ.Attributes{"id": "dlg-name", "value": "Pedro Duarte"})
+				</div>
+				<div class="grid grid-cols-4 items-center gap-4">
+					@ui.Label("text-right", templ.Attributes{"for": "dlg-username"}) {
+						Username
+					}
+					@ui.Input("username", ui.InputTypeText, "col-span-3", templ.Attributes{"id": "dlg-username", "value": "@peduarte"})
+				</div>
+			</div>
+			@ui.DialogFooter("", nil) {
+				@ui.Button(ui.ButtonTypeSubmit, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", ui.DialogCloseAttrs) {
+					Save changes
+				}
+			}
+		}
+	}
+}
+
+// --- Dropdown Menu ---
+
+templ DropdownMenuDemo() {
+	@ui.DropdownMenu("", nil) {
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", ui.DropdownMenuTriggerAttrs) {
+			Open
+		}
+		@ui.DropdownMenuContent(ui.DropdownMenuAlignLeft, "w-56", nil) {
+			@ui.DropdownMenuLabel("", nil) {
+				My Account
+			}
+			@ui.DropdownMenuSeparator("", nil)
+			@ui.DropdownMenuItem("", nil) {
+				@icons.User(icons.Props{Class: "mr-2 h-4 w-4"})
+				<span>Profile</span>
+				@ui.DropdownMenuShortcut("", nil) {
+					{ "⇧⌘P" }
+				}
+			}
+			@ui.DropdownMenuItem("", nil) {
+				@icons.CreditCard(icons.Props{Class: "mr-2 h-4 w-4"})
+				<span>Billing</span>
+				@ui.DropdownMenuShortcut("", nil) {
+					{ "⌘B" }
+				}
+			}
+			@ui.DropdownMenuItem("", nil) {
+				@icons.Settings(icons.Props{Class: "mr-2 h-4 w-4"})
+				<span>Settings</span>
+				@ui.DropdownMenuShortcut("", nil) {
+					{ "⌘S" }
+				}
+			}
+			@ui.DropdownMenuSeparator("", nil)
+			@ui.DropdownMenuItem("", nil) {
+				@icons.LogOut(icons.Props{Class: "mr-2 h-4 w-4"})
+				<span>Log out</span>
+				@ui.DropdownMenuShortcut("", nil) {
+					{ "⇧⌘Q" }
+				}
+			}
+		}
+	}
+}
+
+// --- Field ---
+
+templ FieldDemo() {
+	@ui.Field("w-[350px]", nil) {
+		@ui.Label("", templ.Attributes{"for": "field-email"}) {
+			Email
+		}
+		@ui.Input("email", ui.InputTypeEmail, "", templ.Attributes{"id": "field-email", "placeholder": "you@example.com"})
+		@ui.FieldDescription("", nil) {
+			We'll never share your email with anyone else.
+		}
+		@ui.FieldError("", "", nil) {
+			Please enter a valid email address.
+		}
+	}
+}
+
+// --- Input ---
+
+templ InputDemo() {
+	<div class="flex w-full max-w-sm flex-col gap-4">
+		@ui.Input("email", ui.InputTypeEmail, "", templ.Attributes{"placeholder": "Email"})
+		<div class="grid w-full items-center gap-1.5">
+			@ui.Label("", templ.Attributes{"for": "input-email"}) {
+				Email
+			}
+			@ui.Input("email2", ui.InputTypeEmail, "", templ.Attributes{"id": "input-email", "placeholder": "Email"})
+		</div>
+		@ui.Input("file", ui.InputTypeFile, "", nil)
+		@ui.Input("disabled", ui.InputTypeText, "", templ.Attributes{"placeholder": "Disabled", "disabled": true})
+	</div>
+}
+
+// --- Label ---
+
+templ LabelDemo() {
+	<div class="flex items-center space-x-2">
+		@ui.Checkbox("terms-label", "", templ.Attributes{"id": "terms-label"})
+		@ui.Label("", templ.Attributes{"for": "terms-label"}) {
+			Accept terms and conditions
+		}
+	</div>
+}
+
+// --- Separator ---
+
+templ SeparatorDemo() {
+	<div>
+		<div class="space-y-1">
+			<h4 class="text-sm font-medium leading-none">Radix Primitives</h4>
+			<p class="text-sm text-muted-foreground">An open-source UI component library.</p>
+		</div>
+		@ui.Separator(ui.SeparatorOrientationHorizontal, false, "my-4", nil)
+		<div class="flex h-5 items-center space-x-4 text-sm">
+			<div>Blog</div>
+			@ui.Separator(ui.SeparatorOrientationVertical, false, "", nil)
+			<div>Docs</div>
+			@ui.Separator(ui.SeparatorOrientationVertical, false, "", nil)
+			<div>Source</div>
+		</div>
+	</div>
+}
+
+// --- Skeleton ---
+
+templ SkeletonDemo() {
+	<div class="flex items-center space-x-4">
+		@ui.Skeleton("h-12 w-12 rounded-full", nil)
+		<div class="space-y-2">
+			@ui.Skeleton("h-4 w-[250px]", nil)
+			@ui.Skeleton("h-4 w-[200px]", nil)
+		</div>
+	</div>
+}
+
+// --- Switch ---
+
+templ SwitchDemo() {
+	<div class="flex items-center space-x-2">
+		@ui.Switch("airplane-mode", false, false, "", templ.Attributes{"id": "airplane-mode"})
+		@ui.Label("", templ.Attributes{"for": "airplane-mode"}) {
+			Airplane Mode
+		}
+	</div>
+}
+
+// --- Table ---
+
+templ TableDemo() {
+	<div class="w-full max-w-2xl">
+		@ui.Table("", nil) {
+			@ui.TableCaption("", nil) {
+				A list of your recent invoices.
+			}
+			@ui.TableHeader("", nil) {
+				@ui.TableRow("", nil) {
+					@ui.TableHead("w-[100px]", nil) {
+						Invoice
+					}
+					@ui.TableHead("", nil) {
+						Status
+					}
+					@ui.TableHead("", nil) {
+						Method
+					}
+					@ui.TableHead("text-right", nil) {
+						Amount
+					}
+				}
+			}
+			@ui.TableBody("", nil) {
+				@invoiceRow("INV001", "Paid", "Credit Card", "$250.00")
+				@invoiceRow("INV002", "Pending", "PayPal", "$150.00")
+				@invoiceRow("INV003", "Unpaid", "Bank Transfer", "$350.00")
+				@invoiceRow("INV004", "Paid", "Credit Card", "$450.00")
+			}
+			@ui.TableFooter("", nil) {
+				@ui.TableRow("", nil) {
+					@ui.TableCell("", templ.Attributes{"colspan": "3"}) {
+						Total
+					}
+					@ui.TableCell("text-right", nil) {
+						$1,200.00
+					}
+				}
+			}
+		}
+	</div>
+}
+
+templ invoiceRow(invoice, status, method, amount string) {
+	@ui.TableRow("", nil) {
+		@ui.TableCell("font-medium", nil) {
+			{ invoice }
+		}
+		@ui.TableCell("", nil) {
+			{ status }
+		}
+		@ui.TableCell("", nil) {
+			{ method }
+		}
+		@ui.TableCell("text-right", nil) {
+			{ amount }
+		}
+	}
+}
+
+// --- Tabs ---
+
+templ TabsDemo() {
+	@ui.Tabs("account", "w-[400px]", nil) {
+		@ui.TabsList("grid w-full grid-cols-2", nil) {
+			@ui.TabsTrigger("account", "", nil) {
+				Account
+			}
+			@ui.TabsTrigger("password", "", nil) {
+				Password
+			}
+		}
+		@ui.TabsContent("account", "", nil) {
+			@ui.Card("", nil) {
+				@ui.CardHeader("", nil) {
+					@ui.CardTitle("", nil) {
+						Account
+					}
+					@ui.CardDescription("", nil) {
+						Make changes to your account here. Click save when you're done.
+					}
+				}
+				@ui.CardContent("space-y-2", nil) {
+					<div class="space-y-1">
+						@ui.Label("", templ.Attributes{"for": "tab-name"}) {
+							Name
+						}
+						@ui.Input("name", ui.InputTypeText, "", templ.Attributes{"id": "tab-name", "value": "Pedro Duarte"})
+					</div>
+					<div class="space-y-1">
+						@ui.Label("", templ.Attributes{"for": "tab-username"}) {
+							Username
+						}
+						@ui.Input("username", ui.InputTypeText, "", templ.Attributes{"id": "tab-username", "value": "@peduarte"})
+					</div>
+				}
+				@ui.CardFooter("", nil) {
+					@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+						Save changes
+					}
+				}
+			}
+		}
+		@ui.TabsContent("password", "", nil) {
+			@ui.Card("", nil) {
+				@ui.CardHeader("", nil) {
+					@ui.CardTitle("", nil) {
+						Password
+					}
+					@ui.CardDescription("", nil) {
+						Change your password here. After saving, you'll be logged out.
+					}
+				}
+				@ui.CardContent("space-y-2", nil) {
+					<div class="space-y-1">
+						@ui.Label("", templ.Attributes{"for": "tab-current"}) {
+							Current password
+						}
+						@ui.Input("current", ui.InputTypePassword, "", templ.Attributes{"id": "tab-current"})
+					</div>
+					<div class="space-y-1">
+						@ui.Label("", templ.Attributes{"for": "tab-new"}) {
+							New password
+						}
+						@ui.Input("new", ui.InputTypePassword, "", templ.Attributes{"id": "tab-new"})
+					</div>
+				}
+				@ui.CardFooter("", nil) {
+					@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+						Save password
+					}
+				}
+			}
+		}
+	}
+}
+
+// --- Textarea ---
+
+templ TextareaDemo() {
+	<div class="grid w-full max-w-sm gap-2">
+		@ui.Textarea("message", "", templ.Attributes{"placeholder": "Type your message here."})
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+			Send message
+		}
+	</div>
+}
+
+// --- Toggle ---
+
+templ ToggleDemo() {
+	<div class="flex flex-wrap items-center gap-2" x-data="{ bold: false, italic: false, underline: false }">
+		@ui.Toggle(ui.ToggleVariantDefault, ui.ToggleSizeDefault, "bold", "", templ.Attributes{"aria-label": "Toggle bold"}) {
+			@icons.Bold(icons.Props{Class: "h-4 w-4"})
+		}
+		@ui.Toggle(ui.ToggleVariantSecondary, ui.ToggleSizeDefault, "italic", "", templ.Attributes{"aria-label": "Toggle italic"}) {
+			@icons.Italic(icons.Props{Class: "h-4 w-4"})
+		}
+		@ui.Toggle(ui.ToggleVariantDefault, ui.ToggleSizeLarge, "underline", "", templ.Attributes{"aria-label": "Toggle underline"}) {
+			@icons.Underline(icons.Props{Class: "mr-2 h-4 w-4"})
+			Underline
+		}
+	</div>
+}

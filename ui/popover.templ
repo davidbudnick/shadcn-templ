@@ -1,0 +1,47 @@
+package ui
+
+import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	popoverContentBaseClass = "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none"
+)
+
+templ Popover(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge("relative inline-block", classes) }
+		{ attrs... }
+		x-data="{ shadcntempl_open: false }"
+		x-on:keydown.esc.window="shadcntempl_open = false"
+	>
+		{ children... }
+	</div>
+}
+
+// There is no element for popover trigger, just add these attributes to your component.
+var PopoverTriggerAttrs = templ.Attributes{
+	"aria-haspopup":  "dialog",
+	":aria-expanded": "shadcntempl_open",
+	"x-data":         true,
+	"x-on:click":     "shadcntempl_open = !shadcntempl_open",
+}
+
+templ PopoverContent(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(popoverContentBaseClass, classes) }
+		{ attrs... }
+		x-cloak
+		x-show="shadcntempl_open"
+		x-on:mousedown.outside="shadcntempl_open = false"
+		x-transition:enter="animate-in fade-in-0 zoom-in-95"
+		x-transition:leave="animate-out fade-out-0 zoom-out-95"
+		role="dialog"
+		style="position:absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%);"
+	>
+		{ children... }
+	</div>
+}
+
+// If you want to close the popover, add these attributes to your component.
+var PopoverCloseAttrs = templ.Attributes{
+	"x-on:click": "shadcntempl_open = false",
+}

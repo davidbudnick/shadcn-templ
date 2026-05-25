@@ -1,0 +1,72 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	itemBaseClass            = "flex items-center gap-4 py-3"
+	itemMediaBaseClass       = "flex shrink-0 items-center justify-center"
+	itemContentBaseClass     = "flex min-w-0 flex-1 flex-col gap-0.5"
+	itemTitleBaseClass       = "truncate text-sm font-medium leading-none"
+	itemDescriptionBaseClass = "truncate text-sm text-muted-foreground"
+	itemActionsBaseClass     = "flex shrink-0 items-center gap-1"
+)
+
+// Item is a flex row container for a list row.
+templ Item(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(itemBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ItemMedia holds a leading image, icon, or avatar.
+templ ItemMedia(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(itemMediaBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ItemContent is the main text area of an Item.
+templ ItemContent(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(itemContentBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ItemTitle is the primary label of an Item.
+templ ItemTitle(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(itemTitleBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+// ItemDescription is the secondary label of an Item.
+templ ItemDescription(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(itemDescriptionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+// ItemActions holds trailing buttons, badges, or other controls.
+templ ItemActions(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(itemActionsBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}

@@ -1,0 +1,48 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// DirectionDemo shows the Direction provider flipping a subtree between
+// left-to-right and right-to-left, mirroring the shadcn/ui Direction docs.
+templ DirectionDemo() {
+	<div class="w-full max-w-md space-y-4" x-data="{ dir: 'ltr' }">
+		<div class="flex items-center justify-between">
+			<p class="text-sm text-muted-foreground">Toggle the text direction:</p>
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeSmall, "", templ.Attributes{
+				"x-on:click": "dir = dir === 'ltr' ? 'rtl' : 'ltr'",
+			}) {
+				<span x-text="dir.toUpperCase()">LTR</span>
+			}
+		</div>
+		<div :dir="dir" class="space-y-4 rounded-lg border p-4">
+			@ui.Breadcrumb("", nil) {
+				@ui.BreadcrumbList("", nil) {
+					@ui.BreadcrumbItem("", nil) {
+						@ui.BreadcrumbLink("/", "", nil) {
+							Home
+						}
+					}
+					@ui.BreadcrumbSeparator("", nil)
+					@ui.BreadcrumbItem("", nil) {
+						<span class="text-foreground">Settings</span>
+					}
+				}
+			}
+			<div class="flex items-center gap-2">
+				@icons.Mail(icons.Props{Class: "h-4 w-4 text-muted-foreground"})
+				@ui.Input("email", ui.InputTypeEmail, "", templ.Attributes{"placeholder": "name@example.com"})
+			</div>
+			<div class="flex items-center gap-2">
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+					Continue
+				}
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantGhost, ui.ButtonSizeDefault, "", nil) {
+					Cancel
+				}
+			</div>
+		</div>
+	</div>
+}

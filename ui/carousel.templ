@@ -1,0 +1,94 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+import "github.com/davidbudnick/shadcn-templ/icons"
+
+const (
+	carouselBaseClass     = "relative w-full"
+	carouselContentClass  = "flex -ml-4 transition-transform duration-300 ease-in-out"
+	carouselItemBaseClass = "min-w-0 shrink-0 grow-0 basis-full pl-4"
+)
+
+// CarouselRoot wraps the whole carousel with Alpine state.
+// count = total number of slides (required for bounds checking).
+templ CarouselRoot(count int, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(carouselBaseClass, classes) }
+		x-data={ `{ current: 0, count: ` + itoa(count) + ` }` }
+		role="region"
+		aria-roledescription="carousel"
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// CarouselContent is the scrolling flex container.
+templ CarouselContent(classes string, attrs templ.Attributes) {
+	<div class="overflow-hidden">
+		<div
+			class={ twmerge.Merge(carouselContentClass, classes) }
+			:style="'transform: translateX(-' + (current * 100) + '%)'"
+			{ attrs... }
+		>
+			{ children... }
+		</div>
+	</div>
+}
+
+// CarouselItem wraps a single slide.
+templ CarouselItem(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(carouselItemBaseClass, classes) }
+		role="group"
+		aria-roledescription="slide"
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// CarouselPrevious renders the previous-slide button.
+templ CarouselPrevious(classes string, attrs templ.Attributes) {
+	<button
+		type="button"
+		x-on:click="current = current > 0 ? current - 1 : count - 1"
+		aria-label="Previous slide"
+		class={ twmerge.Merge("absolute left-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50", classes) }
+		{ attrs... }
+	>
+		@icons.ChevronLeft(icons.Props{Class: "h-4 w-4"})
+	</button>
+}
+
+// CarouselNext renders the next-slide button.
+templ CarouselNext(classes string, attrs templ.Attributes) {
+	<button
+		type="button"
+		x-on:click="current = current < count - 1 ? current + 1 : 0"
+		aria-label="Next slide"
+		class={ twmerge.Merge("absolute right-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50", classes) }
+		{ attrs... }
+	>
+		@icons.ChevronRight(icons.Props{Class: "h-4 w-4"})
+	</button>
+}
+
+func itoa(n int) string {
+	if n == 0 {
+		return "0"
+	}
+	result := ""
+	neg := n < 0
+	if neg {
+		n = -n
+	}
+	for n > 0 {
+		result = string(rune('0'+n%10)) + result
+		n /= 10
+	}
+	if neg {
+		result = "-" + result
+	}
+	return result
+}

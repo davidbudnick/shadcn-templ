@@ -1,0 +1,20 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	buttonGroupBaseClass = "inline-flex"
+)
+
+// ButtonGroup wraps multiple Buttons, removing internal border-radius so they appear joined.
+// Apply [&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md
+// to create the joined look.
+templ ButtonGroup(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(buttonGroupBaseClass, "[&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:first-child)]:-ml-px", classes) }
+		role="group"
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}

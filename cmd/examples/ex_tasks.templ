@@ -1,0 +1,238 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// TasksExample is the full-page Tasks example matching https://ui.shadcn.com/examples/tasks
+templ TasksExample() {
+	<div class="h-full flex-1 flex-col space-y-8 p-8 md:flex">
+		<!-- Heading row -->
+		<div class="flex items-center justify-between space-y-2">
+			<div>
+				<h2 class="text-2xl font-bold tracking-tight">Welcome back!</h2>
+				<p class="text-muted-foreground">Here's a list of your tasks for this month.</p>
+			</div>
+			@ui.Avatar("", nil) {
+				@ui.AvatarImage("https://github.com/shadcn.png", "shadcn", "", nil)
+				@ui.AvatarFallback("", nil) {
+					CN
+				}
+			}
+		</div>
+		<!-- Toolbar row -->
+		<div class="flex items-center justify-between">
+			<div class="flex flex-1 items-center space-x-2">
+				@ui.Input("filter", ui.InputTypeText, "h-8 w-[150px] lg:w-[250px]", templ.Attributes{"placeholder": "Filter tasks..."})
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeSmall, "border-dashed", nil) {
+					@icons.PlusCircle(icons.Props{Class: "mr-2 h-4 w-4"})
+					Status
+				}
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeSmall, "border-dashed", nil) {
+					@icons.PlusCircle(icons.Props{Class: "mr-2 h-4 w-4"})
+					Priority
+				}
+			</div>
+			<div class="flex items-center space-x-2">
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeSmall, "", nil) {
+					@icons.SlidersHorizontal(icons.Props{Class: "mr-2 h-4 w-4"})
+					View
+				}
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeSmall, "", nil) {
+					Add Task
+				}
+			</div>
+		</div>
+		<!-- Table -->
+		@ui.Table("", nil) {
+			@ui.TableHeader("", nil) {
+				@ui.TableRow("", nil) {
+					@ui.TableHead("w-[40px]", nil) {
+						@ui.Checkbox("select-all", "", nil)
+					}
+					@ui.TableHead("w-[100px]", nil) {
+						Task
+					}
+					@ui.TableHead("", nil) {
+						<div class="flex items-center gap-1">
+							Title
+							@icons.ArrowUpDown(icons.Props{Class: "h-3 w-3 text-muted-foreground"})
+						</div>
+					}
+					@ui.TableHead("", nil) {
+						<div class="flex items-center gap-1">
+							Status
+							@icons.ArrowUpDown(icons.Props{Class: "h-3 w-3 text-muted-foreground"})
+						</div>
+					}
+					@ui.TableHead("", nil) {
+						<div class="flex items-center gap-1">
+							Priority
+							@icons.ArrowUpDown(icons.Props{Class: "h-3 w-3 text-muted-foreground"})
+						</div>
+					}
+					@ui.TableHead("w-[40px]", nil) {
+					}
+				}
+			}
+			@ui.TableBody("", nil) {
+				@tasksRow("TASK-8782", "Documentation", "You can't compress the program without quantifying the open-source SSD bandwidth!", "in_progress", "medium")
+				@tasksRow("TASK-7878", "Documentation", "Try to calculate the EXE feed, maybe it will index the multi-byte pixel!", "backlog", "medium")
+				@tasksRow("TASK-7839", "Bug", "We need to bypass the neural TCP card!", "todo", "high")
+				@tasksRow("TASK-5562", "Feature", "The SAS interface is down, bypass the open-source pixel so we can back up the AGP alarm!", "in_progress", "medium")
+				@tasksRow("TASK-8686", "Feature", "I'll parse the wireless SSL protocol, that should driver the API panel!", "canceled", "low")
+				@tasksRow("TASK-1280", "Bug", "Use the digital TLS panel, then you can transmit the haptic system!", "done", "high")
+				@tasksRow("TASK-7262", "Feature", "The UTF8 application is down, parse the neural bandwidth so we can back up the PNG firewall!", "done", "low")
+				@tasksRow("TASK-1138", "Feature", "Generating the driver won't do anything, we need to quantify the online SMTP bandwidth!", "in_progress", "medium")
+				@tasksRow("TASK-7184", "Feature", "We need to program the back-end THX pixel!", "todo", "low")
+				@tasksRow("TASK-5160", "Documentation", "Calculating the bus won't do anything, we need to navigate the back-end JSON protocol!", "in_progress", "high")
+			}
+		}
+		<!-- Footer / Pagination row -->
+		<div class="flex items-center justify-between px-2">
+			<p class="text-sm text-muted-foreground">0 of 100 row(s) selected.</p>
+			<div class="flex items-center space-x-6 lg:space-x-8">
+				<div class="flex items-center space-x-2">
+					<p class="text-sm font-medium">Rows per page</p>
+					<select
+						class="h-8 w-[70px] rounded-md border border-input bg-transparent px-2 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+					>
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="25" selected>25</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+					</select>
+				</div>
+				<div class="flex w-[100px] items-center justify-center text-sm font-medium">
+					Page 1 of 10
+				</div>
+				<div class="flex items-center space-x-2">
+					@tasksPageBtn("«", false)
+					@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeIcon, "h-8 w-8", templ.Attributes{"aria-label": "Previous page"}) {
+						@icons.ChevronLeft(icons.Props{Class: "h-4 w-4"})
+					}
+					@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeIcon, "h-8 w-8", templ.Attributes{"aria-label": "Next page"}) {
+						@icons.ChevronRight(icons.Props{Class: "h-4 w-4"})
+					}
+					@tasksPageBtn("»", false)
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// tasksRow renders a single task table row.
+templ tasksRow(id, taskType, title, status, priority string) {
+	@ui.TableRow("", nil) {
+		@ui.TableCell("", nil) {
+			@ui.Checkbox("row-"+id, "", nil)
+		}
+		@ui.TableCell("font-medium", nil) {
+			{ id }
+		}
+		@ui.TableCell("", nil) {
+			<div class="flex items-center gap-2">
+				@ui.Badge(ui.BadgeVariantOutline, "whitespace-nowrap", nil) {
+					{ taskType }
+				}
+				<span class="max-w-[500px] truncate">{ title }</span>
+			</div>
+		}
+		@ui.TableCell("", nil) {
+			<div class="flex items-center gap-2">
+				@tasksStatusIcon(status)
+				<span>{ tasksStatusLabel(status) }</span>
+			</div>
+		}
+		@ui.TableCell("", nil) {
+			<div class="flex items-center gap-2">
+				@tasksPriorityIcon(priority)
+				<span>{ tasksPriorityLabel(priority) }</span>
+			</div>
+		}
+		@ui.TableCell("", nil) {
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantGhost, ui.ButtonSizeIcon, "h-8 w-8", templ.Attributes{"aria-label": "More options"}) {
+				@icons.MoreHorizontal(icons.Props{Class: "h-4 w-4"})
+			}
+		}
+	}
+}
+
+// tasksStatusIcon returns the icon component for a given status string.
+templ tasksStatusIcon(status string) {
+	switch status {
+	case "backlog":
+		@icons.HelpCircle(icons.Props{Class: "h-4 w-4 text-muted-foreground"})
+	case "todo":
+		@icons.Circle(icons.Props{Class: "h-4 w-4 text-muted-foreground"})
+	case "in_progress":
+		@icons.Timer(icons.Props{Class: "h-4 w-4 text-blue-500"})
+	case "done":
+		@icons.CircleCheck(icons.Props{Class: "h-4 w-4 text-green-500"})
+	case "canceled":
+		@icons.CircleOff(icons.Props{Class: "h-4 w-4 text-muted-foreground"})
+	default:
+		@icons.Circle(icons.Props{Class: "h-4 w-4 text-muted-foreground"})
+	}
+}
+
+// tasksStatusLabel returns the human-readable label for a status string.
+func tasksStatusLabel(status string) string {
+	switch status {
+	case "backlog":
+		return "Backlog"
+	case "todo":
+		return "Todo"
+	case "in_progress":
+		return "In Progress"
+	case "done":
+		return "Done"
+	case "canceled":
+		return "Canceled"
+	default:
+		return status
+	}
+}
+
+// tasksPriorityIcon returns the icon for a given priority string.
+templ tasksPriorityIcon(priority string) {
+	switch priority {
+	case "high":
+		@icons.ArrowUp(icons.Props{Class: "h-4 w-4 text-red-500"})
+	case "medium":
+		@icons.ArrowRight(icons.Props{Class: "h-4 w-4 text-yellow-500"})
+	case "low":
+		@icons.ArrowDown(icons.Props{Class: "h-4 w-4 text-blue-400"})
+	default:
+		@icons.ArrowRight(icons.Props{Class: "h-4 w-4 text-muted-foreground"})
+	}
+}
+
+// tasksPriorityLabel returns the human-readable label for a priority string.
+func tasksPriorityLabel(priority string) string {
+	switch priority {
+	case "high":
+		return "High"
+	case "medium":
+		return "Medium"
+	case "low":
+		return "Low"
+	default:
+		return priority
+	}
+}
+
+// tasksPageBtn renders a text-only pager button (for « and »).
+templ tasksPageBtn(label string, disabled bool) {
+	<button
+		type="button"
+		if disabled {
+			disabled
+		}
+		class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+	>
+		{ label }
+	</button>
+}

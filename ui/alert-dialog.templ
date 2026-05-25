@@ -1,0 +1,103 @@
+package ui
+
+import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	alertDialogOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
+	alertDialogContentBaseClass     = "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg fill-mode-forwards"
+	alertDialogHeaderBaseClass      = "flex flex-col space-y-2 text-center sm:text-left"
+	alertDialogFooterBaseClass      = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
+	alertDialogTitleBaseClass       = "text-lg font-semibold"
+	alertDialogDescriptionBaseClass = "text-sm text-muted-foreground"
+	alertDialogCancelBaseClass      = "mt-2 sm:mt-0"
+	alertDialogActionBaseClass      = ""
+)
+
+templ AlertDialog(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(classes) }
+		{ attrs... }
+		x-data="{ shadcntempl_open: false }"
+	>
+		{ children... }
+	</div>
+}
+
+// There is no element for alert-dialog trigger, just add these attributes to your component.
+var AlertDialogTriggerAttrs = templ.Attributes{
+	"aria-haspopup":  "dialog",
+	":aria-expanded": "shadcntempl_open",
+	"x-data":         true,
+	"x-on:click":     "shadcntempl_open = true",
+}
+
+templ AlertDialogContent(classes string, attrs templ.Attributes) {
+	<div
+		class={ alertDialogOverlayBaseClass }
+		x-cloak
+		x-show="shadcntempl_open"
+		aria-hidden="true"
+		x-transition:enter="animate-in fade-in-0"
+		x-transition:leave="animate-out fade-out-0"
+	></div>
+	<div
+		class={ twmerge.Merge(alertDialogContentBaseClass, classes) }
+		{ attrs... }
+		x-cloak
+		x-show="shadcntempl_open"
+		x-trap.inert.noscroll="shadcntempl_open"
+		x-on:keydown.esc.window="shadcntempl_open = false"
+		role="alertdialog"
+		aria-modal="true"
+		x-transition:enter="animate-in fade-in-0 zoom-in-95 slide-in-from-top-[48%] slide-in-from-left-1/2"
+		x-transition:leave="animate-out fade-out-0 zoom-out-95 slide-out-to-top-[48%] slide-out-to-left-1/2"
+	>
+		{ children... }
+	</div>
+}
+
+templ AlertDialogHeader(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(alertDialogHeaderBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ AlertDialogFooter(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(alertDialogFooterBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ AlertDialogTitle(classes string, attrs templ.Attributes) {
+	<h2
+		class={ twmerge.Merge(alertDialogTitleBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h2>
+}
+
+templ AlertDialogDescription(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(alertDialogDescriptionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+// AlertDialogCancelAttrs closes the dialog without confirming.
+var AlertDialogCancelAttrs = templ.Attributes{
+	"x-on:click": "shadcntempl_open = false",
+}
+
+// AlertDialogActionAttrs confirms the action and closes the dialog.
+var AlertDialogActionAttrs = templ.Attributes{
+	"x-on:click": "shadcntempl_open = false",
+}

@@ -1,0 +1,62 @@
+package ui
+
+import (
+	"fmt"
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+const (
+	radioGroupBaseClass     = "grid gap-2"
+	radioGroupItemBaseClass = "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+)
+
+// RadioGroup renders a group container. alpineValue is the Alpine expression for the x-data value field,
+// e.g. `"{ rg_val: 'option-one' }"`.
+templ RadioGroup(alpineData string, classes string, attrs templ.Attributes) {
+	<div
+		role="radiogroup"
+		aria-required="false"
+		x-data={ alpineData }
+		class={ twmerge.Merge(radioGroupBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// RadioGroupItem renders a single radio option. name is the HTML input name; value is the item value;
+// alpineValueVar is the Alpine variable name used in RadioGroup's x-data (e.g. "rg_val").
+templ RadioGroupItem(name, value, alpineValueVar string, classes string, attrs templ.Attributes) {
+	<button
+		x-data
+		type="button"
+		role="radio"
+		:aria-checked={ fmt.Sprintf("%s === %q", alpineValueVar, value) }
+		:data-state={ fmt.Sprintf("%s === %q ? 'checked' : 'unchecked'", alpineValueVar, value) }
+		x-on:click={ fmt.Sprintf("%s = %q", alpineValueVar, value) }
+		if boolAttr("disabled", attrs) {
+			aria-disabled
+			data-disabled
+		}
+		class={ twmerge.Merge(radioGroupItemBaseClass, classes) }
+		{ attrs... }
+	>
+		<input
+			type="radio"
+			name={ name }
+			value={ value }
+			aria-hidden
+			tabindex="-1"
+			class="absolute h-0 w-0 opacity-0"
+			:checked={ fmt.Sprintf("%s === %q", alpineValueVar, value) }
+		/>
+		<span
+			class="flex items-center justify-center"
+			x-show={ fmt.Sprintf("%s === %q", alpineValueVar, value) }
+			x-cloak
+		>
+			@icons.Circle(icons.Props{Class: "h-2.5 w-2.5 fill-primary"})
+		</span>
+	</button>
+}

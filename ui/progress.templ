@@ -1,0 +1,28 @@
+package ui
+
+import (
+	"fmt"
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+)
+
+const (
+	progressBaseClass      = "relative h-2 w-full overflow-hidden rounded-full bg-primary/20"
+	progressIndicatorClass = "h-full w-full flex-1 bg-primary transition-all"
+)
+
+// Progress displays a progress bar. value is 0–100.
+templ Progress(value int, classes string, attrs templ.Attributes) {
+	<div
+		role="progressbar"
+		aria-valuemin="0"
+		aria-valuemax="100"
+		aria-valuenow={ fmt.Sprintf("%d", value) }
+		class={ twmerge.Merge(progressBaseClass, classes) }
+		{ attrs... }
+	>
+		<div
+			class={ progressIndicatorClass }
+			style={ fmt.Sprintf("transform: translateX(-%d%%)", 100-value) }
+		></div>
+	</div>
+}

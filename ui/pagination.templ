@@ -1,0 +1,100 @@
+package ui
+
+import (
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+const (
+	paginationBaseClass          = "mx-auto flex w-full justify-center"
+	paginationContentBaseClass   = "flex flex-row items-center gap-1"
+	paginationItemBaseClass      = ""
+	paginationLinkBaseClass      = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9"
+	paginationLinkActiveClass    = "border border-input bg-background shadow-sm"
+	paginationEllipsisBaseClass  = "flex h-9 w-9 items-center justify-center"
+)
+
+templ Pagination(classes string, attrs templ.Attributes) {
+	<nav
+		role="navigation"
+		aria-label="pagination"
+		class={ twmerge.Merge(paginationBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</nav>
+}
+
+templ PaginationContent(classes string, attrs templ.Attributes) {
+	<ul
+		class={ twmerge.Merge(paginationContentBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</ul>
+}
+
+templ PaginationItem(classes string, attrs templ.Attributes) {
+	<li
+		class={ twmerge.Merge(paginationItemBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</li>
+}
+
+templ PaginationLink(href templ.SafeURL, isActive bool, classes string, attrs templ.Attributes) {
+	if isActive {
+		<a
+			href={ href }
+			aria-current="page"
+			class={ twmerge.Merge(paginationLinkBaseClass, paginationLinkActiveClass, classes) }
+			{ attrs... }
+		>
+			{ children... }
+		</a>
+	} else {
+		<a
+			href={ href }
+			class={ twmerge.Merge(paginationLinkBaseClass, classes) }
+			{ attrs... }
+		>
+			{ children... }
+		</a>
+	}
+}
+
+templ PaginationPrevious(href templ.SafeURL, classes string, attrs templ.Attributes) {
+	<a
+		href={ href }
+		aria-label="Go to previous page"
+		class={ twmerge.Merge(paginationLinkBaseClass, "gap-1 pl-2.5 w-auto px-4", classes) }
+		{ attrs... }
+	>
+		@icons.ChevronLeft(icons.Props{Class: "h-4 w-4"})
+		<span>Previous</span>
+	</a>
+}
+
+templ PaginationNext(href templ.SafeURL, classes string, attrs templ.Attributes) {
+	<a
+		href={ href }
+		aria-label="Go to next page"
+		class={ twmerge.Merge(paginationLinkBaseClass, "gap-1 pr-2.5 w-auto px-4", classes) }
+		{ attrs... }
+	>
+		<span>Next</span>
+		@icons.ChevronRight(icons.Props{Class: "h-4 w-4"})
+	</a>
+}
+
+templ PaginationEllipsis(classes string, attrs templ.Attributes) {
+	<span
+		aria-hidden="true"
+		class={ twmerge.Merge(paginationEllipsisBaseClass, classes) }
+		{ attrs... }
+	>
+		@icons.MoreHorizontal(icons.Props{Class: "h-4 w-4"})
+		<span class="sr-only">More pages</span>
+	</span>
+}

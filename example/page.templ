@@ -1,0 +1,215 @@
+package main
+
+import (
+	shadcntempl "github.com/davidbudnick/shadcn-templ"
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// dashboardPage reproduces the shadcn/ui Dashboard example
+// (https://ui.shadcn.com/examples/dashboard) using only shadcn-templ
+// components — the kind of app you'd build after `go get`ing the library.
+templ dashboardPage() {
+	<!DOCTYPE html>
+	<html lang="en" class="scroll-smooth">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Dashboard — shadcn-templ example</title>
+			@shadcntempl.Head()
+			<link rel="stylesheet" href="/static/css/styles.css"/>
+		</head>
+		<body class="min-h-screen bg-background font-sans text-foreground antialiased">
+			@dashboardNav()
+			<div class="flex-1 space-y-4 p-8 pt-6">
+				<div class="flex items-center justify-between space-y-2">
+					<h2 class="text-3xl font-bold tracking-tight">Dashboard</h2>
+					<div class="flex items-center space-x-2">
+						@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+							@icons.Download(icons.Props{Class: "mr-2 h-4 w-4"})
+							Download
+						}
+					</div>
+				</div>
+				@ui.Tabs("overview", "space-y-4", nil) {
+					@ui.TabsList("", nil) {
+						@ui.TabsTrigger("overview", "", nil) {
+							Overview
+						}
+						@ui.TabsTrigger("analytics", "", nil) {
+							Analytics
+						}
+						@ui.TabsTrigger("reports", "", nil) {
+							Reports
+						}
+						@ui.TabsTrigger("notifications", "", nil) {
+							Notifications
+						}
+					}
+					@ui.TabsContent("overview", "space-y-4", nil) {
+						<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+							@statCard("Total Revenue", "$45,231.89", "+20.1% from last month", icons.DollarSign(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
+							@statCard("Subscriptions", "+2350", "+180.1% from last month", icons.Users(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
+							@statCard("Sales", "+12,234", "+19% from last month", icons.CreditCard(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
+							@statCard("Active Now", "+573", "+201 since last hour", icons.Activity(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
+						</div>
+						<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+							@ui.Card("lg:col-span-4", nil) {
+								@ui.CardHeader("", nil) {
+									@ui.CardTitle("", nil) {
+										Overview
+									}
+								}
+								@ui.CardContent("pl-2", nil) {
+									@overviewChart()
+								}
+							}
+							@ui.Card("lg:col-span-3", nil) {
+								@ui.CardHeader("", nil) {
+									@ui.CardTitle("", nil) {
+										Recent Sales
+									}
+									@ui.CardDescription("", nil) {
+										You made 265 sales this month.
+									}
+								}
+								@ui.CardContent("space-y-6", nil) {
+									@saleRow("OM", "Olivia Martin", "olivia.martin@email.com", "+$1,999.00")
+									@saleRow("JL", "Jackson Lee", "jackson.lee@email.com", "+$39.00")
+									@saleRow("IN", "Isabella Nguyen", "isabella.nguyen@email.com", "+$299.00")
+									@saleRow("WK", "William Kim", "will@email.com", "+$99.00")
+									@saleRow("SD", "Sofia Davis", "sofia.davis@email.com", "+$39.00")
+								}
+							}
+						</div>
+					}
+					@ui.TabsContent("analytics", "", nil) {
+						@emptyPanel("Analytics", "Your analytics will appear here.")
+					}
+					@ui.TabsContent("reports", "", nil) {
+						@emptyPanel("Reports", "Generated reports will appear here.")
+					}
+					@ui.TabsContent("notifications", "", nil) {
+						@emptyPanel("Notifications", "Your notifications will appear here.")
+					}
+				}
+			</div>
+		</body>
+	</html>
+}
+
+// dashboardNav is the top navigation bar: brand, primary links, search, theme
+// toggle and a user avatar menu.
+templ dashboardNav() {
+	<div class="border-b">
+		<div class="flex h-16 items-center px-4">
+			<span class="font-bold">Acme Inc</span>
+			<nav class="mx-6 flex items-center space-x-4 text-sm font-medium lg:space-x-6">
+				<a href="#" class="transition-colors hover:text-primary">Overview</a>
+				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Customers</a>
+				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Products</a>
+				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Settings</a>
+			</nav>
+			<div class="ml-auto flex items-center space-x-2">
+				<div class="relative hidden md:block">
+					<span class="absolute left-2 top-2.5 text-muted-foreground">
+						@icons.Search(icons.Props{Class: "h-4 w-4"})
+					</span>
+					@ui.Input("search", ui.InputTypeSearch, "w-[200px] pl-8 lg:w-[280px]", templ.Attributes{"placeholder": "Search..."})
+				</div>
+				<button
+					type="button"
+					aria-label="Toggle theme"
+					class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+					onclick="(() => { const d = document.documentElement.classList.toggle('dark'); localStorage.theme = d ? 'dark' : 'light'; })()"
+				>
+					@icons.Sun(icons.Props{Class: "h-4 w-4 dark:hidden"})
+					@icons.Moon(icons.Props{Class: "hidden h-4 w-4 dark:block"})
+				</button>
+				@ui.DropdownMenu("", nil) {
+					@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantGhost, ui.ButtonSizeIcon, "rounded-full", ui.DropdownMenuTriggerAttrs) {
+						@ui.Avatar("h-8 w-8", nil) {
+							@ui.AvatarImage("https://github.com/shadcn.png", "User", "", nil)
+							@ui.AvatarFallback("", nil) {
+								SC
+							}
+						}
+					}
+					@ui.DropdownMenuContent(ui.DropdownMenuAlignRight, "w-56", nil) {
+						@ui.DropdownMenuLabel("", nil) {
+							My Account
+						}
+						@ui.DropdownMenuSeparator("", nil)
+						@ui.DropdownMenuItem("", nil) {
+							@icons.User(icons.Props{Class: "mr-2 h-4 w-4"})
+							<span>Profile</span>
+						}
+						@ui.DropdownMenuItem("", nil) {
+							@icons.Settings(icons.Props{Class: "mr-2 h-4 w-4"})
+							<span>Settings</span>
+						}
+						@ui.DropdownMenuSeparator("", nil)
+						@ui.DropdownMenuItem("", nil) {
+							@icons.LogOut(icons.Props{Class: "mr-2 h-4 w-4"})
+							<span>Log out</span>
+						}
+					}
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ statCard(title, value, sub string, icon templ.Component) {
+	@ui.Card("", nil) {
+		@ui.CardHeader("flex flex-row items-center justify-between space-y-0 pb-2", nil) {
+			@ui.CardTitle("text-sm font-medium", nil) {
+				{ title }
+			}
+			@icon
+		}
+		@ui.CardContent("", nil) {
+			<div class="text-2xl font-bold">{ value }</div>
+			<p class="text-xs text-muted-foreground">{ sub }</p>
+		}
+	}
+}
+
+templ overviewChart() {
+	{{ labels, series := visitorSeries(70) }}
+	@ui.ChartCanvasMulti("overview", "area", labels, series, "h-[320px]", nil)
+	@ui.ChartScripts()
+}
+
+templ saleRow(initials, name, email, amount string) {
+	<div class="flex items-center">
+		@ui.Avatar("h-9 w-9", nil) {
+			@ui.AvatarFallback("", nil) {
+				{ initials }
+			}
+		}
+		<div class="ml-4 space-y-1">
+			<p class="text-sm font-medium leading-none">{ name }</p>
+			<p class="text-sm text-muted-foreground">{ email }</p>
+		</div>
+		<div class="ml-auto font-medium">{ amount }</div>
+	</div>
+}
+
+templ emptyPanel(title, desc string) {
+	@ui.Card("", nil) {
+		@ui.CardHeader("", nil) {
+			@ui.CardTitle("", nil) {
+				{ title }
+			}
+			@ui.CardDescription("", nil) {
+				{ desc }
+			}
+		}
+		@ui.CardContent("", nil) {
+			<div class="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
+				No data to display yet.
+			</div>
+		}
+	}
+}

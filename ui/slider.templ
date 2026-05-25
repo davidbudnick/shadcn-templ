@@ -1,0 +1,24 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	sliderBaseClass = "relative flex w-full touch-none select-none items-center"
+)
+
+// Slider renders a styled native range input.
+// name is the HTML input name; min, max, step are range parameters; defaultValue is the initial value.
+templ Slider(name string, min, max, step, defaultValue int, classes string, attrs templ.Attributes) {
+	<div class={ twmerge.Merge(sliderBaseClass, classes) }>
+		<input
+			type="range"
+			name={ name }
+			min={ intToStr(min) }
+			max={ intToStr(max) }
+			step={ intToStr(step) }
+			value={ intToStr(defaultValue) }
+			class="w-full h-2 appearance-none rounded-full bg-secondary accent-primary cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+			{ attrs... }
+		/>
+	</div>
+}
