@@ -52,7 +52,7 @@ Accordion · Alert · Alert Dialog · Aspect Ratio · Avatar · Badge · Breadcr
 go get github.com/davidbudnick/shadcn-templ
 ```
 
-Requires Go 1.23+. Components are `.templ`; if you author your own templates you'll also want the [templ CLI](https://templ.guide/quick-start/installation).
+Requires Go 1.25+. Components are `.templ`; if you author your own templates you'll also want the [templ CLI](https://templ.guide/quick-start/installation).
 
 ## Usage
 
@@ -210,7 +210,7 @@ make example   # http://localhost:8081
 
 ## Requirements
 
-- Go 1.23+
+- Go 1.25+
 - [templ](https://templ.guide/) and the Tailwind standalone CLI (for development only)
 
 ## License
