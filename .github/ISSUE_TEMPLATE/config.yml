@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: shadcn-templ docs (live demo)
+    url: https://davidbudnick.github.io/shadcn-templ/
+    about: Browse a live preview and the Go/templ source for every component.
+  - name: shadcn/ui documentation
+    url: https://ui.shadcn.com/docs
+    about: The upstream design system this project ports. Check here for the intended markup and behavior.
