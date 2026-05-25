@@ -1,0 +1,136 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	typographyH1BaseClass          = "scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+	typographyH2BaseClass          = "scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0"
+	typographyH3BaseClass          = "scroll-m-20 text-2xl font-semibold tracking-tight"
+	typographyH4BaseClass          = "scroll-m-20 text-xl font-semibold tracking-tight"
+	typographyPBaseClass           = "leading-7 [&:not(:first-child)]:mt-6"
+	typographyBlockquoteBaseClass  = "mt-6 border-l-2 pl-6 italic"
+	typographyCodeBaseClass        = "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold"
+	typographyLeadBaseClass        = "text-xl text-muted-foreground"
+	typographyLargeBaseClass       = "text-lg font-semibold"
+	typographySmallBaseClass       = "text-sm font-medium leading-none"
+	typographyMutedBaseClass       = "text-sm text-muted-foreground"
+	typographyListBaseClass        = "my-6 ml-6 list-disc [&>li]:mt-2"
+	typographyInlineCodeBaseClass  = "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold"
+)
+
+templ TypographyH1(classes string, attrs templ.Attributes) {
+	<h1
+		class={ twmerge.Merge(typographyH1BaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h1>
+}
+
+templ TypographyH2(classes string, attrs templ.Attributes) {
+	<h2
+		class={ twmerge.Merge(typographyH2BaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h2>
+}
+
+templ TypographyH3(classes string, attrs templ.Attributes) {
+	<h3
+		class={ twmerge.Merge(typographyH3BaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h3>
+}
+
+templ TypographyH4(classes string, attrs templ.Attributes) {
+	<h4
+		class={ twmerge.Merge(typographyH4BaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h4>
+}
+
+templ TypographyP(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(typographyPBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+templ TypographyBlockquote(classes string, attrs templ.Attributes) {
+	<blockquote
+		class={ twmerge.Merge(typographyBlockquoteBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</blockquote>
+}
+
+templ TypographyCode(classes string, attrs templ.Attributes) {
+	<code
+		class={ twmerge.Merge(typographyCodeBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</code>
+}
+
+templ TypographyLead(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(typographyLeadBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+templ TypographyLarge(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(typographyLargeBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ TypographySmall(classes string, attrs templ.Attributes) {
+	<small
+		class={ twmerge.Merge(typographySmallBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</small>
+}
+
+templ TypographyMuted(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(typographyMutedBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+templ TypographyList(classes string, attrs templ.Attributes) {
+	<ul
+		class={ twmerge.Merge(typographyListBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</ul>
+}
+
+templ TypographyInlineCode(classes string, attrs templ.Attributes) {
+	<code
+		class={ twmerge.Merge(typographyInlineCodeBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</code>
+}

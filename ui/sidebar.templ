@@ -1,0 +1,186 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	sidebarProviderBaseClass    = "flex min-h-svh w-full"
+	sidebarBaseClass            = "relative flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out"
+	sidebarHeaderBaseClass      = "flex flex-col gap-2 p-2"
+	sidebarContentBaseClass     = "flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
+	sidebarFooterBaseClass      = "flex flex-col gap-2 p-2"
+	sidebarGroupBaseClass       = "relative flex w-full min-w-0 flex-col p-2"
+	sidebarGroupLabelBaseClass  = "flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opacity] duration-200 ease-linear"
+	sidebarMenuBaseClass        = "flex w-full min-w-0 flex-col gap-1"
+	sidebarMenuItemBaseClass    = "group/menu-item relative"
+	sidebarMenuButtonBaseClass  = "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground"
+	sidebarTriggerBaseClass     = "inline-flex h-7 w-7 items-center justify-center rounded-md ring-offset-background transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+	sidebarSeparatorBaseClass   = "mx-2 w-auto bg-sidebar-border"
+	sidebarInsetBaseClass       = "relative flex min-h-svh flex-1 flex-col bg-background"
+)
+
+// SidebarProvider wraps a sidebar + main content area with Alpine collapse state.
+templ SidebarProvider(defaultOpen bool, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(sidebarProviderBaseClass, classes) }
+		{ attrs... }
+		x-data={ sidebarProviderData(defaultOpen) }
+		style="--sidebar-width: 16rem;"
+	>
+		{ children... }
+	</div>
+}
+
+func sidebarProviderData(defaultOpen bool) string {
+	if defaultOpen {
+		return `{ sidebarOpen: true }`
+	}
+	return `{ sidebarOpen: false }`
+}
+
+templ Sidebar(classes string, attrs templ.Attributes) {
+	<aside
+		data-sidebar="sidebar"
+		class={ twmerge.Merge(sidebarBaseClass, classes) }
+		{ attrs... }
+		:style="sidebarOpen ? 'width: var(--sidebar-width)' : 'width: 0; overflow: hidden'"
+	>
+		{ children... }
+	</aside>
+}
+
+templ SidebarHeader(classes string, attrs templ.Attributes) {
+	<div
+		data-sidebar="header"
+		class={ twmerge.Merge(sidebarHeaderBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ SidebarContent(classes string, attrs templ.Attributes) {
+	<div
+		data-sidebar="content"
+		class={ twmerge.Merge(sidebarContentBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ SidebarFooter(classes string, attrs templ.Attributes) {
+	<div
+		data-sidebar="footer"
+		class={ twmerge.Merge(sidebarFooterBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ SidebarGroup(classes string, attrs templ.Attributes) {
+	<div
+		data-sidebar="group"
+		class={ twmerge.Merge(sidebarGroupBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ SidebarGroupLabel(classes string, attrs templ.Attributes) {
+	<div
+		data-sidebar="group-label"
+		class={ twmerge.Merge(sidebarGroupLabelBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ SidebarMenu(classes string, attrs templ.Attributes) {
+	<ul
+		data-sidebar="menu"
+		class={ twmerge.Merge(sidebarMenuBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</ul>
+}
+
+templ SidebarMenuItem(classes string, attrs templ.Attributes) {
+	<li
+		data-sidebar="menu-item"
+		class={ twmerge.Merge(sidebarMenuItemBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</li>
+}
+
+templ SidebarMenuButton(isActive bool, classes string, attrs templ.Attributes) {
+	<button
+		data-sidebar="menu-button"
+		data-active={ boolStr(isActive) }
+		type="button"
+		class={ twmerge.Merge(sidebarMenuButtonBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</button>
+}
+
+templ SidebarMenuButtonLink(href string, isActive bool, classes string, attrs templ.Attributes) {
+	<a
+		href={ templ.SafeURL(href) }
+		data-sidebar="menu-button"
+		data-active={ boolStr(isActive) }
+		class={ twmerge.Merge(sidebarMenuButtonBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</a>
+}
+
+templ SidebarTrigger(classes string, attrs templ.Attributes) {
+	<button
+		type="button"
+		data-sidebar="trigger"
+		aria-label="Toggle sidebar"
+		class={ twmerge.Merge(sidebarTriggerBaseClass, classes) }
+		{ attrs... }
+		x-on:click="sidebarOpen = !sidebarOpen"
+	>
+		<svg
+			class="h-4 w-4"
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			aria-hidden="true"
+		>
+			<rect width="18" height="18" x="3" y="3" rx="2"></rect>
+			<path d="M9 3v18"></path>
+		</svg>
+		<span class="sr-only">Toggle sidebar</span>
+	</button>
+}
+
+templ SidebarInset(classes string, attrs templ.Attributes) {
+	<main
+		class={ twmerge.Merge(sidebarInsetBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</main>
+}
+
+func boolStr(b bool) string {
+	if b {
+		return "true"
+	}
+	return "false"
+}

@@ -1,0 +1,153 @@
+package ui
+
+import (
+	"fmt"
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+)
+
+const (
+	inputOTPBaseClass       = "flex items-center gap-2"
+	inputOTPGroupBaseClass  = "flex items-center"
+	inputOTPSlotBaseClass   = "relative flex h-9 w-9 items-center justify-center border-y border-r border-input text-sm shadow-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md"
+	inputOTPSlotActiveClass = "z-10 ring-1 ring-ring"
+	inputOTPSeparatorClass  = "flex items-center [&>svg]:h-4 [&>svg]:w-4"
+)
+
+// InputOTP renders a one-time-password input row of `slots` individual character inputs.
+// The Alpine component tracks the values array and active index, auto-advancing focus on input.
+templ InputOTP(slots int, name string, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(inputOTPBaseClass, classes) }
+		x-data={ fmt.Sprintf(`{
+			otp: Array(%d).fill(''),
+			active: -1,
+			handleInput(idx, e) {
+				const v = e.target.value.replace(/[^0-9]/g, '');
+				if (v.length > 0) {
+					this.otp[idx] = v[v.length - 1];
+					if (idx < %d) {
+						this.$refs['slot' + (idx + 1)].focus();
+					}
+				} else {
+					this.otp[idx] = '';
+				}
+			},
+			handleKeydown(idx, e) {
+				if (e.key === 'Backspace' && this.otp[idx] === '' && idx > 0) {
+					this.$refs['slot' + (idx - 1)].focus();
+				}
+				if (e.key === 'ArrowLeft' && idx > 0) {
+					this.$refs['slot' + (idx - 1)].focus();
+				}
+				if (e.key === 'ArrowRight' && idx < %d) {
+					this.$refs['slot' + (idx + 1)].focus();
+				}
+			},
+			handlePaste(e) {
+				e.preventDefault();
+				const text = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+				for (let i = 0; i < Math.min(text.length, %d); i++) {
+					this.otp[i] = text[i];
+				}
+				const next = Math.min(text.length, %d - 1);
+				this.$refs['slot' + next].focus();
+			}
+		}`, slots, slots-1, slots-1, slots, slots) }
+		{ attrs... }
+	>
+		<div class={ inputOTPGroupBaseClass }>
+			for i := 0; i < slots; i++ {
+				<input
+					x-ref={ fmt.Sprintf("slot%d", i) }
+					type="text"
+					inputmode="numeric"
+					maxlength="1"
+					name={ fmt.Sprintf("%s_%d", name, i) }
+					:value={ fmt.Sprintf("otp[%d]", i) }
+					x-on:input={ fmt.Sprintf("handleInput(%d, $event)", i) }
+					x-on:keydown={ fmt.Sprintf("handleKeydown(%d, $event)", i) }
+					x-on:paste="handlePaste($event)"
+					x-on:focus={ fmt.Sprintf("active = %d", i) }
+					x-on:blur="active = -1"
+					:class={ fmt.Sprintf(`active === %d ? '%s' : ''`, i, inputOTPSlotActiveClass) }
+					class={ inputOTPSlotBaseClass }
+					autocomplete="one-time-code"
+				/>
+			}
+		</div>
+	</div>
+}
+
+// InputOTPWithSeparator renders an OTP input split into groups with a separator.
+// groupSize defines how many slots per group; groups is the number of groups.
+templ InputOTPWithSeparator(groupSize, groups int, name string, classes string, attrs templ.Attributes) {
+	{{ totalSlots := groupSize * groups }}
+	<div
+		class={ twmerge.Merge(inputOTPBaseClass, classes) }
+		x-data={ fmt.Sprintf(`{
+			otp: Array(%d).fill(''),
+			active: -1,
+			handleInput(idx, e) {
+				const v = e.target.value.replace(/[^0-9]/g, '');
+				if (v.length > 0) {
+					this.otp[idx] = v[v.length - 1];
+					if (idx < %d) {
+						this.$refs['otp' + (idx + 1)].focus();
+					}
+				} else {
+					this.otp[idx] = '';
+				}
+			},
+			handleKeydown(idx, e) {
+				if (e.key === 'Backspace' && this.otp[idx] === '' && idx > 0) {
+					this.$refs['otp' + (idx - 1)].focus();
+				}
+				if (e.key === 'ArrowLeft' && idx > 0) {
+					this.$refs['otp' + (idx - 1)].focus();
+				}
+				if (e.key === 'ArrowRight' && idx < %d) {
+					this.$refs['otp' + (idx + 1)].focus();
+				}
+			},
+			handlePaste(e) {
+				e.preventDefault();
+				const text = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+				for (let i = 0; i < Math.min(text.length, %d); i++) {
+					this.otp[i] = text[i];
+				}
+				const next = Math.min(text.length, %d - 1);
+				this.$refs['otp' + next].focus();
+			}
+		}`, totalSlots, totalSlots-1, totalSlots-1, totalSlots, totalSlots) }
+		{ attrs... }
+	>
+		for g := 0; g < groups; g++ {
+			if g > 0 {
+				<div class={ inputOTPSeparatorClass } role="separator" aria-hidden="true">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg>
+				</div>
+			}
+			<div class={ inputOTPGroupBaseClass }>
+				for s := 0; s < groupSize; s++ {
+					{{ idx := g*groupSize + s }}
+					<input
+						x-ref={ fmt.Sprintf("otp%d", idx) }
+						type="text"
+						inputmode="numeric"
+						maxlength="1"
+						name={ fmt.Sprintf("%s_%d", name, idx) }
+						:value={ fmt.Sprintf("otp[%d]", idx) }
+						x-on:input={ fmt.Sprintf("handleInput(%d, $event)", idx) }
+						x-on:keydown={ fmt.Sprintf("handleKeydown(%d, $event)", idx) }
+						x-on:paste="handlePaste($event)"
+						x-on:focus={ fmt.Sprintf("active = %d", idx) }
+						x-on:blur="active = -1"
+						:class={ fmt.Sprintf(`active === %d ? '%s' : ''`, idx, inputOTPSlotActiveClass) }
+						class={ inputOTPSlotBaseClass }
+						autocomplete="one-time-code"
+					/>
+				}
+			</div>
+		}
+	</div>
+}

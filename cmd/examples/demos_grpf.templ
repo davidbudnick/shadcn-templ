@@ -1,0 +1,216 @@
+package main
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// --- Calendar ---
+
+templ CalendarDemo() {
+	{{
+		now := time.Now()
+	}}
+	<div class="flex items-center justify-center p-4">
+		@ui.Calendar(now.Year(), now.Month(), "", nil)
+	</div>
+}
+
+// --- Date Picker ---
+
+templ DatePickerDemo() {
+	{{
+		now := time.Now()
+	}}
+	<div class="flex items-center justify-center p-4">
+		@ui.DatePicker(now.Year(), now.Month(), "", nil)
+	</div>
+}
+
+// --- Carousel ---
+
+templ CarouselDemo() {
+	<div class="flex items-center justify-center p-8">
+		<div class="w-full max-w-xs">
+			@ui.CarouselRoot(5, "", nil) {
+				@ui.CarouselContent("", nil) {
+					for _, n := range []int{1, 2, 3, 4, 5} {
+						@ui.CarouselItem("", nil) {
+							<div class="p-1">
+								<div class="flex aspect-square items-center justify-center rounded-xl border bg-muted p-6">
+									<span class="text-4xl font-semibold">{ fmt.Sprintf("%d", n) }</span>
+								</div>
+							</div>
+						}
+					}
+				}
+				@ui.CarouselPrevious("", nil)
+				@ui.CarouselNext("", nil)
+			}
+		</div>
+	</div>
+}
+
+// --- Data Table ---
+
+templ DataTableDemo() {
+	{{
+		columns := []ui.DataTableColumn{
+			{Key: "status", Label: "Status", Sortable: true},
+			{Key: "email", Label: "Email", Sortable: true},
+			{Key: "amount", Label: "Amount", Sortable: true},
+		}
+		rows := []ui.DataTableRow{
+			{"status": "success", "email": "ken99@yahoo.com", "amount": "$316.00"},
+			{"status": "success", "email": "abe45@gmail.com", "amount": "$242.00"},
+			{"status": "processing", "email": "monserrat44@gmail.com", "amount": "$837.00"},
+			{"status": "success", "email": "silas22@gmail.com", "amount": "$874.00"},
+			{"status": "failed", "email": "carmella@hotmail.com", "amount": "$721.00"},
+			{"status": "processing", "email": "darryl@example.com", "amount": "$492.00"},
+			{"status": "success", "email": "fiona@example.com", "amount": "$615.00"},
+			{"status": "failed", "email": "george@example.com", "amount": "$188.00"},
+			{"status": "success", "email": "harriet@example.com", "amount": "$330.00"},
+			{"status": "processing", "email": "ivan@example.com", "amount": "$445.00"},
+			{"status": "success", "email": "julia@example.com", "amount": "$952.00"},
+		}
+	}}
+	<div class="w-full max-w-3xl mx-auto">
+		@ui.DataTable(columns, rows, 5, "", nil)
+	</div>
+}
+
+// --- Chart ---
+
+templ ChartDemo() {
+	{{
+		labels := []string{"January", "February", "March", "April", "May", "June"}
+		values := []float64{186, 305, 237, 173, 209, 264}
+		areaLabels, areaSeries := visitorSeries(48)
+	}}
+	<div class="mx-auto grid w-full max-w-2xl gap-4">
+		@ui.Card("", nil) {
+			@ui.CardHeader("", nil) {
+				@ui.CardTitle("", nil) {
+					Total Visitors
+				}
+				@ui.CardDescription("", nil) {
+					Area chart with a gradient fill — the last 6 weeks.
+				}
+			}
+			@ui.CardContent("", nil) {
+				@ui.ChartCanvasMulti("demo-area", "area", areaLabels, areaSeries, "h-[260px]", nil)
+			}
+		}
+		<div class="grid gap-4 sm:grid-cols-2">
+			@ui.Card("", nil) {
+				@ui.CardHeader("", nil) {
+					@ui.CardTitle("", nil) {
+						Bar Chart
+					}
+					@ui.CardDescription("", nil) {
+						January – June 2026
+					}
+				}
+				@ui.CardContent("", nil) {
+					@ui.ChartCanvas("demo-bar", "bar", labels, values, "h-[220px]", nil)
+				}
+			}
+			@ui.Card("", nil) {
+				@ui.CardHeader("", nil) {
+					@ui.CardTitle("", nil) {
+						Line Chart
+					}
+					@ui.CardDescription("", nil) {
+						January – June 2026
+					}
+				}
+				@ui.CardContent("", nil) {
+					@ui.ChartCanvas("demo-line", "line", labels, values, "h-[220px]", nil)
+				}
+			}
+		</div>
+	</div>
+	@ui.ChartScripts()
+}
+
+// --- Sonner ---
+
+templ SonnerDemo() {
+	<div class="flex flex-col items-center gap-4 p-4">
+		@ui.SonnerToaster("", nil)
+		<button
+			type="button"
+			class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+			x-data
+			x-on:click={ `$store.sonner.add({ message: 'Your message has been sent.', title: 'Event has been created' })` }
+		>
+			Show Toast
+		</button>
+		<button
+			type="button"
+			class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+			x-data
+			x-on:click={ `$store.sonner.add({ message: 'Something went wrong.', type: 'error', title: 'Error' })` }
+		>
+			Show Error Toast
+		</button>
+		<button
+			type="button"
+			class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+			x-data
+			x-on:click={ `$store.sonner.add({ message: 'Action completed successfully.', type: 'success', title: 'Success' })` }
+		>
+			Show Success Toast
+		</button>
+	</div>
+}
+
+// --- Toast ---
+
+templ ToastDemo() {
+	<div class="flex flex-col items-center gap-4 p-4">
+		@ui.ToastViewport("", nil)
+		<button
+			type="button"
+			class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+			x-data
+			x-on:click={ `$store.toast.add({ title: 'Scheduled: Catch up', description: 'Friday, February 10, 2023 at 5:57 PM' })` }
+		>
+			Add to calendar
+		</button>
+		<button
+			type="button"
+			class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-destructive text-destructive shadow-sm hover:bg-destructive/10 h-9 px-4 py-2"
+			x-data
+			x-on:click={ `$store.toast.add({ title: 'Uh oh! Something went wrong.', description: 'There was a problem with your request.', variant: 'destructive' })` }
+		>
+			Show Destructive Toast
+		</button>
+	</div>
+}
+
+// --- Resizable ---
+
+templ ResizableDemo() {
+	<div class="w-full max-w-2xl mx-auto">
+		<div class="rounded-xl border overflow-hidden" style="height: 200px;">
+			@ui.ResizablePanelGroup("horizontal", "h-full", nil) {
+				@ui.ResizablePanel(50, "flex items-center justify-center p-6", nil) {
+					<span class="font-semibold">One</span>
+				}
+				@ui.ResizableHandle(true, false, "", nil)
+				@ui.ResizablePanelGroup("vertical", "h-full flex-1", nil) {
+					@ui.ResizablePanel(50, "flex items-center justify-center p-6", nil) {
+						<span class="font-semibold">Two</span>
+					}
+					@ui.ResizableHandle(false, true, "", nil)
+					@ui.ResizablePanel(50, "flex items-center justify-center p-6", nil) {
+						<span class="font-semibold">Three</span>
+					}
+				}
+			}
+		</div>
+	</div>
+}

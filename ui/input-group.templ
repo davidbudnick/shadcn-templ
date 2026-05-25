@@ -1,0 +1,77 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	inputGroupBaseClass       = "flex w-full"
+	inputGroupAddonBaseClass  = "inline-flex items-center rounded-md border border-input bg-muted px-3 py-1 text-sm text-muted-foreground shadow-sm"
+	inputGroupLeadingClass    = "rounded-r-none border-r-0"
+	inputGroupTrailingClass   = "rounded-l-none border-l-0"
+	inputGroupInputLeading    = "rounded-l-none"
+	inputGroupInputTrailing   = "rounded-r-none"
+	inputGroupInputBothClass  = "rounded-none"
+)
+
+// InputGroup wraps an input with optional leading and/or trailing addons.
+templ InputGroup(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(inputGroupBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// InputGroupAddon renders a leading or trailing addon (text/icon).
+// position should be "leading" or "trailing".
+templ InputGroupAddon(position string, classes string, attrs templ.Attributes) {
+	if position == "trailing" {
+		<span
+			class={ twmerge.Merge(inputGroupAddonBaseClass, inputGroupTrailingClass, classes) }
+			{ attrs... }
+		>
+			{ children... }
+		</span>
+	} else {
+		<span
+			class={ twmerge.Merge(inputGroupAddonBaseClass, inputGroupLeadingClass, classes) }
+			{ attrs... }
+		>
+			{ children... }
+		</span>
+	}
+}
+
+// InputGroupInput renders an Input styled to fit inside an InputGroup.
+// hasLeading and hasTrailing control which border-radius corners are removed.
+templ InputGroupInput(name string, inputType InputType, hasLeading, hasTrailing bool, classes string, attrs templ.Attributes) {
+	if hasLeading && hasTrailing {
+		<input
+			type={ inputType.String() }
+			name={ name }
+			class={ twmerge.Merge(inputBaseClass, inputGroupInputBothClass, "flex-1", classes) }
+			{ attrs... }
+		/>
+	} else if hasLeading {
+		<input
+			type={ inputType.String() }
+			name={ name }
+			class={ twmerge.Merge(inputBaseClass, inputGroupInputLeading, "flex-1", classes) }
+			{ attrs... }
+		/>
+	} else if hasTrailing {
+		<input
+			type={ inputType.String() }
+			name={ name }
+			class={ twmerge.Merge(inputBaseClass, inputGroupInputTrailing, "flex-1", classes) }
+			{ attrs... }
+		/>
+	} else {
+		<input
+			type={ inputType.String() }
+			name={ name }
+			class={ twmerge.Merge(inputBaseClass, "flex-1", classes) }
+			{ attrs... }
+		/>
+	}
+}

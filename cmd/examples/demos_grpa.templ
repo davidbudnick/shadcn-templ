@@ -1,0 +1,198 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// --- Aspect Ratio ---
+
+templ AspectRatioDemo() {
+	<div class="w-[350px]">
+		@ui.AspectRatio(16.0/9.0, "overflow-hidden rounded-md bg-muted", nil) {
+			<img
+				src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+				alt="Photo by Drew Beamer"
+				class="h-full w-full object-cover"
+			/>
+		}
+	</div>
+}
+
+// --- Progress ---
+
+templ ProgressDemo() {
+	<div class="w-[350px] space-y-4">
+		@ui.Progress(33, "", nil)
+		@ui.Progress(66, "", nil)
+		@ui.Progress(100, "", nil)
+	</div>
+}
+
+// --- Kbd ---
+
+templ KbdDemo() {
+	<div class="flex flex-wrap items-center gap-4">
+		<p class="text-sm text-muted-foreground">
+			Press
+			@ui.Kbd("", nil) {
+				{ "⌘" }
+			}
+			{ " + " }
+			@ui.Kbd("", nil) {
+				K
+			}
+			to open command palette.
+		</p>
+		<p class="text-sm text-muted-foreground">
+			@ui.Kbd("", nil) {
+				Ctrl
+			}
+			{ " + " }
+			@ui.Kbd("", nil) {
+				C
+			}
+			to copy.
+		</p>
+		<p class="text-sm text-muted-foreground">
+			@ui.Kbd("", nil) {
+				{ "⇧⌘P" }
+			}
+		</p>
+	</div>
+}
+
+// --- Spinner ---
+
+templ SpinnerDemo() {
+	<div class="flex items-center gap-4">
+		@ui.Spinner("", nil)
+		@ui.Spinner("h-6 w-6", templ.Attributes{"aria-label": "Loading large"})
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", templ.Attributes{"disabled": true}) {
+			@ui.Spinner("mr-2 h-4 w-4", nil)
+			Please wait
+		}
+	</div>
+}
+
+// --- Empty ---
+
+templ EmptyDemo() {
+	<div class="flex w-full max-w-sm flex-col items-center justify-center py-12">
+		@ui.Empty("py-10 px-6", nil) {
+			@ui.EmptyIcon("", nil) {
+				@icons.Package(icons.Props{Class: "h-12 w-12"})
+			}
+			@ui.EmptyTitle("", nil) {
+				No results found
+			}
+			@ui.EmptyDescription("", nil) {
+				We couldn't find what you searched for. Try searching again.
+			}
+			@ui.EmptyAction("", nil) {
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+					Browse all
+				}
+			}
+		}
+	</div>
+}
+
+// --- Scroll Area ---
+
+templ ScrollAreaDemo() {
+	<div class="w-64">
+		@ui.ScrollArea("h-72 rounded-md border", nil) {
+			<div class="p-4">
+				<h4 class="mb-4 text-sm font-medium leading-none">Tags</h4>
+				for _, tag := range scrollAreaTags() {
+					<div class="text-sm py-1">{ tag }</div>
+					<div class="my-1 h-px bg-border"></div>
+				}
+			</div>
+		}
+	</div>
+}
+
+func scrollAreaTags() []string {
+	return []string{
+		"v1.2.0-beta.1",
+		"v1.1.0",
+		"v1.0.4",
+		"v1.0.3",
+		"v1.0.2",
+		"v1.0.1",
+		"v1.0.0",
+		"v0.9.0",
+		"v0.8.5",
+		"v0.8.4",
+		"v0.8.3",
+		"v0.8.2",
+		"v0.8.1",
+		"v0.8.0",
+		"v0.7.0",
+		"v0.6.2",
+		"v0.6.1",
+		"v0.6.0",
+		"v0.5.0",
+		"v0.4.0",
+	}
+}
+
+// --- Typography ---
+
+templ TypographyDemo() {
+	<div class="mx-auto max-w-2xl space-y-6">
+		@ui.TypographyH1("", nil) {
+			The Joke Tax Chronicles
+		}
+		@ui.TypographyLead("", nil) {
+			Once upon a time, in a far-off land, there was a very lazy king who spent all day lounging on his throne.
+		}
+		@ui.TypographyH2("", nil) {
+			The King's Plan
+		}
+		@ui.TypographyP("", nil) {
+			The king thought long and hard, and finally came up with
+			<a href="#" class="font-medium text-primary underline underline-offset-4">a brilliant plan</a>
+			: he would tax the jokes in the kingdom.
+		}
+		@ui.TypographyBlockquote("", nil) {
+			"After all," he said, "everyone enjoys a good joke, so it's only fair that they should pay for the privilege."
+		}
+		@ui.TypographyH3("", nil) {
+			The Joke Tax
+		}
+		@ui.TypographyP("", nil) {
+			The king's subjects were not amused. They grumbled and complained, but the king was firm:
+		}
+		@ui.TypographyList("", nil) {
+			<li>1st joke of the day — free</li>
+			<li>2nd joke of the day — 3 coppers</li>
+			<li>3rd joke of the day — 6 coppers</li>
+			<li>Each additional joke — 1 gold</li>
+		}
+		@ui.TypographyH4("", nil) {
+			The Consequences
+		}
+		@ui.TypographyP("", nil) {
+			The people of the kingdom were very unhappy about the joke tax. The jester, Jokester, was especially displeased.
+			He decided to tell his funniest joke yet: press
+			@ui.TypographyInlineCode("", nil) {
+				Shift + Alt + J
+			}
+			to summon him.
+		}
+		<div class="space-y-1">
+			@ui.TypographyLarge("", nil) {
+				Large text example
+			}
+			@ui.TypographySmall("", nil) {
+				Small text example
+			}
+			@ui.TypographyMuted("", nil) {
+				Muted text example — secondary information.
+			}
+		</div>
+	</div>
+}

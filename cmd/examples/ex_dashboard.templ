@@ -1,0 +1,172 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// DashboardExample renders the shadcn/ui Dashboard example
+// (https://ui.shadcn.com/examples/dashboard).
+templ DashboardExample() {
+	@dashNav()
+	<div class="flex-1 space-y-4 p-8 pt-6">
+		<div class="flex items-center justify-between space-y-2">
+			<h2 class="text-3xl font-bold tracking-tight">Dashboard</h2>
+			<div class="flex items-center space-x-2">
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+					@icons.Download(icons.Props{Class: "mr-2 h-4 w-4"})
+					Download
+				}
+			</div>
+		</div>
+		@ui.Tabs("overview", "space-y-4", nil) {
+			@ui.TabsList("", nil) {
+				@ui.TabsTrigger("overview", "", nil) {
+					Overview
+				}
+				@ui.TabsTrigger("analytics", "", nil) {
+					Analytics
+				}
+				@ui.TabsTrigger("reports", "", nil) {
+					Reports
+				}
+				@ui.TabsTrigger("notifications", "", nil) {
+					Notifications
+				}
+			}
+			@ui.TabsContent("overview", "space-y-4", nil) {
+				<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+					@dashStatCard("Total Revenue", "$45,231.89", "+20.1% from last month", icons.DollarSign(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
+					@dashStatCard("Subscriptions", "+2350", "+180.1% from last month", icons.Users(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
+					@dashStatCard("Sales", "+12,234", "+19% from last month", icons.CreditCard(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
+					@dashStatCard("Active Now", "+573", "+201 since last hour", icons.Activity(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
+				</div>
+				<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+					@ui.Card("lg:col-span-4", nil) {
+						@ui.CardHeader("", nil) {
+							@ui.CardTitle("", nil) {
+								Overview
+							}
+						}
+						@ui.CardContent("pl-2", nil) {
+							@dashOverviewChart()
+						}
+					}
+					@ui.Card("lg:col-span-3", nil) {
+						@ui.CardHeader("", nil) {
+							@ui.CardTitle("", nil) {
+								Recent Sales
+							}
+							@ui.CardDescription("", nil) {
+								You made 265 sales this month.
+							}
+						}
+						@ui.CardContent("space-y-6", nil) {
+							@dashSaleRow("OM", "Olivia Martin", "olivia.martin@email.com", "+$1,999.00")
+							@dashSaleRow("JL", "Jackson Lee", "jackson.lee@email.com", "+$39.00")
+							@dashSaleRow("IN", "Isabella Nguyen", "isabella.nguyen@email.com", "+$299.00")
+							@dashSaleRow("WK", "William Kim", "will@email.com", "+$99.00")
+							@dashSaleRow("SD", "Sofia Davis", "sofia.davis@email.com", "+$39.00")
+						}
+					}
+				</div>
+			}
+			@ui.TabsContent("analytics", "", nil) {
+				@dashEmptyTab("Analytics", "Your analytics will appear here.")
+			}
+			@ui.TabsContent("reports", "", nil) {
+				@dashEmptyTab("Reports", "Generated reports will appear here.")
+			}
+			@ui.TabsContent("notifications", "", nil) {
+				@dashEmptyTab("Notifications", "Your notifications will appear here.")
+			}
+		}
+	</div>
+}
+
+// dashNav is the top navigation bar matching shadcn/ui dashboard-01:
+// brand | nav links | search input + avatar (ml-auto).
+templ dashNav() {
+	<div class="border-b">
+		<div class="flex h-16 items-center px-4">
+			<span class="font-bold">Acme Inc</span>
+			<nav class="mx-6 flex items-center space-x-4 text-sm font-medium lg:space-x-6">
+				<a href="#" class="transition-colors hover:text-primary">Overview</a>
+				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Customers</a>
+				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Products</a>
+				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Settings</a>
+			</nav>
+			<div class="ml-auto flex items-center space-x-2">
+				<div class="relative hidden md:block">
+					<span class="absolute left-2 top-2.5 text-muted-foreground">
+						@icons.Search(icons.Props{Class: "h-4 w-4"})
+					</span>
+					@ui.Input("search", ui.InputTypeSearch, "w-[200px] pl-8 lg:w-[300px]", templ.Attributes{"placeholder": "Search..."})
+				</div>
+				@ui.Avatar("h-8 w-8", nil) {
+					@ui.AvatarFallback("", nil) {
+						SC
+					}
+				}
+			</div>
+		</div>
+	</div>
+}
+
+// dashStatCard renders a single KPI card in the 4-up stat grid.
+templ dashStatCard(title, value, sub string, icon templ.Component) {
+	@ui.Card("", nil) {
+		@ui.CardHeader("flex flex-row items-center justify-between space-y-0 pb-2", nil) {
+			@ui.CardTitle("text-sm font-medium", nil) {
+				{ title }
+			}
+			@icon
+		}
+		@ui.CardContent("", nil) {
+			<div class="text-2xl font-bold">{ value }</div>
+			<p class="text-xs text-muted-foreground">{ sub }</p>
+		}
+	}
+}
+
+// dashOverviewChart renders the wavy "Total Visitors" area chart with Chart.js.
+templ dashOverviewChart() {
+	{{ labels, series := visitorSeries(70) }}
+	@ui.ChartCanvasMulti("dash-overview", "area", labels, series, "h-[320px]", nil)
+	@ui.ChartScripts()
+}
+
+// dashSaleRow renders a single row in the Recent Sales list.
+templ dashSaleRow(initials, name, email, amount string) {
+	<div class="flex items-center">
+		@ui.Avatar("h-9 w-9", nil) {
+			@ui.AvatarFallback("", nil) {
+				{ initials }
+			}
+		}
+		<div class="ml-4 space-y-1">
+			<p class="text-sm font-medium leading-none">{ name }</p>
+			<p class="text-sm text-muted-foreground">{ email }</p>
+		</div>
+		<div class="ml-auto font-medium">{ amount }</div>
+	</div>
+}
+
+// dashEmptyTab renders a placeholder card for Analytics/Reports/Notifications tabs.
+templ dashEmptyTab(title, desc string) {
+	@ui.Card("", nil) {
+		@ui.CardHeader("", nil) {
+			@ui.CardTitle("", nil) {
+				{ title }
+			}
+			@ui.CardDescription("", nil) {
+				{ desc }
+			}
+		}
+		@ui.CardContent("", nil) {
+			<div class="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
+				No data to display yet.
+			</div>
+		}
+	}
+}

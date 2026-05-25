@@ -1,0 +1,134 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+// ComboboxOption is a single option in a combobox.
+type ComboboxOption struct {
+	Value string
+	Label string
+}
+
+const (
+	comboboxBaseClass    = "relative"
+	comboboxPopoverClass = "absolute left-0 top-full z-50 mt-1 min-w-[var(--combobox-width,12rem)] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+)
+
+// Combobox renders a self-contained combobox with a button trigger and a
+// filterable command-style dropdown. It manages open/selected state via Alpine.
+templ Combobox(placeholder string, options []ComboboxOption, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(comboboxBaseClass, classes) }
+		{ attrs... }
+		x-data={ comboboxData(placeholder, options) }
+		x-init="$el.style.setProperty('--combobox-width', $el.offsetWidth + 'px')"
+		x-on:keydown.esc.window="open = false"
+	>
+		<button
+			type="button"
+			role="combobox"
+			aria-haspopup="listbox"
+			:aria-expanded="open"
+			class="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+			x-on:click="open = !open"
+		>
+			<span x-text="selectedLabel || placeholder" :class="selectedLabel ? '' : 'text-muted-foreground'"></span>
+			<svg
+				class="ml-2 h-4 w-4 shrink-0 opacity-50"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="m7 15 5 5 5-5"></path>
+				<path d="m7 9 5-5 5 5"></path>
+			</svg>
+		</button>
+		<div
+			class={ comboboxPopoverClass }
+			x-show="open"
+			x-transition
+			x-cloak
+			x-on:mousedown.outside="open = false"
+		>
+			<div class="flex items-center border-b px-3">
+				<svg
+					class="mr-2 h-4 w-4 shrink-0 opacity-50"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="8"></circle>
+					<path d="m21 21-4.3-4.3"></path>
+				</svg>
+				<input
+					type="text"
+					role="searchbox"
+					autocomplete="off"
+					placeholder="Search..."
+					class="flex h-10 w-full bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+					x-model="query"
+					x-ref="searchInput"
+					x-on:keydown.down.prevent="$focus.wrap().next()"
+					x-on:keydown.up.prevent="$focus.wrap().previous()"
+				/>
+			</div>
+			<div role="listbox" class="max-h-[200px] overflow-y-auto overflow-x-hidden p-1">
+				<template x-for="option in options" :key="option.value">
+					<div
+						role="option"
+						:aria-selected="selectedValue === option.value"
+						class="relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+						tabindex="0"
+						x-show="query === '' || option.label.toLowerCase().includes(query.toLowerCase())"
+						x-on:click="select(option)"
+						x-on:keydown.enter="select(option)"
+					>
+						<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+							<svg
+								x-show="selectedValue === option.value"
+								class="h-4 w-4"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<path d="M20 6 9 17l-5-5"></path>
+							</svg>
+						</span>
+						<span x-text="option.label"></span>
+					</div>
+				</template>
+				<div
+					class="py-6 text-center text-sm text-muted-foreground"
+					x-show="options.filter(o => query === '' || o.label.toLowerCase().includes(query.toLowerCase())).length === 0"
+				>No results found.</div>
+			</div>
+		</div>
+	</div>
+}
+
+// comboboxData generates the Alpine x-data expression for a Combobox.
+func comboboxData(placeholder string, options []ComboboxOption) string {
+	optJSON := "["
+	for i, o := range options {
+		if i > 0 {
+			optJSON += ","
+		}
+		optJSON += `{"value":"` + o.Value + `","label":"` + o.Label + `"}`
+	}
+	optJSON += "]"
+	return `{ open: false, query: '', selectedValue: '', selectedLabel: '', placeholder: '` + placeholder + `', options: ` + optJSON + `, select(option) { this.selectedValue = option.value; this.selectedLabel = option.label; this.open = false; this.query = ''; } }`
+}

@@ -1,0 +1,99 @@
+package ui
+
+import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	drawerOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
+	drawerContentBaseClass     = "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background"
+	drawerHandleBaseClass      = "mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted"
+	drawerHeaderBaseClass      = "grid gap-1.5 p-4 text-center sm:text-left"
+	drawerFooterBaseClass      = "mt-auto flex flex-col gap-2 p-4"
+	drawerTitleBaseClass       = "text-lg font-semibold leading-none tracking-tight"
+	drawerDescriptionBaseClass = "text-sm text-muted-foreground"
+)
+
+templ Drawer(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(classes) }
+		{ attrs... }
+		x-data="{ shadcntempl_open: false }"
+	>
+		{ children... }
+	</div>
+}
+
+// There is no element for drawer trigger, just add these attributes to your component.
+var DrawerTriggerAttrs = templ.Attributes{
+	"aria-haspopup":  "dialog",
+	":aria-expanded": "shadcntempl_open",
+	"x-data":         true,
+	"x-on:click":     "shadcntempl_open = true",
+}
+
+templ DrawerContent(classes string, attrs templ.Attributes) {
+	<div
+		class={ drawerOverlayBaseClass }
+		x-cloak
+		x-show="shadcntempl_open"
+		aria-hidden="true"
+		x-transition:enter="animate-in fade-in-0"
+		x-transition:leave="animate-out fade-out-0"
+		x-on:click="shadcntempl_open = false"
+	></div>
+	<div
+		class={ twmerge.Merge(drawerContentBaseClass, classes) }
+		{ attrs... }
+		x-cloak
+		x-show="shadcntempl_open"
+		x-trap.inert.noscroll="shadcntempl_open"
+		x-on:keydown.esc.window="shadcntempl_open = false"
+		role="dialog"
+		aria-modal="true"
+		x-transition:enter="animate-in slide-in-from-bottom"
+		x-transition:leave="animate-out slide-out-to-bottom"
+	>
+		<div class={ drawerHandleBaseClass }></div>
+		{ children... }
+	</div>
+}
+
+// If you want to close the drawer, add these attributes to your component.
+var DrawerCloseAttrs = templ.Attributes{
+	"x-on:click": "shadcntempl_open = false",
+}
+
+templ DrawerHeader(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(drawerHeaderBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ DrawerFooter(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(drawerFooterBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ DrawerTitle(classes string, attrs templ.Attributes) {
+	<h2
+		class={ twmerge.Merge(drawerTitleBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h2>
+}
+
+templ DrawerDescription(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(drawerDescriptionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}

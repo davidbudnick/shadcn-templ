@@ -1,0 +1,40 @@
+package ui
+
+import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	hoverCardContentBaseClass = "z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none"
+)
+
+templ HoverCard(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge("relative inline-block", classes) }
+		{ attrs... }
+		x-data="{ shadcntempl_open: false }"
+	>
+		{ children... }
+	</div>
+}
+
+// There is no element for hover-card trigger, just add these attributes to your component.
+var HoverCardTriggerAttrs = templ.Attributes{
+	"x-data":          true,
+	"x-on:mouseenter": "shadcntempl_open = true",
+	"x-on:mouseleave": "shadcntempl_open = false",
+}
+
+templ HoverCardContent(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(hoverCardContentBaseClass, classes) }
+		{ attrs... }
+		x-cloak
+		x-show="shadcntempl_open"
+		x-on:mouseenter="shadcntempl_open = true"
+		x-on:mouseleave="shadcntempl_open = false"
+		x-transition:enter="animate-in fade-in-0 zoom-in-95"
+		x-transition:leave="animate-out fade-out-0 zoom-out-95"
+		style="position:absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%);"
+	>
+		{ children... }
+	</div>
+}

@@ -1,0 +1,17 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	kbdBaseClass = "pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100"
+)
+
+// Kbd renders a keyboard shortcut badge.
+templ Kbd(classes string, attrs templ.Attributes) {
+	<kbd
+		class={ twmerge.Merge(kbdBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</kbd>
+}

@@ -1,0 +1,159 @@
+package ui
+
+import (
+	twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+type SheetSide int
+
+const (
+	SheetSideRight SheetSide = iota
+	SheetSideLeft
+	SheetSideTop
+	SheetSideBottom
+)
+
+func (s SheetSide) Class() string {
+	switch s {
+	case SheetSideLeft:
+		return "inset-y-0 left-0 h-full w-3/4 sm:max-w-sm border-r"
+	case SheetSideTop:
+		return "inset-x-0 top-0 h-auto border-b"
+	case SheetSideBottom:
+		return "inset-x-0 bottom-0 h-auto border-t"
+	default:
+		return "inset-y-0 right-0 h-full w-3/4 sm:max-w-sm border-l"
+	}
+}
+
+func (s SheetSide) EnterClass() string {
+	switch s {
+	case SheetSideLeft:
+		return "slide-in-from-left"
+	case SheetSideTop:
+		return "slide-in-from-top"
+	case SheetSideBottom:
+		return "slide-in-from-bottom"
+	default:
+		return "slide-in-from-right"
+	}
+}
+
+func (s SheetSide) LeaveClass() string {
+	switch s {
+	case SheetSideLeft:
+		return "slide-out-to-left"
+	case SheetSideTop:
+		return "slide-out-to-top"
+	case SheetSideBottom:
+		return "slide-out-to-bottom"
+	default:
+		return "slide-out-to-right"
+	}
+}
+
+const (
+	sheetOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
+	sheetContentBaseClass     = "fixed z-50 gap-4 bg-background p-6 shadow-lg duration-200 fill-mode-forwards"
+	sheetCloseBaseClass       = "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+	sheetHeaderBaseClass      = "flex flex-col space-y-2 text-center sm:text-left"
+	sheetFooterBaseClass      = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
+	sheetTitleBaseClass       = "text-lg font-semibold text-foreground"
+	sheetDescriptionBaseClass = "text-sm text-muted-foreground"
+)
+
+templ Sheet(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(classes) }
+		{ attrs... }
+		x-data="{ shadcntempl_open: false }"
+	>
+		{ children... }
+	</div>
+}
+
+// There is no element for sheet trigger, just add these attributes to your component.
+var SheetTriggerAttrs = templ.Attributes{
+	"aria-haspopup":  "dialog",
+	":aria-expanded": "shadcntempl_open",
+	"x-data":         true,
+	"x-on:click":     "shadcntempl_open = true",
+}
+
+templ SheetContent(side SheetSide, classes string, attrs templ.Attributes) {
+	<div
+		class={ sheetOverlayBaseClass }
+		x-cloak
+		x-show="shadcntempl_open"
+		aria-hidden="true"
+		x-transition:enter="animate-in fade-in-0"
+		x-transition:leave="animate-out fade-out-0"
+		x-on:click="shadcntempl_open = false"
+	></div>
+	<div
+		class={ twmerge.Merge(sheetContentBaseClass, side.Class(), classes) }
+		{ attrs... }
+		x-cloak
+		x-show="shadcntempl_open"
+		x-trap.inert.noscroll="shadcntempl_open"
+		x-on:keydown.esc.window="shadcntempl_open = false"
+		role="dialog"
+		aria-modal="true"
+		x-transition:enter={ "animate-in fade-in-0 " + side.EnterClass() }
+		x-transition:leave={ "animate-out fade-out-0 " + side.LeaveClass() }
+	>
+		{ children... }
+		<button
+			type="button"
+			class={ sheetCloseBaseClass }
+			{ SheetCloseAttrs... }
+		>
+			@icons.X(icons.Props{
+				Class: "h-4 w-4",
+			})
+			<span class="sr-only">Close</span>
+		</button>
+	</div>
+}
+
+// If you want to add a custom close, add these attributes to your component.
+var SheetCloseAttrs = templ.Attributes{
+	"x-on:click": "shadcntempl_open = false",
+}
+
+templ SheetHeader(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(sheetHeaderBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ SheetFooter(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(sheetFooterBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ SheetTitle(classes string, attrs templ.Attributes) {
+	<h2
+		class={ twmerge.Merge(sheetTitleBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h2>
+}
+
+templ SheetDescription(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(sheetDescriptionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}

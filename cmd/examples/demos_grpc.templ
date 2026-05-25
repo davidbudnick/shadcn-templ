@@ -1,0 +1,190 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// --- Toggle Group ---
+
+templ ToggleGroupDemo() {
+	<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-2">
+			<p class="text-sm text-muted-foreground">Single selection</p>
+			@ui.ToggleGroup(`{ tg: '' }`, "", nil) {
+				@ui.ToggleGroupItem("tg", "bold", "single", ui.ToggleVariantDefault, ui.ToggleSizeDefault, "", templ.Attributes{"aria-label": "Toggle bold"}) {
+					@icons.Bold(icons.Props{Class: "h-4 w-4"})
+				}
+				@ui.ToggleGroupItem("tg", "italic", "single", ui.ToggleVariantDefault, ui.ToggleSizeDefault, "", templ.Attributes{"aria-label": "Toggle italic"}) {
+					@icons.Italic(icons.Props{Class: "h-4 w-4"})
+				}
+				@ui.ToggleGroupItem("tg", "underline", "single", ui.ToggleVariantDefault, ui.ToggleSizeDefault, "", templ.Attributes{"aria-label": "Toggle underline"}) {
+					@icons.Underline(icons.Props{Class: "h-4 w-4"})
+				}
+			}
+		</div>
+		<div class="flex flex-col gap-2">
+			<p class="text-sm text-muted-foreground">Multiple selection</p>
+			@ui.ToggleGroup(`{ tg: [] }`, "", nil) {
+				@ui.ToggleGroupItem("tg", "bold", "multiple", ui.ToggleVariantDefault, ui.ToggleSizeDefault, "", templ.Attributes{"aria-label": "Toggle bold"}) {
+					@icons.Bold(icons.Props{Class: "h-4 w-4"})
+				}
+				@ui.ToggleGroupItem("tg", "italic", "multiple", ui.ToggleVariantDefault, ui.ToggleSizeDefault, "", templ.Attributes{"aria-label": "Toggle italic"}) {
+					@icons.Italic(icons.Props{Class: "h-4 w-4"})
+				}
+				@ui.ToggleGroupItem("tg", "underline", "multiple", ui.ToggleVariantDefault, ui.ToggleSizeDefault, "", templ.Attributes{"aria-label": "Toggle underline"}) {
+					@icons.Underline(icons.Props{Class: "h-4 w-4"})
+				}
+			}
+		</div>
+	</div>
+}
+
+// --- Input OTP ---
+
+templ InputOTPDemo() {
+	<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-2">
+			<p class="text-sm text-muted-foreground">6-digit OTP</p>
+			@ui.InputOTP(6, "otp", "", nil)
+		</div>
+		<div class="flex flex-col gap-2">
+			<p class="text-sm text-muted-foreground">With separator (3+3)</p>
+			@ui.InputOTPWithSeparator(3, 2, "otp2", "", nil)
+		</div>
+	</div>
+}
+
+// --- Item ---
+
+templ ItemDemo() {
+	<div class="w-full max-w-md divide-y rounded-lg border">
+		@ui.Item("px-4", nil) {
+			@ui.ItemMedia("", nil) {
+				@ui.Avatar("h-10 w-10", nil) {
+					@ui.AvatarImage("https://github.com/shadcn.png", "shadcn", "", nil)
+					@ui.AvatarFallback("", nil) {
+						SC
+					}
+				}
+			}
+			@ui.ItemContent("", nil) {
+				@ui.ItemTitle("", nil) {
+					shadcn
+				}
+				@ui.ItemDescription("", nil) {
+					{ "m@example.com" }
+				}
+			}
+			@ui.ItemActions("", nil) {
+				@ui.Badge(ui.BadgeVariantSecondary, "", nil) {
+					Admin
+				}
+			}
+		}
+		@ui.Item("px-4", nil) {
+			@ui.ItemMedia("", nil) {
+				@ui.Avatar("h-10 w-10", nil) {
+					@ui.AvatarFallback("", nil) {
+						JD
+					}
+				}
+			}
+			@ui.ItemContent("", nil) {
+				@ui.ItemTitle("", nil) {
+					Jane Doe
+				}
+				@ui.ItemDescription("", nil) {
+					jane@example.com
+				}
+			}
+			@ui.ItemActions("", nil) {
+				@ui.Badge(ui.BadgeVariantOutline, "", nil) {
+					Member
+				}
+			}
+		}
+		@ui.Item("px-4", nil) {
+			@ui.ItemMedia("", nil) {
+				@ui.Avatar("h-10 w-10", nil) {
+					@ui.AvatarFallback("", nil) {
+						AB
+					}
+				}
+			}
+			@ui.ItemContent("", nil) {
+				@ui.ItemTitle("", nil) {
+					Alice Brown
+				}
+				@ui.ItemDescription("", nil) {
+					alice@example.com
+				}
+			}
+			@ui.ItemActions("", nil) {
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantGhost, ui.ButtonSizeIcon, "h-8 w-8", templ.Attributes{"aria-label": "Options"}) {
+					@icons.MoreHorizontal(icons.Props{Class: "h-4 w-4"})
+				}
+			}
+		}
+	</div>
+}
+
+// --- Pagination ---
+
+templ PaginationDemo() {
+	@ui.Pagination("", nil) {
+		@ui.PaginationContent("", nil) {
+			@ui.PaginationItem("", nil) {
+				@ui.PaginationPrevious("/", "", nil)
+			}
+			@ui.PaginationItem("", nil) {
+				@ui.PaginationLink("/", false, "", nil) {
+					1
+				}
+			}
+			@ui.PaginationItem("", nil) {
+				@ui.PaginationLink("/", true, "", nil) {
+					2
+				}
+			}
+			@ui.PaginationItem("", nil) {
+				@ui.PaginationLink("/", false, "", nil) {
+					3
+				}
+			}
+			@ui.PaginationItem("", nil) {
+				@ui.PaginationEllipsis("", nil)
+			}
+			@ui.PaginationItem("", nil) {
+				@ui.PaginationNext("/", "", nil)
+			}
+		}
+	}
+}
+
+// --- Tooltip ---
+
+templ TooltipDemo() {
+	<div class="flex flex-wrap gap-8 p-8">
+		@ui.Tooltip("", nil) {
+			@ui.TooltipTrigger("", nil) {
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+					Hover me
+				}
+			}
+			@ui.TooltipContent("top", "", nil) {
+				Add to library
+			}
+		}
+		@ui.Tooltip("", nil) {
+			@ui.TooltipTrigger("", nil) {
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeIcon, "", templ.Attributes{"aria-label": "Settings"}) {
+					@icons.Settings(icons.Props{Class: "h-4 w-4"})
+				}
+			}
+			@ui.TooltipContent("top", "", nil) {
+				Settings
+			}
+		}
+	</div>
+}

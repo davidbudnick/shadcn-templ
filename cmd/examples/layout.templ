@@ -1,0 +1,311 @@
+package main
+
+import (
+	shadcntempl "github.com/davidbudnick/shadcn-templ"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+const repoURL = "https://github.com/davidbudnick/shadcn-templ"
+
+// Layout is the shell for component documentation pages: shared header,
+// components sidebar and the main content area.
+templ Layout(nav []NavItem, current, title string) {
+	@document(title) {
+		@siteHeader("components")
+		<div class="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+			@sidebar(nav, current)
+			<main class="relative min-w-0 overflow-x-clip py-6 lg:py-8">
+				{ children... }
+			</main>
+		</div>
+	}
+}
+
+// document is the shared <html> skeleton used by every page.
+templ document(title string) {
+	<!DOCTYPE html>
+	<html lang="en" class="scroll-smooth">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title } — shadcn-templ</title>
+			@shadcntempl.Head()
+			<link rel="stylesheet" href={ urlCSS() }/>
+		</head>
+		<body class="min-h-screen bg-background font-sans text-foreground antialiased">
+			{ children... }
+		</body>
+	</html>
+}
+
+// siteHeader is the global top bar. `section` is "components", "examples" or ""
+// and controls which primary nav item is highlighted.
+templ siteHeader(section string) {
+	<header
+		class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+		x-data="{ mobileOpen: false }"
+	>
+		<div class="container flex h-14 max-w-screen-2xl items-center gap-2 sm:gap-4">
+			<button
+				type="button"
+				aria-label="Open menu"
+				x-on:click="mobileOpen = !mobileOpen"
+				class="-ml-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:hidden"
+			>
+				<span x-show="!mobileOpen">
+					@icons.Menu(icons.Props{Class: "h-5 w-5"})
+				</span>
+				<span x-show="mobileOpen" x-cloak>
+					@icons.X(icons.Props{Class: "h-5 w-5"})
+				</span>
+			</button>
+			<a href={ urlHome() } class="mr-2 shrink-0 whitespace-nowrap font-bold">shadcn-templ</a>
+			<nav class="hidden items-center gap-1 text-sm font-medium md:flex">
+				@topNavLink(urlComponent("accordion"), "Components", section == "components")
+				@topNavLink(urlExample("dashboard"), "Examples", section == "examples")
+			</nav>
+			<div class="ml-auto flex items-center gap-1">
+				<a href="https://ui.shadcn.com" target="_blank" rel="noreferrer" class="hidden h-9 items-center rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground lg:inline-flex">shadcn/ui</a>
+				<a href={ templ.SafeURL(repoURL) } target="_blank" rel="noreferrer" aria-label="GitHub repository" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+					@icons.Github(icons.Props{Class: "h-4 w-4"})
+				</a>
+				@themeColorPicker()
+				@themeToggle()
+			</div>
+		</div>
+		<!-- Mobile menu -->
+		<div
+			x-show="mobileOpen"
+			x-cloak
+			class="border-t md:hidden"
+		>
+			<div class="container max-h-[calc(100vh-3.5rem)] space-y-4 overflow-y-auto py-4">
+				<div class="space-y-1">
+					<p class="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Examples</p>
+					<div class="grid grid-cols-2 gap-1">
+						for _, item := range examplesNav() {
+							<a href={ urlExample(item.Slug) } class="rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground">{ item.Title }</a>
+						}
+					</div>
+				</div>
+				<div class="space-y-1">
+					<p class="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Components</p>
+					<div class="grid grid-cols-2 gap-1">
+						for _, item := range componentNav() {
+							<a href={ urlComponent(item.Slug) } class="rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground">{ item.Title }</a>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+}
+
+templ topNavLink(href templ.SafeURL, label string, active bool) {
+	<a
+		href={ href }
+		if active {
+			class="rounded-md px-3 py-1.5 text-foreground"
+		} else {
+			class="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
+		}
+	>{ label }</a>
+}
+
+// themeColorPicker switches the accent color theme (matching ui.shadcn.com/themes)
+// via a swatch popover and persists the choice; Head() restores it on next load.
+templ themeColorPicker() {
+	<div
+		class="relative hidden sm:block"
+		x-data="{ open: false, c: (localStorage.themeColor || '') }"
+		x-init="document.documentElement.dataset.theme = c"
+	>
+		<button
+			type="button"
+			aria-label="Color theme"
+			x-on:click="open = !open"
+			x-on:click.outside="open = false"
+			class="inline-flex h-9 items-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+		>
+			<span class="h-3.5 w-3.5 rounded-full ring-1 ring-border bg-primary"></span>
+			Theme
+		</button>
+		<div
+			x-show="open"
+			x-cloak
+			x-transition
+			class="absolute right-0 z-50 mt-2 w-48 rounded-md border bg-popover p-3 text-popover-foreground shadow-md"
+		>
+			<p class="mb-2 text-xs font-medium text-muted-foreground">Color</p>
+			<div class="grid grid-cols-4 gap-2">
+				for _, tc := range themeColors {
+					<button
+						type="button"
+						title={ tc.Label }
+						aria-label={ tc.Label }
+						style={ "background: hsl(" + tc.HSL + ")" }
+						x-on:click={ "c='" + tc.Name + "'; localStorage.themeColor = c; document.documentElement.dataset.theme = c; open = false" }
+						x-bind:class={ "c === '" + tc.Name + "' ? 'ring-2 ring-ring ring-offset-2 ring-offset-popover' : 'ring-1 ring-border'" }
+						class="h-8 w-8 rounded-full transition-transform hover:scale-110"
+					></button>
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ themeToggle() {
+	<button
+		type="button"
+		aria-label="Toggle theme"
+		class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+		onclick="(() => { const d = document.documentElement.classList.toggle('dark'); localStorage.theme = d ? 'dark' : 'light'; })()"
+	>
+		@icons.Sun(icons.Props{Class: "h-4 w-4 dark:hidden"})
+		@icons.Moon(icons.Props{Class: "hidden h-4 w-4 dark:block"})
+	</button>
+}
+
+templ sidebar(nav []NavItem, current string) {
+	<aside class="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 overflow-y-auto border-r py-6 pr-2 md:sticky md:block lg:py-8">
+		<div class="pb-4">
+			<h4 class="mb-2 px-2 text-sm font-semibold">Components</h4>
+			<div class="grid grid-flow-row auto-rows-max gap-0.5 text-sm">
+				for _, item := range nav {
+					<a
+						href={ urlComponent(item.Slug) }
+						if item.Slug == current {
+							class="flex w-full items-center rounded-md bg-accent px-2 py-1 font-medium text-accent-foreground"
+							aria-current="page"
+						} else {
+							class="flex w-full items-center rounded-md px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
+						}
+					>{ item.Title }</a>
+				}
+			</div>
+		</div>
+	</aside>
+}
+
+// ComponentPage renders a single component's breadcrumb, heading, description
+// and demos.
+templ ComponentPage(nav []NavItem, s Section) {
+	@Layout(nav, s.Slug, s.Title) {
+		<div class="mx-auto w-full min-w-0 max-w-3xl">
+			<div class="mb-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+				<a href={ urlComponent("accordion") } class="transition-colors hover:text-foreground">Components</a>
+				@icons.ChevronRight(icons.Props{Class: "h-3.5 w-3.5"})
+				<span class="text-foreground">{ s.Title }</span>
+			</div>
+			<div class="mb-8 space-y-2">
+				<h1 class="scroll-m-20 text-3xl font-bold tracking-tight">{ s.Title }</h1>
+				if s.Description != "" {
+					<p class="text-lg text-muted-foreground">{ s.Description }</p>
+				}
+			</div>
+			<div class="space-y-12">
+				for _, ex := range s.Examples {
+					<div class="space-y-3">
+						if ex.Name != "" {
+							<h2 class="text-sm font-medium text-muted-foreground">{ ex.Name }</h2>
+						}
+						<div class="flex min-h-[350px] w-full items-center justify-center overflow-x-auto rounded-md border p-4 sm:p-10">
+							@ex.Component
+						</div>
+						@codeBlock(demoCodeHTML(ex.Func))
+					</div>
+				}
+			</div>
+		</div>
+	}
+}
+
+// codeBlock shows the syntax-highlighted Go/templ source for a demo so it's
+// obvious how to use the component. codeHTML is trusted, pre-highlighted markup.
+templ codeBlock(codeHTML string) {
+	if codeHTML != "" {
+		<div class="min-w-0 max-w-full overflow-hidden rounded-lg border bg-zinc-950">
+			<div class="flex items-center border-b border-white/10 px-4 py-2">
+				<span class="font-mono text-xs text-zinc-400">templ</span>
+			</div>
+			<div class="overflow-x-auto p-4 text-sm leading-relaxed [&_pre]:!bg-transparent [&_pre]:m-0">
+				@templ.Raw(codeHTML)
+			</div>
+		</div>
+	}
+}
+
+// Home is the landing page.
+templ Home(nav []NavItem) {
+	@document("Home") {
+		@siteHeader("")
+		<main>
+			<!-- Hero -->
+			<section class="container flex max-w-screen-md flex-col items-center gap-6 py-24 text-center md:py-32">
+				<a href={ templ.SafeURL(repoURL) } target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 rounded-full border bg-muted/40 px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted">
+					<span class="flex h-2 w-2 rounded-full bg-primary"></span>
+					{ "59 components · MIT licensed" }
+				</a>
+				<h1 class="text-balance text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+					shadcn/ui, ported to Go &amp; Templ
+				</h1>
+				<p class="max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground">
+					Every <a href="https://ui.shadcn.com" class="font-medium text-foreground underline underline-offset-4">shadcn/ui</a> component and page example,
+					rendered on the server with <a href="https://templ.guide" class="font-medium text-foreground underline underline-offset-4">Templ</a>,
+					<a href="https://alpinejs.dev" class="font-medium text-foreground underline underline-offset-4">Alpine.js</a> and
+					<a href="https://tailwindcss.com" class="font-medium text-foreground underline underline-offset-4">Tailwind CSS</a>.
+					No React, no build step — one Go dependency.
+				</p>
+				<div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+					@ui_linkButton(urlComponent("accordion"), "Browse components", true)
+					@ui_linkButton(urlExample("dashboard"), "View examples", false)
+				</div>
+			</section>
+			<!-- Examples -->
+			<section class="border-t bg-muted/20">
+				<div class="container max-w-screen-lg space-y-6 py-16">
+					<div class="space-y-1">
+						<h2 class="text-2xl font-semibold tracking-tight">Examples</h2>
+						<p class="text-muted-foreground">Full pages composed entirely from the components.</p>
+					</div>
+					<div class="flex flex-wrap gap-3">
+						for _, item := range examplesNav() {
+							<a href={ urlExample(item.Slug) } class="inline-flex items-center rounded-lg border bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground">{ item.Title }</a>
+						}
+					</div>
+				</div>
+			</section>
+			<!-- Components -->
+			<section class="border-t">
+				<div class="container max-w-screen-lg space-y-6 py-16">
+					<div class="space-y-1">
+						<h2 class="text-2xl font-semibold tracking-tight">Components</h2>
+						<p class="text-muted-foreground">All { itoa(len(nav)) } of them, each with a live preview and copy-paste code.</p>
+					</div>
+					<div class="flex flex-wrap gap-2">
+						for _, item := range nav {
+							<a href={ urlComponent(item.Slug) } class="inline-flex items-center rounded-md border bg-background px-3 py-1 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">{ item.Title }</a>
+						}
+					</div>
+				</div>
+			</section>
+			<footer class="border-t">
+				<div class="container max-w-screen-lg py-10 text-center text-sm text-muted-foreground">
+					A port of <a href="https://ui.shadcn.com" class="underline underline-offset-4">shadcn/ui</a>. MIT licensed. Source on
+					<a href={ templ.SafeURL(repoURL) } class="underline underline-offset-4">GitHub</a>.
+				</div>
+			</footer>
+		</main>
+	}
+}
+
+templ ui_linkButton(href templ.SafeURL, label string, primary bool) {
+	<a
+		href={ href }
+		if primary {
+			class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+		} else {
+			class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-6 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+		}
+	>{ label }</a>
+}

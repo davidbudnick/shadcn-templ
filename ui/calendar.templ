@@ -1,0 +1,115 @@
+package ui
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+// calendarDays returns all the cells for the month grid — with leading/trailing
+// zeros used as "empty" padding days from adjacent months.
+func calendarDays(year int, month time.Month) [][]int {
+	firstDay := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
+	// Sunday = 0 … Saturday = 6
+	startOffset := int(firstDay.Weekday())
+	daysInMonth := time.Date(year, month+1, 0, 0, 0, 0, 0, time.UTC).Day()
+
+	var weeks [][]int
+	var week []int
+
+	for i := 0; i < startOffset; i++ {
+		week = append(week, 0)
+	}
+	for d := 1; d <= daysInMonth; d++ {
+		week = append(week, d)
+		if len(week) == 7 {
+			weeks = append(weeks, week)
+			week = nil
+		}
+	}
+	if len(week) > 0 {
+		for len(week) < 7 {
+			week = append(week, 0)
+		}
+		weeks = append(weeks, week)
+	}
+	return weeks
+}
+
+func calendarMonthName(year int, month time.Month) string {
+	return fmt.Sprintf("%s %d", month.String(), year)
+}
+
+// Calendar renders a month grid. year/month drive the displayed month.
+// Alpine state tracks the selected day within the rendered month.
+// prev/next navigation links are rendered as anchor hrefs (or handled server-side).
+templ Calendar(year int, month time.Month, classes string, attrs templ.Attributes) {
+	{{
+		today := time.Now()
+		todayY, todayM, todayD := today.Date()
+		weeks := calendarDays(year, month)
+		prevMonth := time.Date(year, month-1, 1, 0, 0, 0, 0, time.UTC)
+		nextMonth := time.Date(year, month+1, 1, 0, 0, 0, 0, time.UTC)
+		_ = prevMonth
+		_ = nextMonth
+	}}
+	<div
+		class={ twmerge.Merge("p-3 rounded-md border bg-popover text-popover-foreground shadow-md w-fit", classes) }
+		x-data="{ selected: 0 }"
+		{ attrs... }
+	>
+		<!-- Header -->
+		<div class="flex items-center justify-between mb-2">
+			<button
+				type="button"
+				class="inline-flex items-center justify-center h-7 w-7 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+				x-on:click={ fmt.Sprintf("window.location.href='?year=%d&month=%d'", prevMonth.Year(), int(prevMonth.Month())) }
+				aria-label="Previous month"
+			>
+				@icons.ChevronLeft(icons.Props{Class: "h-4 w-4"})
+			</button>
+			<span class="text-sm font-medium">{ calendarMonthName(year, month) }</span>
+			<button
+				type="button"
+				class="inline-flex items-center justify-center h-7 w-7 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+				x-on:click={ fmt.Sprintf("window.location.href='?year=%d&month=%d'", nextMonth.Year(), int(nextMonth.Month())) }
+				aria-label="Next month"
+			>
+				@icons.ChevronRight(icons.Props{Class: "h-4 w-4"})
+			</button>
+		</div>
+		<!-- Day headers -->
+		<div class="grid grid-cols-7 mb-1">
+			for _, h := range []string{"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"} {
+				<div class="text-muted-foreground text-[0.8rem] font-normal flex items-center justify-center w-9 h-9">{ h }</div>
+			}
+		</div>
+		<!-- Weeks -->
+		for _, week := range weeks {
+			<div class="grid grid-cols-7">
+				for _, day := range week {
+					if day == 0 {
+						<div class="w-9 h-9"></div>
+					} else if todayY == year && todayM == month && todayD == day {
+						<button
+							type="button"
+							class="w-9 h-9 rounded-md text-sm bg-accent text-accent-foreground font-semibold hover:bg-primary hover:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+							:class={ fmt.Sprintf("selected === %d ? 'bg-primary text-primary-foreground' : ''", day) }
+							x-on:click={ fmt.Sprintf("selected = %d", day) }
+							aria-label={ fmt.Sprintf("Select %s", calendarMonthName(year, month)) }
+						>{ fmt.Sprintf("%d", day) }</button>
+					} else {
+						<button
+							type="button"
+							class="w-9 h-9 rounded-md text-sm hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+							:class={ fmt.Sprintf("selected === %d ? 'bg-primary text-primary-foreground' : ''", day) }
+							x-on:click={ fmt.Sprintf("selected = %d", day) }
+						>{ fmt.Sprintf("%d", day) }</button>
+					}
+				}
+			</div>
+		}
+	</div>
+}

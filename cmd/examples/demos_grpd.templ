@@ -1,0 +1,237 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// --- Popover ---
+
+templ PopoverDemo() {
+	@ui.Popover("", nil) {
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", ui.PopoverTriggerAttrs) {
+			Open popover
+		}
+		@ui.PopoverContent("w-80", nil) {
+			<div class="grid gap-4">
+				<div class="space-y-2">
+					<h4 class="font-medium leading-none">Dimensions</h4>
+					<p class="text-sm text-muted-foreground">
+						Set the dimensions for the layer.
+					</p>
+				</div>
+				<div class="grid gap-2">
+					<div class="grid grid-cols-3 items-center gap-4">
+						@ui.Label("", templ.Attributes{"for": "pop-width"}) {
+							Width
+						}
+						@ui.Input("width", ui.InputTypeText, "col-span-2 h-8", templ.Attributes{"id": "pop-width", "value": "100%"})
+					</div>
+					<div class="grid grid-cols-3 items-center gap-4">
+						@ui.Label("", templ.Attributes{"for": "pop-maxwidth"}) {
+							Max. width
+						}
+						@ui.Input("maxWidth", ui.InputTypeText, "col-span-2 h-8", templ.Attributes{"id": "pop-maxwidth", "value": "300px"})
+					</div>
+					<div class="grid grid-cols-3 items-center gap-4">
+						@ui.Label("", templ.Attributes{"for": "pop-height"}) {
+							Height
+						}
+						@ui.Input("height", ui.InputTypeText, "col-span-2 h-8", templ.Attributes{"id": "pop-height", "value": "25px"})
+					</div>
+					<div class="grid grid-cols-3 items-center gap-4">
+						@ui.Label("", templ.Attributes{"for": "pop-maxheight"}) {
+							Max. height
+						}
+						@ui.Input("maxHeight", ui.InputTypeText, "col-span-2 h-8", templ.Attributes{"id": "pop-maxheight", "value": "none"})
+					</div>
+				</div>
+			</div>
+		}
+	}
+}
+
+// --- HoverCard ---
+
+templ HoverCardDemo() {
+	@ui.HoverCard("", nil) {
+		<a
+			href="https://twitter.com/shadcn"
+			target="_blank"
+			rel="noreferrer"
+			class="inline-flex items-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+			{ ui.HoverCardTriggerAttrs... }
+		>
+			{ "@shadcn" }
+		</a>
+		@ui.HoverCardContent("w-80", nil) {
+			<div class="flex justify-between space-x-4">
+				@ui.Avatar("", nil) {
+					@ui.AvatarImage("https://github.com/shadcn.png", "@shadcn", "", nil)
+					@ui.AvatarFallback("", nil) {
+						SC
+					}
+				}
+				<div class="space-y-1">
+					<h4 class="text-sm font-semibold">{ "@shadcn" }</h4>
+					<p class="text-sm">
+						The React Framework – created and maintained by { "@vercel" }.
+					</p>
+					<div class="flex items-center pt-2">
+						@icons.Calendar(icons.Props{Class: "mr-2 h-4 w-4 opacity-70"})
+						<span class="text-xs text-muted-foreground">Joined December 2021</span>
+					</div>
+				</div>
+			</div>
+		}
+	}
+}
+
+// --- AlertDialog ---
+
+templ AlertDialogDemo() {
+	@ui.AlertDialog("", nil) {
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", ui.AlertDialogTriggerAttrs) {
+			Show Dialog
+		}
+		@ui.AlertDialogContent("", nil) {
+			@ui.AlertDialogHeader("", nil) {
+				@ui.AlertDialogTitle("", nil) {
+					Are you absolutely sure?
+				}
+				@ui.AlertDialogDescription("", nil) {
+					This action cannot be undone. This will permanently delete your
+					account and remove your data from our servers.
+				}
+			}
+			@ui.AlertDialogFooter("", nil) {
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", ui.AlertDialogCancelAttrs) {
+					Cancel
+				}
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", ui.AlertDialogActionAttrs) {
+					Continue
+				}
+			}
+		}
+	}
+}
+
+// --- Sheet ---
+
+templ SheetDemo() {
+	@ui.Sheet("", nil) {
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", ui.SheetTriggerAttrs) {
+			Open
+		}
+		@ui.SheetContent(ui.SheetSideRight, "", nil) {
+			@ui.SheetHeader("", nil) {
+				@ui.SheetTitle("", nil) {
+					Edit profile
+				}
+				@ui.SheetDescription("", nil) {
+					Make changes to your profile here. Click save when you're done.
+				}
+			}
+			<div class="grid gap-4 py-4">
+				<div class="grid grid-cols-4 items-center gap-4">
+					@ui.Label("text-right", templ.Attributes{"for": "sheet-name"}) {
+						Name
+					}
+					@ui.Input("name", ui.InputTypeText, "col-span-3", templ.Attributes{"id": "sheet-name", "value": "Pedro Duarte"})
+				</div>
+				<div class="grid grid-cols-4 items-center gap-4">
+					@ui.Label("text-right", templ.Attributes{"for": "sheet-username"}) {
+						Username
+					}
+					@ui.Input("username", ui.InputTypeText, "col-span-3", templ.Attributes{"id": "sheet-username", "value": "@peduarte"})
+				</div>
+			</div>
+			@ui.SheetFooter("", nil) {
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", ui.SheetCloseAttrs) {
+					Save changes
+				}
+			}
+		}
+	}
+}
+
+// --- Drawer ---
+
+templ DrawerDemo() {
+	@ui.Drawer("", nil) {
+		@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", ui.DrawerTriggerAttrs) {
+			Open Drawer
+		}
+		@ui.DrawerContent("", nil) {
+			@ui.DrawerHeader("", nil) {
+				@ui.DrawerTitle("", nil) {
+					Move Goal
+				}
+				@ui.DrawerDescription("", nil) {
+					Set your daily activity goal.
+				}
+			}
+			<div class="p-4 pb-0">
+				<div class="flex items-center justify-center space-x-2">
+					<div class="flex-1 text-center">
+						<div class="text-7xl font-bold tracking-tighter">350</div>
+						<div class="text-[0.70rem] uppercase text-muted-foreground">Calories/day</div>
+					</div>
+				</div>
+			</div>
+			@ui.DrawerFooter("", nil) {
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+					Submit
+				}
+				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", ui.DrawerCloseAttrs) {
+					Cancel
+				}
+			}
+		}
+	}
+}
+
+// --- ContextMenu ---
+
+templ ContextMenuDemo() {
+	@ui.ContextMenu("", nil) {
+		@ui.ContextMenuTrigger("flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm", nil) {
+			Right click here
+		}
+		@ui.ContextMenuContent("w-64", nil) {
+			@ui.ContextMenuItem("", nil) {
+				@icons.Copy(icons.Props{Class: "mr-2 h-4 w-4"})
+				<span>Copy</span>
+				@ui.ContextMenuShortcut("", nil) {
+					{ "⌘C" }
+				}
+			}
+			@ui.ContextMenuItem("", nil) {
+				@icons.Clipboard(icons.Props{Class: "mr-2 h-4 w-4"})
+				<span>Paste</span>
+				@ui.ContextMenuShortcut("", nil) {
+					{ "⌘V" }
+				}
+			}
+			@ui.ContextMenuItem("", nil) {
+				@icons.Scissors(icons.Props{Class: "mr-2 h-4 w-4"})
+				<span>Cut</span>
+				@ui.ContextMenuShortcut("", nil) {
+					{ "⌘X" }
+				}
+			}
+			@ui.ContextMenuSeparator("", nil)
+			@ui.ContextMenuLabel("", nil) {
+				Actions
+			}
+			@ui.ContextMenuSeparator("", nil)
+			@ui.ContextMenuItem("", nil) {
+				@icons.Trash(icons.Props{Class: "mr-2 h-4 w-4"})
+				<span>Delete</span>
+				@ui.ContextMenuShortcut("", nil) {
+					{ "⌘⌫" }
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,359 @@
+package ui
+
+import (
+	"encoding/json"
+	"fmt"
+	"math"
+
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+)
+
+// ChartDataPoint is a single labelled value for charts.
+type ChartDataPoint struct {
+	Label string
+	Value float64
+}
+
+func chartJSON(v any) string {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return "[]"
+	}
+	return string(b)
+}
+
+// ChartCanvas renders a Chart.js canvas driven by the theme's CSS variables.
+// chartType is "bar", "line" or "area". Include ChartScripts() once on the page.
+// Chart.js is loaded from a CDN (client-side only) — it is not a Go dependency.
+templ ChartCanvas(id, chartType string, labels []string, values []float64, classes string, attrs templ.Attributes) {
+	<div class={ twmerge.Merge("relative h-[350px] w-full", classes) } { attrs... }>
+		<canvas
+			id={ id }
+			data-chart={ chartType }
+			data-labels={ chartJSON(labels) }
+			data-values={ chartJSON(values) }
+		></canvas>
+	</div>
+}
+
+// ChartCanvasMulti renders a Chart.js canvas with multiple overlapping series
+// (e.g. the dashboard "Total Visitors" area chart). chartType is "area",
+// "line" or "bar".
+templ ChartCanvasMulti(id, chartType string, labels []string, series [][]float64, classes string, attrs templ.Attributes) {
+	<div class={ twmerge.Merge("relative h-[350px] w-full", classes) } { attrs... }>
+		<canvas
+			id={ id }
+			data-chart={ chartType }
+			data-labels={ chartJSON(labels) }
+			data-values={ chartJSON(series) }
+		></canvas>
+	</div>
+}
+
+// ChartScripts loads Chart.js and renders every <canvas data-chart> on the page
+// using the current theme colors, re-rendering when the theme changes. Include
+// it once per page that uses ChartCanvas.
+templ ChartScripts() {
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+	<script>
+		(function () {
+			function renderCharts() {
+				if (!window.Chart) { setTimeout(renderCharts, 60); return; }
+				var cs = getComputedStyle(document.documentElement);
+				var rawPrimary = cs.getPropertyValue('--primary').trim();
+				var rawMuted = cs.getPropertyValue('--muted-foreground').trim();
+				var mutedColor = 'hsl(' + rawMuted + ')';
+				var palette = [rawPrimary, rawMuted];
+				function fillGrad(raw) {
+					return function (c) {
+						var area = c.chart.chartArea;
+						if (!area) return 'transparent';
+						var g = c.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+						g.addColorStop(0, 'hsl(' + raw + ' / 0.4)');
+						g.addColorStop(1, 'hsl(' + raw + ' / 0)');
+						return g;
+					};
+				}
+				document.querySelectorAll('canvas[data-chart]').forEach(function (el) {
+					if (el._chart) { el._chart.destroy(); }
+					var type = el.getAttribute('data-chart');
+					var labels = JSON.parse(el.getAttribute('data-labels') || '[]');
+					var values = JSON.parse(el.getAttribute('data-values') || '[]');
+					var series = Array.isArray(values[0]) ? values : [values];
+					var isArea = type === 'area';
+					var renderType = isArea ? 'line' : type;
+					var datasets = series.map(function (s, i) {
+						var raw = palette[i % palette.length];
+						return {
+							data: s,
+							borderColor: 'hsl(' + raw + ')',
+							backgroundColor: type === 'bar' ? 'hsl(' + raw + ')' : (isArea ? fillGrad(raw) : 'transparent'),
+							borderRadius: 6,
+							borderWidth: type === 'bar' ? 0 : 2,
+							fill: isArea,
+							tension: 0.4,
+							pointRadius: 0,
+							maxBarThickness: 48
+						};
+					});
+					el._chart = new window.Chart(el, {
+						type: renderType,
+						data: { labels: labels, datasets: datasets },
+						options: {
+							responsive: true, maintainAspectRatio: false,
+							interaction: { intersect: false, mode: 'index' },
+							plugins: { legend: { display: false }, tooltip: { enabled: true } },
+							scales: {
+								x: { grid: { display: false }, border: { display: false }, ticks: { color: mutedColor, font: { size: 12 }, autoSkip: true, maxTicksLimit: 8, maxRotation: 0 } },
+								y: { display: false, beginAtZero: true, grid: { display: false } }
+							}
+						}
+					});
+				});
+			}
+			if (document.readyState !== 'loading') renderCharts();
+			else document.addEventListener('DOMContentLoaded', renderCharts);
+			new MutationObserver(renderCharts).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+		})();
+	</script>
+}
+
+func chartMax(data []ChartDataPoint) float64 {
+	m := 0.0
+	for _, d := range data {
+		if d.Value > m {
+			m = d.Value
+		}
+	}
+	return m
+}
+
+func chartRound(v float64) float64 {
+	if v == 0 {
+		return 1
+	}
+	return v
+}
+
+// BarChart renders a pure-SVG bar chart matching shadcn chart-card styling.
+templ BarChart(data []ChartDataPoint, title string, classes string, attrs templ.Attributes) {
+	{{
+		const svgW = 500
+		const svgH = 260
+		const padL = 40
+		const padR = 10
+		const padT = 10
+		const padB = 40
+		plotW := svgW - padL - padR
+		plotH := svgH - padT - padB
+		n := len(data)
+		maxVal := chartRound(chartMax(data))
+		barW := 0.0
+		gap := 0.0
+		if n > 0 {
+			gap = float64(plotW) / float64(n) * 0.2
+			barW = float64(plotW)/float64(n) - gap
+		}
+		gridLines := 5
+		_ = math.Ceil(0)
+	}}
+	<div
+		class={ twmerge.Merge("rounded-xl border bg-card text-card-foreground shadow", classes) }
+		{ attrs... }
+	>
+		if title != "" {
+			<div class="flex flex-col space-y-1.5 p-6 pb-2">
+				<h3 class="font-semibold leading-none tracking-tight">{ title }</h3>
+			</div>
+		}
+		<div class="p-6 pt-0">
+			<svg
+				viewBox={ fmt.Sprintf("0 0 %d %d", svgW, svgH) }
+				class="w-full"
+				aria-label={ title }
+			>
+				<!-- Grid lines -->
+				for i := 0; i <= gridLines; i++ {
+					{{
+						y := padT + float64(plotH)*(1-float64(i)/float64(gridLines))
+						label := fmt.Sprintf("%.0f", maxVal*float64(i)/float64(gridLines))
+					}}
+					<line
+						x1={ fmt.Sprintf("%d", padL) }
+						y1={ fmt.Sprintf("%.1f", y) }
+						x2={ fmt.Sprintf("%d", svgW-padR) }
+						y2={ fmt.Sprintf("%.1f", y) }
+						stroke="hsl(var(--border))"
+						stroke-width="1"
+					/>
+					<text
+						x={ fmt.Sprintf("%d", padL-4) }
+						y={ fmt.Sprintf("%.1f", y+4) }
+						text-anchor="end"
+						font-size="11"
+						fill="hsl(var(--muted-foreground))"
+					>{ label }</text>
+				}
+				<!-- Bars -->
+				for i, d := range data {
+					{{
+						bh := float64(plotH) * (d.Value / maxVal)
+						x := float64(padL) + float64(i)*(barW+gap) + gap/2
+						y := float64(padT+plotH) - bh
+					}}
+					<rect
+						x={ fmt.Sprintf("%.1f", x) }
+						y={ fmt.Sprintf("%.1f", y) }
+						width={ fmt.Sprintf("%.1f", barW) }
+						height={ fmt.Sprintf("%.1f", bh) }
+						fill="hsl(var(--primary))"
+						rx="4"
+					/>
+					<text
+						x={ fmt.Sprintf("%.1f", x+barW/2) }
+						y={ fmt.Sprintf("%d", svgH-padB+15) }
+						text-anchor="middle"
+						font-size="11"
+						fill="hsl(var(--muted-foreground))"
+					>{ d.Label }</text>
+				}
+				<!-- X axis -->
+				<line
+					x1={ fmt.Sprintf("%d", padL) }
+					y1={ fmt.Sprintf("%d", padT+plotH) }
+					x2={ fmt.Sprintf("%d", svgW-padR) }
+					y2={ fmt.Sprintf("%d", padT+plotH) }
+					stroke="hsl(var(--border))"
+					stroke-width="1"
+				/>
+			</svg>
+		</div>
+	</div>
+}
+
+// LineChart renders a pure-SVG area/line chart.
+templ LineChart(data []ChartDataPoint, title string, classes string, attrs templ.Attributes) {
+	{{
+		const svgW = 500
+		const svgH = 260
+		const padL = 40
+		const padR = 10
+		const padT = 10
+		const padB = 40
+		plotW := svgW - padL - padR
+		plotH := svgH - padT - padB
+		n := len(data)
+		maxVal := chartRound(chartMax(data))
+		gridLines := 5
+
+		pointX := func(i int) float64 {
+			if n <= 1 {
+				return float64(padL + plotW/2)
+			}
+			return float64(padL) + float64(i)*float64(plotW)/float64(n-1)
+		}
+		pointY := func(v float64) float64 {
+			return float64(padT+plotH) - float64(plotH)*(v/maxVal)
+		}
+
+		polyline := ""
+		areaPath := ""
+		if n > 0 {
+			for i, d := range data {
+				sep := " "
+				if i == 0 {
+					sep = ""
+				}
+				polyline += fmt.Sprintf("%s%.1f,%.1f", sep, pointX(i), pointY(d.Value))
+			}
+			// Area: start at bottom-left, trace points, end at bottom-right.
+			areaPath = fmt.Sprintf("M %.1f,%.1f ", pointX(0), float64(padT+plotH))
+			for i, d := range data {
+				areaPath += fmt.Sprintf("L %.1f,%.1f ", pointX(i), pointY(d.Value))
+			}
+			areaPath += fmt.Sprintf("L %.1f,%.1f Z", pointX(n-1), float64(padT+plotH))
+		}
+	}}
+	<div
+		class={ twmerge.Merge("rounded-xl border bg-card text-card-foreground shadow", classes) }
+		{ attrs... }
+	>
+		if title != "" {
+			<div class="flex flex-col space-y-1.5 p-6 pb-2">
+				<h3 class="font-semibold leading-none tracking-tight">{ title }</h3>
+			</div>
+		}
+		<div class="p-6 pt-0">
+			<svg
+				viewBox={ fmt.Sprintf("0 0 %d %d", svgW, svgH) }
+				class="w-full"
+				aria-label={ title }
+			>
+				<!-- Grid lines -->
+				for i := 0; i <= gridLines; i++ {
+					{{
+						y := float64(padT) + float64(plotH)*(1-float64(i)/float64(gridLines))
+						label := fmt.Sprintf("%.0f", maxVal*float64(i)/float64(gridLines))
+					}}
+					<line
+						x1={ fmt.Sprintf("%d", padL) }
+						y1={ fmt.Sprintf("%.1f", y) }
+						x2={ fmt.Sprintf("%d", svgW-padR) }
+						y2={ fmt.Sprintf("%.1f", y) }
+						stroke="hsl(var(--border))"
+						stroke-width="1"
+					/>
+					<text
+						x={ fmt.Sprintf("%d", padL-4) }
+						y={ fmt.Sprintf("%.1f", y+4) }
+						text-anchor="end"
+						font-size="11"
+						fill="hsl(var(--muted-foreground))"
+					>{ label }</text>
+				}
+				if n > 0 {
+					<!-- Area fill -->
+					<path
+						d={ areaPath }
+						fill="hsl(var(--primary))"
+						fill-opacity="0.15"
+					/>
+					<!-- Line -->
+					<polyline
+						points={ polyline }
+						fill="none"
+						stroke="hsl(var(--primary))"
+						stroke-width="2"
+						stroke-linejoin="round"
+						stroke-linecap="round"
+					/>
+					<!-- Dots + labels -->
+					for i, d := range data {
+						<circle
+							cx={ fmt.Sprintf("%.1f", pointX(i)) }
+							cy={ fmt.Sprintf("%.1f", pointY(d.Value)) }
+							r="4"
+							fill="hsl(var(--primary))"
+						/>
+						<text
+							x={ fmt.Sprintf("%.1f", pointX(i)) }
+							y={ fmt.Sprintf("%d", padT+plotH+15) }
+							text-anchor="middle"
+							font-size="11"
+							fill="hsl(var(--muted-foreground))"
+						>{ d.Label }</text>
+					}
+				}
+				<!-- X axis -->
+				<line
+					x1={ fmt.Sprintf("%d", padL) }
+					y1={ fmt.Sprintf("%d", padT+plotH) }
+					x2={ fmt.Sprintf("%d", svgW-padR) }
+					y2={ fmt.Sprintf("%d", padT+plotH) }
+					stroke="hsl(var(--border))"
+					stroke-width="1"
+				/>
+			</svg>
+		</div>
+	</div>
+}

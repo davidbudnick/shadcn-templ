@@ -1,0 +1,52 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	toggleGroupBaseClass     = "flex items-center justify-center gap-1"
+	toggleGroupItemBaseClass = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
+)
+
+// ToggleGroup renders a group wrapper. alpineKey is the x-data key that holds the selection.
+// For single mode, it should be a string; for multiple mode, an array.
+// The x-data expression is passed in as alpineData (e.g. "{ tg: '' }" or "{ tg: [] }").
+templ ToggleGroup(alpineData string, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(toggleGroupBaseClass, classes) }
+		x-data={ alpineData }
+		role="group"
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ToggleGroupItem renders a single item inside a ToggleGroup.
+// alpineModel is the x-data key (e.g. "tg"), value is this item's value string.
+// For single: clicking sets tg = value (or '' to deselect). For multiple: toggles in array.
+// mode: "single" or "multiple".
+templ ToggleGroupItem(alpineModel, value, mode string, variant ToggleVariant, size ToggleSize, classes string, attrs templ.Attributes) {
+	if mode == "multiple" {
+		<button
+			type="button"
+			:data-state={ `$data["` + alpineModel + `"].includes("` + value + `") ? 'on' : 'off'` }
+			:aria-pressed={ `$data["` + alpineModel + `"].includes("` + value + `")` }
+			x-on:click={ `$data["` + alpineModel + `"].includes("` + value + `") ? $data["` + alpineModel + `"].splice($data["` + alpineModel + `"].indexOf("` + value + `"), 1) : $data["` + alpineModel + `"].push("` + value + `")` }
+			class={ twmerge.Merge(toggleGroupItemBaseClass, variant.Class(), size.Class(), classes) }
+			{ attrs... }
+		>
+			{ children... }
+		</button>
+	} else {
+		<button
+			type="button"
+			:data-state={ `$data["` + alpineModel + `"] === "` + value + `" ? 'on' : 'off'` }
+			:aria-pressed={ `$data["` + alpineModel + `"] === "` + value + `"` }
+			x-on:click={ `$data["` + alpineModel + `"] === "` + value + `" ? $data["` + alpineModel + `"] = '' : $data["` + alpineModel + `"] = "` + value + `"` }
+			class={ twmerge.Merge(toggleGroupItemBaseClass, variant.Class(), size.Class(), classes) }
+			{ attrs... }
+		>
+			{ children... }
+		</button>
+	}
+}

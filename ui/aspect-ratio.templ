@@ -1,0 +1,24 @@
+package ui
+
+import (
+	"fmt"
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+)
+
+const (
+	aspectRatioBaseClass = "relative w-full"
+	aspectRatioInnerClass = "absolute inset-0"
+)
+
+// AspectRatio constrains content to a given ratio (width/height, e.g. 16/9).
+templ AspectRatio(ratio float64, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(aspectRatioBaseClass, classes) }
+		style={ fmt.Sprintf("padding-bottom: %.6f%%", (1.0/ratio)*100) }
+		{ attrs... }
+	>
+		<div class={ aspectRatioInnerClass }>
+			{ children... }
+		</div>
+	</div>
+}

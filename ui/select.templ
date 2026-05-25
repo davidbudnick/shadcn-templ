@@ -1,0 +1,124 @@
+package ui
+
+import (
+	"fmt"
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+const (
+	selectTriggerBaseClass = "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+	selectContentBaseClass = "absolute z-50 mt-1 max-h-96 min-w-[8rem] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+	selectItemBaseClass    = "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+	selectLabelBaseClass   = "px-2 py-1.5 text-sm font-semibold"
+	selectSeparatorClass   = "-mx-1 my-1 h-px bg-muted"
+)
+
+// SelectOption represents one option in a custom Select.
+type SelectOption struct {
+	Value    string
+	Label    string
+	Disabled bool
+}
+
+// Select renders a Radix-style custom select built with Alpine.js.
+// alpineVar is the Alpine variable name, placeholder is shown when nothing is selected,
+// and options is the list of options.
+templ Select(name, alpineVar, placeholder string, options []SelectOption, classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge("relative", classes) }
+		x-data={ fmt.Sprintf("{ %s: '', %s_open: false }", alpineVar, alpineVar) }
+		x-on:keydown.esc.window={ fmt.Sprintf("%s_open = false", alpineVar) }
+		{ attrs... }
+	>
+		<!-- hidden native input for form submission -->
+		<input
+			type="hidden"
+			name={ name }
+			x-bind:value={ alpineVar }
+		/>
+		<!-- trigger button -->
+		<button
+			type="button"
+			role="combobox"
+			aria-haspopup="listbox"
+			x-data
+			:aria-expanded={ fmt.Sprintf("%s_open", alpineVar) }
+			:aria-controls={ fmt.Sprintf("'%s-listbox'", alpineVar) }
+			x-on:click={ fmt.Sprintf("%s_open = !%s_open", alpineVar, alpineVar) }
+			x-on:keydown.enter.prevent={ fmt.Sprintf("%s_open = !%s_open", alpineVar, alpineVar) }
+			x-on:keydown.space.prevent={ fmt.Sprintf("%s_open = !%s_open", alpineVar, alpineVar) }
+			class={ selectTriggerBaseClass }
+		>
+			<span x-text={ fmt.Sprintf("%s ? $el.parentElement.querySelector('[data-value=\"' + %s + '\"]')?.textContent?.trim() : %q", alpineVar, alpineVar, placeholder) }>{ placeholder }</span>
+			@icons.ChevronDown(icons.Props{Class: "h-4 w-4 opacity-50"})
+		</button>
+		<!-- listbox popover -->
+		<div
+			:id={ fmt.Sprintf("'%s-listbox'", alpineVar) }
+			role="listbox"
+			x-show={ fmt.Sprintf("%s_open", alpineVar) }
+			x-cloak
+			x-transition
+			x-on:mousedown.outside={ fmt.Sprintf("%s_open = false", alpineVar) }
+			x-on:keydown.down.prevent="$focus.wrap().next()"
+			x-on:keydown.up.prevent="$focus.wrap().previous()"
+			x-trap.inert={ fmt.Sprintf("%s_open", alpineVar) }
+			class={ selectContentBaseClass }
+		>
+			<div class="p-1">
+				for _, opt := range options {
+					@selectItem(alpineVar, opt)
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ selectItem(alpineVar string, opt SelectOption) {
+	<div
+		role="option"
+		data-value={ opt.Value }
+		:aria-selected={ fmt.Sprintf("%s === %q", alpineVar, opt.Value) }
+		:data-state={ fmt.Sprintf("%s === %q ? 'checked' : 'unchecked'", alpineVar, opt.Value) }
+		if opt.Disabled {
+			data-disabled
+			aria-disabled="true"
+		}
+		tabindex="0"
+		x-data
+		x-on:click={ fmt.Sprintf("if (!$el.dataset.disabled) { %s = %q; %s_open = false }", alpineVar, opt.Value, alpineVar) }
+		x-on:keydown.enter={ fmt.Sprintf("if (!$el.dataset.disabled) { %s = %q; %s_open = false }", alpineVar, opt.Value, alpineVar) }
+		class={ selectItemBaseClass }
+	>
+		<span class="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+			<span x-show={ fmt.Sprintf("%s === %q", alpineVar, opt.Value) } x-cloak>
+				@icons.Check(icons.Props{Class: "h-4 w-4"})
+			</span>
+		</span>
+		{ opt.Label }
+	</div>
+}
+
+templ SelectLabel(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(selectLabelBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+templ SelectSeparator(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(selectSeparatorClass, classes) }
+		{ attrs... }
+	></div>
+}
+
+// SelectGroup groups related options inside the listbox.
+templ SelectGroup(classes string, attrs templ.Attributes) {
+	<div role="group" class={ twmerge.Merge(classes) } { attrs... }>
+		{ children... }
+	</div>
+}

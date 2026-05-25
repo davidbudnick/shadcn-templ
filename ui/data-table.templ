@@ -1,0 +1,166 @@
+package ui
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+// DataTableColumn describes a column: key, header label, and sortable flag.
+type DataTableColumn struct {
+	Key      string
+	Label    string
+	Sortable bool
+}
+
+// DataTableRow is a single data row — a map of column-key to display value.
+type DataTableRow map[string]string
+
+// DataTable renders an interactive table with Alpine-powered filter, sort, row
+// selection and pagination over pre-rendered server-side data.
+templ DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, classes string, attrs templ.Attributes) {
+	{{
+		rowsJSON, _ := json.Marshal(rows)
+		colsJSON, _ := json.Marshal(func() []string {
+			keys := make([]string, len(columns))
+			for i, c := range columns {
+				keys[i] = c.Key
+			}
+			return keys
+		}())
+		_ = colsJSON
+	}}
+	<div
+		class={ twmerge.Merge("w-full space-y-4", classes) }
+		x-data={ fmt.Sprintf(`{
+  rows: %s,
+  filter: '',
+  sortKey: '',
+  sortAsc: true,
+  page: 0,
+  pageSize: %d,
+  selectedAll: false,
+  selected: {},
+  get filtered() {
+    let r = this.rows;
+    if (this.filter) {
+      const f = this.filter.toLowerCase();
+      r = r.filter(row => Object.values(row).some(v => String(v).toLowerCase().includes(f)));
+    }
+    if (this.sortKey) {
+      const k = this.sortKey;
+      const asc = this.sortAsc;
+      r = [...r].sort((a,b) => {
+        const av = String(a[k]||''), bv = String(b[k]||'');
+        return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+      });
+    }
+    return r;
+  },
+  get paginated() {
+    const s = this.page * this.pageSize;
+    return this.filtered.slice(s, s + this.pageSize);
+  },
+  get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.pageSize)); },
+  toggleSort(key) {
+    if (this.sortKey === key) { this.sortAsc = !this.sortAsc; } else { this.sortKey = key; this.sortAsc = true; }
+    this.page = 0;
+  },
+  toggleAll() {
+    this.selectedAll = !this.selectedAll;
+    if (this.selectedAll) {
+      this.paginated.forEach((r,i) => { this.selected[this.page+'_'+i] = true; });
+    } else { this.selected = {}; }
+  },
+  selectedCount() { return Object.values(this.selected).filter(Boolean).length; }
+}`, string(rowsJSON), pageSize) }
+		{ attrs... }
+	>
+		<!-- Filter + selected count -->
+		<div class="flex items-center justify-between gap-2">
+			<input
+				type="text"
+				x-model="filter"
+				x-on:input="page = 0"
+				placeholder="Filter..."
+				class="flex h-9 max-w-xs rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+			/>
+			<span class="text-sm text-muted-foreground" x-show="selectedCount() > 0" x-cloak>
+				<span x-text="selectedCount()"></span> row(s) selected
+			</span>
+		</div>
+		<!-- Table -->
+		<div class="relative w-full overflow-auto rounded-md border">
+			<table class="w-full caption-bottom text-sm">
+				<thead class="[&_tr]:border-b">
+					<tr class="border-b transition-colors hover:bg-muted/50">
+						<!-- Select-all checkbox -->
+						<th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground w-10">
+							<input type="checkbox" x-model="selectedAll" x-on:change="toggleAll()" class="h-4 w-4 rounded border-primary"/>
+						</th>
+						for _, col := range columns {
+							<th
+								class="h-10 px-2 text-left align-middle font-medium text-muted-foreground"
+							>
+								if col.Sortable {
+									<button
+										type="button"
+										class="inline-flex items-center gap-1 hover:text-foreground"
+										x-on:click={ fmt.Sprintf("toggleSort('%s')", col.Key) }
+									>
+										{ col.Label }
+										@icons.ArrowUpDown(icons.Props{Class: "h-4 w-4"})
+									</button>
+								} else {
+									{ col.Label }
+								}
+							</th>
+						}
+					</tr>
+				</thead>
+				<tbody class="[&_tr:last-child]:border-0">
+					<template x-for="(row, idx) in paginated" :key="page + '_' + idx">
+						<tr class="border-b transition-colors hover:bg-muted/50" :class="selected[page+'_'+idx] ? 'bg-muted' : ''">
+							<td class="p-2 align-middle">
+								<input type="checkbox" x-model="selected[page+'_'+idx]" class="h-4 w-4 rounded border-primary"/>
+							</td>
+							for _, col := range columns {
+								<td class="p-2 align-middle" x-text={ fmt.Sprintf("row['%s'] || ''", col.Key) }></td>
+							}
+						</tr>
+					</template>
+					<template x-if="filtered.length === 0">
+						<tr>
+							<td
+								class="p-4 text-center text-muted-foreground"
+								{ templ.Attributes{"colspan": fmt.Sprintf("%d", len(columns)+1)}... }
+							>No results.</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+		</div>
+		<!-- Pagination -->
+		<div class="flex items-center justify-between text-sm text-muted-foreground">
+			<span>
+				Page <span x-text="page + 1"></span> of <span x-text="totalPages"></span>
+			</span>
+			<div class="flex gap-2">
+				<button
+					type="button"
+					class={ twmerge.Merge("inline-flex items-center justify-center h-8 px-3 rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none") }
+					x-on:click="if (page > 0) page--"
+					:disabled="page === 0"
+				>Previous</button>
+				<button
+					type="button"
+					class={ twmerge.Merge("inline-flex items-center justify-center h-8 px-3 rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none") }
+					x-on:click="if (page < totalPages - 1) page++"
+					:disabled="page >= totalPages - 1"
+				>Next</button>
+			</div>
+		</div>
+	</div>
+}

@@ -1,0 +1,134 @@
+package main
+
+import (
+	"github.com/davidbudnick/shadcn-templ/icons"
+	"github.com/davidbudnick/shadcn-templ/ui"
+)
+
+// --- Radio Group ---
+
+templ RadioGroupDemo() {
+	<div class="flex flex-col gap-4">
+		@ui.RadioGroup(`{ rg_val: "option-one" }`, "", nil) {
+			<div class="flex items-center space-x-2">
+				@ui.RadioGroupItem("notify", "option-one", "rg_val", "", templ.Attributes{"id": "rg-option-one"})
+				@ui.Label("", templ.Attributes{"for": "rg-option-one"}) {
+					Default
+				}
+			</div>
+			<div class="flex items-center space-x-2">
+				@ui.RadioGroupItem("notify", "option-two", "rg_val", "", templ.Attributes{"id": "rg-option-two"})
+				@ui.Label("", templ.Attributes{"for": "rg-option-two"}) {
+					Comfortable
+				}
+			</div>
+			<div class="flex items-center space-x-2">
+				@ui.RadioGroupItem("notify", "option-three", "rg_val", "", templ.Attributes{"id": "rg-option-three"})
+				@ui.Label("", templ.Attributes{"for": "rg-option-three"}) {
+					Compact
+				}
+			</div>
+		}
+	</div>
+}
+
+// --- Slider ---
+
+templ SliderDemo() {
+	<div class="w-[60%] min-w-[200px]">
+		@ui.Slider("volume", 0, 100, 1, 33, "", nil)
+	</div>
+}
+
+// --- Select ---
+
+templ SelectDemo() {
+	@ui.Select(
+		"fruit",
+		"sel_fruit",
+		"Select a fruit",
+		[]ui.SelectOption{
+			{Value: "apple", Label: "Apple"},
+			{Value: "banana", Label: "Banana"},
+			{Value: "blueberry", Label: "Blueberry"},
+			{Value: "grapes", Label: "Grapes"},
+			{Value: "pineapple", Label: "Pineapple"},
+		},
+		"w-[180px]",
+		nil,
+	)
+}
+
+// --- Native Select ---
+
+templ NativeSelectDemo() {
+	<div class="w-[180px]">
+		@ui.NativeSelect("theme", "", nil) {
+			<option value="" disabled selected>Select a theme</option>
+			@ui.NativeSelectOption("light", "", nil) {
+				Light
+			}
+			@ui.NativeSelectOption("dark", "", nil) {
+				Dark
+			}
+			@ui.NativeSelectOption("system", "", nil) {
+				System
+			}
+		}
+	</div>
+}
+
+// --- Input Group ---
+
+templ InputGroupDemo() {
+	<div class="flex flex-col gap-4 w-full max-w-sm">
+		@ui.InputGroup("", nil) {
+			@ui.InputGroupAddon("leading", "", nil) {
+				@icons.DollarSign(icons.Props{Class: "h-4 w-4"})
+			}
+			@ui.InputGroupInput("amount", ui.InputTypeNumber, true, false, "", templ.Attributes{"placeholder": "0.00"})
+		}
+		@ui.InputGroup("", nil) {
+			@ui.InputGroupAddon("leading", "", nil) {
+				{ "https://" }
+			}
+			@ui.InputGroupInput("url", ui.InputTypeText, true, true, "", templ.Attributes{"placeholder": "example.com"})
+			@ui.InputGroupAddon("trailing", "", nil) {
+				{ ".com" }
+			}
+		}
+		@ui.InputGroup("", nil) {
+			@ui.InputGroupInput("email", ui.InputTypeEmail, false, true, "", templ.Attributes{"placeholder": "Email address"})
+			@ui.InputGroupAddon("trailing", "", nil) {
+				@icons.Mail(icons.Props{Class: "h-4 w-4"})
+			}
+		}
+	</div>
+}
+
+// --- Button Group ---
+
+templ ButtonGroupDemo() {
+	<div class="flex flex-col gap-4 items-start">
+		@ui.ButtonGroup("", nil) {
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+				Bold
+			}
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+				Italic
+			}
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+				Underline
+			}
+		}
+		@ui.ButtonGroup("", nil) {
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
+				@icons.ChevronDown(icons.Props{Class: "mr-1 h-4 w-4"})
+				Deploy
+			}
+			@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeIcon, "", nil) {
+				@icons.ChevronDown(icons.Props{Class: "h-4 w-4"})
+			}
+		}
+	</div>
+}

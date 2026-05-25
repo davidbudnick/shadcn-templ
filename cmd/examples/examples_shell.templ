@@ -1,0 +1,56 @@
+package main
+
+// ExampleShell is the full-bleed layout used by the page-level examples
+// (Authentication, Dashboard, Mail, ...). It shares the global header with the
+// docs and adds a secondary tab bar for switching between examples.
+templ ExampleShell(pages []NavItem, current, title string) {
+	@document(title) {
+		@siteHeader("examples")
+		@exampleTabs(pages, current)
+		<main>
+			{ children... }
+		</main>
+	}
+}
+
+// exampleDocument wraps a full-page example in the ExampleShell so it can be
+// rendered as a complete HTML document from Go (server + static export).
+templ exampleDocument(pages []NavItem, current, title string, body templ.Component) {
+	@ExampleShell(pages, current, title) {
+		@body
+	}
+}
+
+// exampleTabs is the secondary navigation under the header: a horizontally
+// scrollable row of example pages with the current one shown as an active pill.
+templ exampleTabs(pages []NavItem, current string) {
+	<div class="sticky top-14 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+		<nav class="flex h-12 items-center gap-1 overflow-x-auto px-4 lg:px-6">
+			for _, p := range pages {
+				<a
+					href={ urlExample(p.Slug) }
+					if p.Slug == current {
+						class="whitespace-nowrap rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground"
+						aria-current="page"
+					} else {
+						class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+					}
+				>{ p.Title }</a>
+			}
+		</nav>
+	</div>
+}
+
+// nativeSelect renders a styled native <select>, used where the shadcn/ui
+// examples use the (not-yet-ported) Select component.
+templ nativeSelect(name string, options []string) {
+	<select
+		name={ name }
+		class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+	>
+		for _, o := range options {
+			<option value={ o }>{ o }</option>
+		}
+	</select>
+}
+

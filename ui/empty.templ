@@ -1,0 +1,61 @@
+package ui
+
+import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+
+const (
+	emptyBaseClass       = "flex flex-col items-center justify-center text-center"
+	emptyIconBaseClass   = "mb-4 text-muted-foreground"
+	emptyTitleBaseClass  = "text-lg font-semibold"
+	emptyDescBaseClass   = "mt-1 text-sm text-muted-foreground"
+	emptyActionBaseClass = "mt-4"
+)
+
+// Empty renders an empty-state container.
+templ Empty(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(emptyBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// EmptyIcon wraps the icon slot of an empty-state.
+templ EmptyIcon(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(emptyIconBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// EmptyTitle renders the heading of an empty-state.
+templ EmptyTitle(classes string, attrs templ.Attributes) {
+	<h3
+		class={ twmerge.Merge(emptyTitleBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h3>
+}
+
+// EmptyDescription renders the body text of an empty-state.
+templ EmptyDescription(classes string, attrs templ.Attributes) {
+	<p
+		class={ twmerge.Merge(emptyDescBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+// EmptyAction wraps the call-to-action area of an empty-state.
+templ EmptyAction(classes string, attrs templ.Attributes) {
+	<div
+		class={ twmerge.Merge(emptyActionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}

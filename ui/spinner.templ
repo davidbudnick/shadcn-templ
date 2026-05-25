@@ -1,0 +1,24 @@
+package ui
+
+import (
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
+
+const (
+	spinnerBaseClass = "animate-spin"
+)
+
+// Spinner renders an animated loading indicator.
+// Pass size classes (e.g. "h-4 w-4") via classes — they are applied to the SVG icon.
+templ Spinner(classes string, attrs templ.Attributes) {
+	<span
+		role="status"
+		aria-label="Loading"
+		class="inline-flex"
+		{ attrs... }
+	>
+		@icons.Loader(icons.Props{Class: twmerge.Merge(spinnerBaseClass, "text-muted-foreground", classes)})
+		<span class="sr-only">Loading...</span>
+	</span>
+}
