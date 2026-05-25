@@ -11,8 +11,8 @@ For the full API reference and authoring conventions, read
 
 ## Prerequisites
 
-- **Go 1.23+**
-- **templ CLI** — `go install github.com/a-h/templ/cmd/templ@v0.3.1001`
+- **Go 1.25+**
+- **templ CLI** — `go install github.com/a-h/templ/cmd/templ@v0.3.1020`
   (match the version pinned in [`go.mod`](go.mod) / CI).
 - **Tailwind standalone CLI** — download it once into the repo root (it's
   git-ignored); pick the binary for your platform from the

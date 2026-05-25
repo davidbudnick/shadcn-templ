@@ -56,7 +56,7 @@ body:
     attributes:
       label: Go / templ version
       description: Output of `go version` and the templ CLI version (`templ version`).
-      placeholder: "go1.23.4 darwin/arm64, templ v0.3.1001"
+      placeholder: "go1.25.0 darwin/arm64, templ v0.3.1020"
     validations:
       required: true
 
