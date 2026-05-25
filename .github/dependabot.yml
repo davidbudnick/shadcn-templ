@@ -1,0 +1,40 @@
+# Dependabot configuration.
+#
+# Note: the Tailwind standalone CLI is downloaded out-of-band at build time
+# (see README "Development" and .github/workflows/pages.yml) rather than via a
+# package manager, so Dependabot cannot track or bump it. When a new Tailwind
+# v3.4.x release is published, bump the pinned version in the README and the
+# pages workflow by hand.
+version: 2
+updates:
+  # Go modules — keeps the single runtime dependency (a-h/templ) current.
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "go"
+    groups:
+      gomod-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions — keeps the workflow actions current
+  # (actions/checkout, actions/setup-go and the GitHub Pages actions:
+  # configure-pages, upload-pages-artifact, deploy-pages).
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      github-actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"

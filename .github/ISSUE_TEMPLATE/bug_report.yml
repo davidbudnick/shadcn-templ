@@ -1,0 +1,78 @@
+name: Bug report
+description: Report a component that doesn't render or behave like shadcn/ui.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug! Please search
+        [existing issues](https://github.com/davidbudnick/shadcn-templ/issues)
+        first to avoid duplicates.
+
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      description: Which component is affected? (e.g. `Dialog`, `Select`, `DataTable`)
+      placeholder: Button
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: A minimal `.templ` snippet or steps that trigger the bug.
+      placeholder: |
+        ```templ
+        @ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeDefault, "", nil) {
+          Click me
+        }
+        ```
+      render: templ
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen? Link to the matching shadcn/ui docs if relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened? Include rendered HTML, screenshots, or console errors if helpful.
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Go / templ version
+      description: Output of `go version` and the templ CLI version (`templ version`).
+      placeholder: "go1.23.4 darwin/arm64, templ v0.3.1001"
+    validations:
+      required: true
+
+  - type: input
+    id: library-version
+    attributes:
+      label: shadcn-templ version
+      description: The module version or commit you're on (e.g. `v0.1.1`).
+      placeholder: v0.1.1
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might help — browser, dark mode / theme, related issues.
+    validations:
+      required: false

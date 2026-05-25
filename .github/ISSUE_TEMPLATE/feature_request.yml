@@ -1,0 +1,46 @@
+name: Feature request
+description: Suggest a new component, variant, or improvement.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion! Please search
+        [existing issues](https://github.com/davidbudnick/shadcn-templ/issues)
+        first. Note this project tracks shadcn/ui — features should generally
+        map to something in [the upstream docs](https://ui.shadcn.com/docs).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the use case or limitation you're running into.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What component, variant, or API change would you like? Link to the shadcn/ui equivalent if there is one.
+    validations:
+      required: true
+
+  - type: input
+    id: shadcn-link
+    attributes:
+      label: shadcn/ui reference
+      description: Link to the matching shadcn/ui component or docs page, if applicable.
+      placeholder: https://ui.shadcn.com/docs/components/...
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any workarounds you've tried or other approaches you've thought about.
+    validations:
+      required: false
