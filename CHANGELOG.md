@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-25
+
+### Changed
+
+- **Migrated styling to Tailwind CSS v4** (v4.3.0). Tailwind is now configured
+  CSS-first in `static/css/input.css` via `@theme` / `@plugin` / `@source`;
+  there is no `tailwind.config.js`. The embedded stylesheet (`shadcntempl.CSS`)
+  is regenerated, but component markup and emitted classes are unchanged.
+- **Raised the minimum Go version to 1.25** (previously documented as 1.23),
+  required by the templ upgrade below.
+- Bumped `github.com/a-h/templ` to `v0.3.1020` and regenerated every component
+  (its codegen now uses the `templ.ResolveAttributeValue` runtime API).
+- Bumped pinned GitHub Actions: `checkout` v6, `upload-artifact` v7,
+  `configure-pages` v6, `upload-pages-artifact` v5, `deploy-pages` v5.
+
+### Added
+
+- CI now builds, vets, and race-tests across Go 1.25 and 1.26 and uploads a
+  per-version coverage profile as a workflow artifact.
+- Repository metadata: Dependabot config, `CONTRIBUTING.md`, `SECURITY.md`,
+  issue and pull-request templates, `.editorconfig`, and this changelog.
+
+### Removed
+
+- `tailwind.config.js` — replaced by the CSS-first `@theme` configuration in
+  `static/css/input.css`.
+
 ## [0.1.1] - 2026-05-24
 
 ### Added
@@ -43,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   GitHub Pages deploy workflow.
 - `AGENTS.md` skill file documenting the API and conventions for AI assistants.
 
-[Unreleased]: https://github.com/davidbudnick/shadcn-templ/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/davidbudnick/shadcn-templ/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/davidbudnick/shadcn-templ/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/davidbudnick/shadcn-templ/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/davidbudnick/shadcn-templ/releases/tag/v0.1.0
