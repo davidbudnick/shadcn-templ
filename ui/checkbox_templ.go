@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	checkboxBaseClass = "peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+	checkboxBaseClass = "peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary dark:bg-input/30 dark:data-[state=checked]:bg-primary"
 )
 
 // `attrs` will go to the inner input
@@ -44,7 +44,7 @@ func Checkbox(name, classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<button x-data=\"{ checked: false }\" type=\"button\" role=\"checkbox\" :aria-checked=\"checked\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<button data-slot=\"checkbox\" x-data=\"{ checked: false }\" type=\"button\" role=\"checkbox\" :aria-checked=\"checked\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -64,7 +64,7 @@ func Checkbox(name, classes string, attrs templ.Attributes) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " x-on:keydown.enter.prevent=\"\" x-on:click=\"checked = ! checked\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " x-on:keydown.space.prevent=\"checked = ! checked\" x-on:click=\"checked = ! checked\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -84,7 +84,7 @@ func Checkbox(name, classes string, attrs templ.Attributes) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/checkbox.templ`, Line: 32, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/checkbox.templ`, Line: 33, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -98,7 +98,7 @@ func Checkbox(name, classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "> <span x-data class=\"pointer-events-none flex items-center justify-center text-current\" :data-state=\"checked ? 'checked' : 'unchecked'\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "> <span data-slot=\"checkbox-indicator\" x-data class=\"grid place-content-center text-current transition-none\" :data-state=\"checked ? 'checked' : 'unchecked'\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -113,7 +113,7 @@ func Checkbox(name, classes string, attrs templ.Attributes) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = icons.Check(icons.Props{
-			Class: "h-4 w-4",
+			Class: "size-3.5",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

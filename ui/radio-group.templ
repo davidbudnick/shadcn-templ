@@ -7,14 +7,15 @@ import (
 )
 
 const (
-	radioGroupBaseClass     = "grid gap-2"
-	radioGroupItemBaseClass = "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+	radioGroupBaseClass     = "grid gap-3"
+	radioGroupItemBaseClass = "aspect-square size-4 shrink-0 rounded-full border border-input text-primary shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30"
 )
 
-// RadioGroup renders a group container. alpineValue is the Alpine expression for the x-data value field,
+// RadioGroup renders a group container. alpineData is the Alpine expression for the x-data value field,
 // e.g. `"{ rg_val: 'option-one' }"`.
 templ RadioGroup(alpineData string, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="radio-group"
 		role="radiogroup"
 		aria-required="false"
 		x-data={ alpineData }
@@ -27,14 +28,26 @@ templ RadioGroup(alpineData string, classes string, attrs templ.Attributes) {
 
 // RadioGroupItem renders a single radio option. name is the HTML input name; value is the item value;
 // alpineValueVar is the Alpine variable name used in RadioGroup's x-data (e.g. "rg_val").
+//
+// The group is a single tab stop (roving tabindex): the checked item is focusable,
+// or the first item when nothing is checked. Arrow keys move focus between items and
+// select them.
 templ RadioGroupItem(name, value, alpineValueVar string, classes string, attrs templ.Attributes) {
 	<button
+		data-slot="radio-group-item"
 		x-data
 		type="button"
 		role="radio"
+		data-value={ value }
 		:aria-checked={ fmt.Sprintf("%s === %q", alpineValueVar, value) }
 		:data-state={ fmt.Sprintf("%s === %q ? 'checked' : 'unchecked'", alpineValueVar, value) }
+		:tabindex={ fmt.Sprintf("%s === %q ? 0 : (%s ? -1 : ($el === $el.closest('[role=radiogroup]').querySelector('[role=radio]:not([disabled])') ? 0 : -1))", alpineValueVar, value, alpineValueVar) }
 		x-on:click={ fmt.Sprintf("%s = %q", alpineValueVar, value) }
+		x-on:keydown.up.prevent={ fmt.Sprintf("%s = ((els) => { let i = els.indexOf($el); let n = els[(i - 1 + els.length) %% els.length]; n.focus(); return n.dataset.value })([...$el.closest('[role=radiogroup]').querySelectorAll('[role=radio]:not([disabled])')])", alpineValueVar) }
+		x-on:keydown.left.prevent={ fmt.Sprintf("%s = ((els) => { let i = els.indexOf($el); let n = els[(i - 1 + els.length) %% els.length]; n.focus(); return n.dataset.value })([...$el.closest('[role=radiogroup]').querySelectorAll('[role=radio]:not([disabled])')])", alpineValueVar) }
+		x-on:keydown.down.prevent={ fmt.Sprintf("%s = ((els) => { let i = els.indexOf($el); let n = els[(i + 1) %% els.length]; n.focus(); return n.dataset.value })([...$el.closest('[role=radiogroup]').querySelectorAll('[role=radio]:not([disabled])')])", alpineValueVar) }
+		x-on:keydown.right.prevent={ fmt.Sprintf("%s = ((els) => { let i = els.indexOf($el); let n = els[(i + 1) %% els.length]; n.focus(); return n.dataset.value })([...$el.closest('[role=radiogroup]').querySelectorAll('[role=radio]:not([disabled])')])", alpineValueVar) }
+		x-on:keydown.space.prevent={ fmt.Sprintf("%s = %q", alpineValueVar, value) }
 		if boolAttr("disabled", attrs) {
 			aria-disabled
 			data-disabled
@@ -52,11 +65,12 @@ templ RadioGroupItem(name, value, alpineValueVar string, classes string, attrs t
 			:checked={ fmt.Sprintf("%s === %q", alpineValueVar, value) }
 		/>
 		<span
-			class="flex items-center justify-center"
+			data-slot="radio-group-indicator"
+			class="relative flex items-center justify-center"
 			x-show={ fmt.Sprintf("%s === %q", alpineValueVar, value) }
 			x-cloak
 		>
-			@icons.Circle(icons.Props{Class: "h-2.5 w-2.5 fill-primary"})
+			@icons.Circle(icons.Props{Class: "absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-primary"})
 		</span>
 	</button>
 }

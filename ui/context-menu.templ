@@ -1,21 +1,27 @@
 package ui
 
-import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+import (
+	twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
 
 const (
-	contextMenuContentBaseClass   = "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
-	contextMenuItemBaseClass      = "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-	contextMenuSeparatorBaseClass = "-mx-1 my-1 h-px bg-muted"
-	contextMenuShortcutBaseClass  = "ml-auto text-xs tracking-widest opacity-60"
-	contextMenuLabelBaseClass     = "px-2 py-1.5 text-sm font-semibold text-foreground"
+	contextMenuContentBaseClass    = "z-50 min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+	contextMenuItemBaseClass       = "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+	contextMenuCheckItemBaseClass  = "relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+	contextMenuSeparatorBaseClass  = "-mx-1 my-1 h-px bg-border"
+	contextMenuShortcutBaseClass   = "ml-auto text-xs tracking-widest text-muted-foreground"
+	contextMenuLabelBaseClass      = "px-2 py-1.5 text-sm font-medium text-foreground data-[inset]:pl-8"
+	contextMenuSubTriggerBaseClass = "flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[inset]:pl-8 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+	contextMenuSubContentBaseClass = "absolute left-full top-0 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg"
 )
 
 templ ContextMenu(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="context-menu"
 		class={ twmerge.Merge("relative", classes) }
 		{ attrs... }
 		x-data="{ shadcntempl_open: false, shadcntempl_x: 0, shadcntempl_y: 0 }"
-		x-on:contextmenu.prevent="shadcntempl_x = $event.clientX; shadcntempl_y = $event.clientY; shadcntempl_open = true"
 		x-on:keydown.esc.window="shadcntempl_open = false"
 	>
 		{ children... }
@@ -24,8 +30,10 @@ templ ContextMenu(classes string, attrs templ.Attributes) {
 
 templ ContextMenuTrigger(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="context-menu-trigger"
 		class={ twmerge.Merge(classes) }
 		{ attrs... }
+		x-on:contextmenu.prevent="shadcntempl_x = $event.clientX; shadcntempl_y = $event.clientY; shadcntempl_open = true"
 	>
 		{ children... }
 	</div>
@@ -33,12 +41,14 @@ templ ContextMenuTrigger(classes string, attrs templ.Attributes) {
 
 templ ContextMenuContent(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="context-menu-content"
 		class={ twmerge.Merge(contextMenuContentBaseClass, classes) }
 		{ attrs... }
 		x-cloak
 		x-show="shadcntempl_open"
 		x-on:mousedown.outside="shadcntempl_open = false"
 		x-trap.inert.noscroll="shadcntempl_open"
+		x-effect="if (shadcntempl_open) { $nextTick(() => { let f = $el.querySelector('[role^=menuitem]:not([data-disabled])'); f && f.focus() }) }"
 		x-on:keydown.down.prevent="$focus.wrap().next()"
 		x-on:keydown.up.prevent="$focus.wrap().previous()"
 		x-transition
@@ -51,6 +61,7 @@ templ ContextMenuContent(classes string, attrs templ.Attributes) {
 
 templ ContextMenuItem(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="context-menu-item"
 		class={ twmerge.Merge(contextMenuItemBaseClass, classes) }
 		{ attrs... }
 		x-data
@@ -63,8 +74,69 @@ templ ContextMenuItem(classes string, attrs templ.Attributes) {
 	</div>
 }
 
+// ContextMenuGroup groups related items.
+templ ContextMenuGroup(classes string, attrs templ.Attributes) {
+	<div data-slot="context-menu-group" role="group" class={ twmerge.Merge(classes) } { attrs... }>
+		{ children... }
+	</div>
+}
+
+// ContextMenuCheckboxItem is a menu item with a checkmark bound to `alpineChecked`
+// (an Alpine boolean expression defined in the menu's x-data).
+templ ContextMenuCheckboxItem(alpineChecked, classes string, attrs templ.Attributes) {
+	<div
+		data-slot="context-menu-checkbox-item"
+		role="menuitemcheckbox"
+		x-data
+		tabindex="0"
+		:aria-checked={ alpineChecked }
+		x-on:click={ alpineChecked + " = ! " + alpineChecked }
+		x-on:keydown.enter={ alpineChecked + " = ! " + alpineChecked }
+		class={ twmerge.Merge(contextMenuCheckItemBaseClass, classes) }
+		{ attrs... }
+	>
+		<span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+			<span x-show={ alpineChecked } x-cloak>
+				@icons.Check(icons.Props{Class: "size-4"})
+			</span>
+		</span>
+		{ children... }
+	</div>
+}
+
+// ContextMenuRadioGroup holds radio items bound to `alpineValue` (an Alpine
+// variable in the menu's x-data).
+templ ContextMenuRadioGroup(classes string, attrs templ.Attributes) {
+	<div data-slot="context-menu-radio-group" role="group" class={ twmerge.Merge(classes) } { attrs... }>
+		{ children... }
+	</div>
+}
+
+// ContextMenuRadioItem selects `value` into the Alpine variable `alpineValue`.
+templ ContextMenuRadioItem(alpineValue, value, classes string, attrs templ.Attributes) {
+	<div
+		data-slot="context-menu-radio-item"
+		role="menuitemradio"
+		x-data
+		tabindex="0"
+		:aria-checked={ alpineValue + " === '" + value + "'" }
+		x-on:click={ alpineValue + " = '" + value + "'" }
+		x-on:keydown.enter={ alpineValue + " = '" + value + "'" }
+		class={ twmerge.Merge(contextMenuCheckItemBaseClass, classes) }
+		{ attrs... }
+	>
+		<span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+			<span x-show={ alpineValue + " === '" + value + "'" } x-cloak>
+				@icons.Circle(icons.Props{Class: "size-2 fill-current"})
+			</span>
+		</span>
+		{ children... }
+	</div>
+}
+
 templ ContextMenuSeparator(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="context-menu-separator"
 		class={ twmerge.Merge(contextMenuSeparatorBaseClass, classes) }
 		{ attrs... }
 		role="separator"
@@ -73,6 +145,7 @@ templ ContextMenuSeparator(classes string, attrs templ.Attributes) {
 
 templ ContextMenuShortcut(classes string, attrs templ.Attributes) {
 	<span
+		data-slot="context-menu-shortcut"
 		class={ twmerge.Merge(contextMenuShortcutBaseClass, classes) }
 		{ attrs... }
 	>
@@ -82,8 +155,63 @@ templ ContextMenuShortcut(classes string, attrs templ.Attributes) {
 
 templ ContextMenuLabel(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="context-menu-label"
 		class={ twmerge.Merge(contextMenuLabelBaseClass, classes) }
 		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ContextMenuSub wraps a submenu trigger and content, owning its own open state.
+templ ContextMenuSub(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="context-menu-sub"
+		class={ twmerge.Merge("relative", classes) }
+		x-data="{ shadcntempl_subopen: false }"
+		x-on:mouseleave="shadcntempl_subopen = false"
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ContextMenuSubTrigger opens the adjacent ContextMenuSubContent.
+templ ContextMenuSubTrigger(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="context-menu-sub-trigger"
+		role="menuitem"
+		aria-haspopup="menu"
+		tabindex="0"
+		:aria-expanded="shadcntempl_subopen"
+		:data-state="shadcntempl_subopen ? 'open' : 'closed'"
+		class={ twmerge.Merge(contextMenuSubTriggerBaseClass, classes) }
+		{ attrs... }
+		x-on:click="shadcntempl_subopen = !shadcntempl_subopen"
+		x-on:mouseenter="shadcntempl_subopen = true"
+		x-on:keydown.enter.prevent="shadcntempl_subopen = !shadcntempl_subopen"
+		x-on:keydown.right.prevent="shadcntempl_subopen = true"
+		x-on:keydown.left.prevent="shadcntempl_subopen = false"
+	>
+		{ children... }
+		@icons.ChevronRight(icons.Props{Class: "ml-auto"})
+	</div>
+}
+
+// ContextMenuSubContent is the submenu popover, shown when its sibling
+// ContextMenuSubTrigger is active.
+templ ContextMenuSubContent(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="context-menu-sub-content"
+		role="menu"
+		class={ twmerge.Merge(contextMenuSubContentBaseClass, classes) }
+		{ attrs... }
+		x-show="shadcntempl_subopen"
+		x-transition
+		x-cloak
+		x-on:keydown.down.prevent="$focus.wrap().next()"
+		x-on:keydown.up.prevent="$focus.wrap().previous()"
+		x-on:keydown.left.prevent="shadcntempl_subopen = false"
 	>
 		{ children... }
 	</div>

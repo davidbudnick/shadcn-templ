@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	selectTriggerBaseClass = "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-	selectContentBaseClass = "absolute z-50 mt-1 max-h-96 min-w-[8rem] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
-	selectItemBaseClass    = "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-	selectLabelBaseClass   = "px-2 py-1.5 text-sm font-semibold"
-	selectSeparatorClass   = "-mx-1 my-1 h-px bg-muted"
+	selectTriggerBaseClass = "flex w-fit items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=default]:h-9 data-[size=sm]:h-8 dark:bg-input/30 dark:hover:bg-input/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+	selectContentBaseClass = "absolute z-50 mt-1 max-h-96 min-w-[8rem] w-full overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md"
+	selectItemBaseClass    = "relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+	selectLabelBaseClass   = "px-2 py-1.5 text-xs text-muted-foreground"
+	selectSeparatorClass   = "pointer-events-none -mx-1 my-1 h-px bg-border"
 )
 
 // SelectOption represents one option in a custom Select.
@@ -26,8 +26,9 @@ type SelectOption struct {
 // and options is the list of options.
 templ Select(name, alpineVar, placeholder string, options []SelectOption, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="select"
 		class={ twmerge.Merge("relative", classes) }
-		x-data={ fmt.Sprintf("{ %s: '', %s_open: false }", alpineVar, alpineVar) }
+		x-data={ selectDataExpr(alpineVar, options) }
 		x-on:keydown.esc.window={ fmt.Sprintf("%s_open = false", alpineVar) }
 		{ attrs... }
 	>
@@ -41,20 +42,25 @@ templ Select(name, alpineVar, placeholder string, options []SelectOption, classe
 		<button
 			type="button"
 			role="combobox"
+			data-slot="select-trigger"
+			data-size="default"
 			aria-haspopup="listbox"
 			x-data
 			:aria-expanded={ fmt.Sprintf("%s_open", alpineVar) }
 			:aria-controls={ fmt.Sprintf("'%s-listbox'", alpineVar) }
-			x-on:click={ fmt.Sprintf("%s_open = !%s_open", alpineVar, alpineVar) }
-			x-on:keydown.enter.prevent={ fmt.Sprintf("%s_open = !%s_open", alpineVar, alpineVar) }
-			x-on:keydown.space.prevent={ fmt.Sprintf("%s_open = !%s_open", alpineVar, alpineVar) }
+			:data-placeholder={ fmt.Sprintf("%s ? null : true", alpineVar) }
+			x-on:click={ fmt.Sprintf("%s_open = !%s_open; if (%s_open) $nextTick(() => { let l = $el.parentElement.querySelector('[role=option][data-state=checked]') || $el.parentElement.querySelector('[role=option]:not([data-disabled])'); l && l.focus() })", alpineVar, alpineVar, alpineVar) }
+			x-on:keydown.enter.prevent={ fmt.Sprintf("%s_open = !%s_open; if (%s_open) $nextTick(() => { let l = $el.parentElement.querySelector('[role=option][data-state=checked]') || $el.parentElement.querySelector('[role=option]:not([data-disabled])'); l && l.focus() })", alpineVar, alpineVar, alpineVar) }
+			x-on:keydown.space.prevent={ fmt.Sprintf("%s_open = !%s_open; if (%s_open) $nextTick(() => { let l = $el.parentElement.querySelector('[role=option][data-state=checked]') || $el.parentElement.querySelector('[role=option]:not([data-disabled])'); l && l.focus() })", alpineVar, alpineVar, alpineVar) }
+			x-on:keydown.down.prevent={ fmt.Sprintf("if (!%s_open) { %s_open = true; $nextTick(() => { let l = $el.parentElement.querySelector('[role=option][data-state=checked]') || $el.parentElement.querySelector('[role=option]:not([data-disabled])'); l && l.focus() }) }", alpineVar, alpineVar) }
 			class={ selectTriggerBaseClass }
 		>
-			<span x-text={ fmt.Sprintf("%s ? $el.parentElement.querySelector('[data-value=\"' + %s + '\"]')?.textContent?.trim() : %q", alpineVar, alpineVar, placeholder) }>{ placeholder }</span>
-			@icons.ChevronDown(icons.Props{Class: "h-4 w-4 opacity-50"})
+			<span data-slot="select-value" class="line-clamp-1 flex items-center gap-2" x-text={ fmt.Sprintf("%s ? (%s_labels[%s] ?? %s) : %q", alpineVar, alpineVar, alpineVar, alpineVar, placeholder) }>{ placeholder }</span>
+			@icons.ChevronDown(icons.Props{Class: "size-4 opacity-50"})
 		</button>
 		<!-- listbox popover -->
 		<div
+			data-slot="select-content"
 			:id={ fmt.Sprintf("'%s-listbox'", alpineVar) }
 			role="listbox"
 			x-show={ fmt.Sprintf("%s_open", alpineVar) }
@@ -63,6 +69,8 @@ templ Select(name, alpineVar, placeholder string, options []SelectOption, classe
 			x-on:mousedown.outside={ fmt.Sprintf("%s_open = false", alpineVar) }
 			x-on:keydown.down.prevent="$focus.wrap().next()"
 			x-on:keydown.up.prevent="$focus.wrap().previous()"
+			x-on:keydown.home.prevent="$focus.first()"
+			x-on:keydown.end.prevent="$focus.last()"
 			x-trap.inert={ fmt.Sprintf("%s_open", alpineVar) }
 			class={ selectContentBaseClass }
 		>
@@ -77,6 +85,7 @@ templ Select(name, alpineVar, placeholder string, options []SelectOption, classe
 
 templ selectItem(alpineVar string, opt SelectOption) {
 	<div
+		data-slot="select-item"
 		role="option"
 		data-value={ opt.Value }
 		:aria-selected={ fmt.Sprintf("%s === %q", alpineVar, opt.Value) }
@@ -91,9 +100,9 @@ templ selectItem(alpineVar string, opt SelectOption) {
 		x-on:keydown.enter={ fmt.Sprintf("if (!$el.dataset.disabled) { %s = %q; %s_open = false }", alpineVar, opt.Value, alpineVar) }
 		class={ selectItemBaseClass }
 	>
-		<span class="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+		<span data-slot="select-item-indicator" class="absolute right-2 flex size-3.5 items-center justify-center">
 			<span x-show={ fmt.Sprintf("%s === %q", alpineVar, opt.Value) } x-cloak>
-				@icons.Check(icons.Props{Class: "h-4 w-4"})
+				@icons.Check(icons.Props{Class: "size-4"})
 			</span>
 		</span>
 		{ opt.Label }
@@ -102,6 +111,7 @@ templ selectItem(alpineVar string, opt SelectOption) {
 
 templ SelectLabel(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="select-label"
 		class={ twmerge.Merge(selectLabelBaseClass, classes) }
 		{ attrs... }
 	>
@@ -111,6 +121,7 @@ templ SelectLabel(classes string, attrs templ.Attributes) {
 
 templ SelectSeparator(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="select-separator"
 		class={ twmerge.Merge(selectSeparatorClass, classes) }
 		{ attrs... }
 	></div>
@@ -118,7 +129,7 @@ templ SelectSeparator(classes string, attrs templ.Attributes) {
 
 // SelectGroup groups related options inside the listbox.
 templ SelectGroup(classes string, attrs templ.Attributes) {
-	<div role="group" class={ twmerge.Merge(classes) } { attrs... }>
+	<div data-slot="select-group" role="group" class={ twmerge.Merge(classes) } { attrs... }>
 		{ children... }
 	</div>
 }

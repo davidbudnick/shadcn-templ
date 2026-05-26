@@ -11,14 +11,12 @@ import templruntime "github.com/a-h/templ/runtime"
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	navigationMenuBaseClass          = "relative z-10 flex max-w-max flex-1 items-center justify-center"
-	navigationMenuListBaseClass      = "group flex flex-1 list-none items-center justify-center space-x-1"
-	navigationMenuItemBaseClass      = "relative"
-	navigationMenuTriggerBaseClass   = "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-accent/50"
-	navigationMenuContentBaseClass   = "absolute left-0 top-full z-50 mt-1.5 w-auto overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg"
-	navigationMenuLinkBaseClass      = "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-	navigationMenuViewportBaseClass  = "relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow"
-	navigationMenuIndicatorBaseClass = "top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden"
+	navigationMenuBaseClass        = "group/navigation-menu relative z-10 flex max-w-max flex-1 items-center justify-center"
+	navigationMenuListBaseClass    = "group flex flex-1 list-none items-center justify-center gap-1"
+	navigationMenuItemBaseClass    = "relative"
+	navigationMenuTriggerBaseClass = "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-[color,box-shadow] outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-accent/50 data-[state=open]:text-accent-foreground data-[state=open]:hover:bg-accent data-[state=open]:focus:bg-accent"
+	navigationMenuContentBaseClass = "absolute left-0 top-full z-50 mt-1.5 w-auto overflow-hidden rounded-md border bg-popover text-popover-foreground shadow"
+	navigationMenuLinkBaseClass    = "flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-1 data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground data-[active=true]:hover:bg-accent data-[active=true]:focus:bg-accent [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
 )
 
 func NavigationMenu(classes string, attrs templ.Attributes) templ.Component {
@@ -47,7 +45,7 @@ func NavigationMenu(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav data-slot=\"navigation-menu\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -110,7 +108,7 @@ func NavigationMenuList(classes string, attrs templ.Attributes) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<ul class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<ul data-slot=\"navigation-menu-list\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -147,6 +145,9 @@ func NavigationMenuList(classes string, attrs templ.Attributes) templ.Component 
 	})
 }
 
+// NavigationMenuItem owns the open state for its trigger/content. The interaction
+// model: hovering opens the menu; clicking pins it open (a pinned menu stays open
+// when the pointer leaves, and clicking again unpins/closes it).
 func NavigationMenuItem(classes string, attrs templ.Attributes) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -173,7 +174,7 @@ func NavigationMenuItem(classes string, attrs templ.Attributes) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li data-slot=\"navigation-menu-item\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -194,7 +195,7 @@ func NavigationMenuItem(classes string, attrs templ.Attributes) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " x-data=\"{ open: false }\" x-on:keydown.esc.window=\"open = false\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " x-data=\"{ open: false, shadcntempl_pinned: false }\" x-on:keydown.esc.window=\"open = false; shadcntempl_pinned = false\" x-on:mouseleave=\"if (!shadcntempl_pinned) open = false\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -231,12 +232,12 @@ func NavigationMenuTrigger(classes string, attrs templ.Attributes) templ.Compone
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var11 = []any{twmerge.Merge(navigationMenuTriggerBaseClass, classes)}
+		var templ_7745c5c3_Var11 = []any{twmerge.Merge(navigationMenuTriggerBaseClass, "group", classes)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<button type=\"button\" aria-haspopup=\"true\" :aria-expanded=\"open\" :data-state=\"open ? 'open' : 'closed'\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<button data-slot=\"navigation-menu-trigger\" type=\"button\" aria-haspopup=\"true\" :aria-expanded=\"open\" :data-state=\"open ? 'open' : 'closed'\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -257,7 +258,7 @@ func NavigationMenuTrigger(classes string, attrs templ.Attributes) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " x-on:click=\"open = !open\" x-on:mouseenter=\"open = true\" x-on:mouseleave=\"open = false\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " x-on:click=\"shadcntempl_pinned = !shadcntempl_pinned; open = shadcntempl_pinned\" x-on:mouseenter=\"open = true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -265,7 +266,7 @@ func NavigationMenuTrigger(classes string, attrs templ.Attributes) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<svg class=\"relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"></path></svg></button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<svg class=\"relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"></path></svg></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -299,7 +300,7 @@ func NavigationMenuContent(classes string, attrs templ.Attributes) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div data-slot=\"navigation-menu-content\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -320,7 +321,7 @@ func NavigationMenuContent(classes string, attrs templ.Attributes) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " x-show=\"open\" x-transition x-cloak x-on:mouseenter=\"open = true\" x-on:mouseleave=\"open = false\" x-on:mousedown.outside=\"open = false\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " x-show=\"open\" x-transition x-cloak x-on:mouseenter=\"open = true\" x-on:mousedown.outside=\"open = false; shadcntempl_pinned = false\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -362,14 +363,14 @@ func NavigationMenuLink(href, classes string, attrs templ.Attributes) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<a data-slot=\"navigation-menu-link\" href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 templ.SafeURL
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/navigation-menu.templ`, Line: 91, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/navigation-menu.templ`, Line: 97, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
