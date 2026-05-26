@@ -45,7 +45,7 @@ func AspectRatio(ratio float64, classes string, attrs templ.Attributes) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-slot=\"aspect-ratio\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -65,7 +65,7 @@ func AspectRatio(ratio float64, classes string, attrs templ.Attributes) templ.Co
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("padding-bottom: %.6f%%", (1.0/ratio)*100))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/aspect-ratio.templ`, Line: 17, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/aspect-ratio.templ`, Line: 18, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

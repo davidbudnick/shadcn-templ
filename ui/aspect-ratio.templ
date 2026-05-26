@@ -13,6 +13,7 @@ const (
 // AspectRatio constrains content to a given ratio (width/height, e.g. 16/9).
 templ AspectRatio(ratio float64, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="aspect-ratio"
 		class={ twmerge.Merge(aspectRatioBaseClass, classes) }
 		style={ fmt.Sprintf("padding-bottom: %.6f%%", (1.0/ratio)*100) }
 		{ attrs... }

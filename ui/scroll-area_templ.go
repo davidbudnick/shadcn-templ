@@ -12,8 +12,8 @@ import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
 	scrollAreaBaseClass      = "relative overflow-hidden"
-	scrollAreaViewportClass  = "h-full w-full rounded-[inherit] overflow-auto"
-	scrollAreaScrollbarClass = "flex touch-none select-none transition-colors"
+	scrollAreaViewportClass  = "size-full rounded-[inherit] overflow-auto transition-[color,box-shadow] outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-1"
+	scrollAreaScrollbarClass = "flex touch-none p-px transition-colors select-none"
 	scrollAreaThumbClass     = "relative flex-1 rounded-full bg-border"
 )
 
@@ -44,7 +44,7 @@ func ScrollArea(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-slot=\"scroll-area\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -74,7 +74,7 @@ func ScrollArea(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div data-slot=\"scroll-area-viewport\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -103,7 +103,7 @@ func ScrollArea(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div style=\"position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div data-slot=\"scroll-area-corner\" style=\"position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,12 +132,12 @@ func scrollAreaScrollbarVertical() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var7 = []any{twmerge.Merge(scrollAreaScrollbarClass, "h-full w-2.5 border-l border-l-transparent p-[1px]")}
+		var templ_7745c5c3_Var7 = []any{twmerge.Merge(scrollAreaScrollbarClass, "h-full w-2.5 border-l border-l-transparent")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div data-orientation=\"vertical\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div data-slot=\"scroll-area-scrollbar\" data-orientation=\"vertical\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -159,7 +159,7 @@ func scrollAreaScrollbarVertical() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div data-slot=\"scroll-area-thumb\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

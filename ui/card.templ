@@ -3,76 +3,83 @@ package ui
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-  cardBaseClass = "relative rounded-xl border bg-card text-card-foreground shadow"
-  cardHeaderBaseClass = "flex flex-col space-y-1.5 p-6"
-  cardTitleBaseClass = "font-semibold leading-none tracking-tight"
-  cardDescriptionBaseClass = "text-sm text-muted-foreground"
-  cardActionBaseClass = "absolute right-6 top-6"
-  cardContentBaseClass = "p-6 pt-0"
-  cardFooterBaseClass = "flex items-center p-6 pt-0"
+	cardBaseClass            = "flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm"
+	cardHeaderBaseClass      = "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"
+	cardTitleBaseClass       = "leading-none font-semibold"
+	cardDescriptionBaseClass = "text-sm text-muted-foreground"
+	cardActionBaseClass      = "col-start-2 row-span-2 row-start-1 self-start justify-self-end"
+	cardContentBaseClass     = "px-6"
+	cardFooterBaseClass      = "flex items-center px-6 [.border-t]:pt-6"
 )
 
-// CardAction places an action (e.g. a button) in the top-right of the card,
-// matching shadcn/ui's CardAction slot.
-templ CardAction(classes string, attrs templ.Attributes) {
-  <div
-    class={ twmerge.Merge(cardActionBaseClass, classes) }
-    { attrs... }
-  >
-    { children... }
-  </div>
-}
-
 templ Card(classes string, attrs templ.Attributes) {
-  <div
-    class={ twmerge.Merge(cardBaseClass, classes) }
-    { attrs... }
-  >
-    { children... }
-  </div>
+	<div
+		data-slot="card"
+		class={ twmerge.Merge(cardBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
 }
 
 templ CardHeader(classes string, attrs templ.Attributes) {
-  <div
-    class={ twmerge.Merge(cardHeaderBaseClass, classes) }
-    { attrs... }
-  >
-    { children... }
-  </div>
+	<div
+		data-slot="card-header"
+		class={ twmerge.Merge(cardHeaderBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
 }
 
 templ CardTitle(classes string, attrs templ.Attributes) {
-  <h3
-    class={ twmerge.Merge(cardTitleBaseClass, classes) }
-    { attrs... }
-  >
-    { children... }
-  </h3>
+	<h3
+		data-slot="card-title"
+		class={ twmerge.Merge(cardTitleBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</h3>
 }
 
 templ CardDescription(classes string, attrs templ.Attributes) {
-  <p
-    class={ twmerge.Merge(cardDescriptionBaseClass, classes) }
-    { attrs... }
-  >
-    { children... }
-  </p>
+	<p
+		data-slot="card-description"
+		class={ twmerge.Merge(cardDescriptionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</p>
+}
+
+// CardAction places an action (e.g. a button) in the top-right of the card,
+// matching shadcn/ui's CardAction slot. It relies on the card-header grid.
+templ CardAction(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="card-action"
+		class={ twmerge.Merge(cardActionBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
 }
 
 templ CardContent(classes string, attrs templ.Attributes) {
-  <div
-    class={ twmerge.Merge(cardContentBaseClass, classes) }
-    { attrs... }
-  >
-    { children... }
-  </div>
+	<div
+		data-slot="card-content"
+		class={ twmerge.Merge(cardContentBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
 }
 
 templ CardFooter(classes string, attrs templ.Attributes) {
-  <div
-    class={ twmerge.Merge(cardFooterBaseClass, classes) }
-    { attrs... }
-  >
-    { children... }
-  </div>
+	<div
+		data-slot="card-footer"
+		class={ twmerge.Merge(cardFooterBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
 }

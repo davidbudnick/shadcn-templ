@@ -21,6 +21,7 @@ const (
 // SidebarProvider wraps a sidebar + main content area with Alpine collapse state.
 templ SidebarProvider(defaultOpen bool, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="sidebar-wrapper"
 		class={ twmerge.Merge(sidebarProviderBaseClass, classes) }
 		{ attrs... }
 		x-data={ sidebarProviderData(defaultOpen) }
@@ -39,7 +40,9 @@ func sidebarProviderData(defaultOpen bool) string {
 
 templ Sidebar(classes string, attrs templ.Attributes) {
 	<aside
+		data-slot="sidebar"
 		data-sidebar="sidebar"
+		:data-state="sidebarOpen ? 'expanded' : 'collapsed'"
 		class={ twmerge.Merge(sidebarBaseClass, classes) }
 		{ attrs... }
 		:style="sidebarOpen ? 'width: var(--sidebar-width)' : 'width: 0; overflow: hidden'"
@@ -50,6 +53,7 @@ templ Sidebar(classes string, attrs templ.Attributes) {
 
 templ SidebarHeader(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="sidebar-header"
 		data-sidebar="header"
 		class={ twmerge.Merge(sidebarHeaderBaseClass, classes) }
 		{ attrs... }
@@ -60,6 +64,7 @@ templ SidebarHeader(classes string, attrs templ.Attributes) {
 
 templ SidebarContent(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="sidebar-content"
 		data-sidebar="content"
 		class={ twmerge.Merge(sidebarContentBaseClass, classes) }
 		{ attrs... }
@@ -70,6 +75,7 @@ templ SidebarContent(classes string, attrs templ.Attributes) {
 
 templ SidebarFooter(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="sidebar-footer"
 		data-sidebar="footer"
 		class={ twmerge.Merge(sidebarFooterBaseClass, classes) }
 		{ attrs... }
@@ -80,6 +86,7 @@ templ SidebarFooter(classes string, attrs templ.Attributes) {
 
 templ SidebarGroup(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="sidebar-group"
 		data-sidebar="group"
 		class={ twmerge.Merge(sidebarGroupBaseClass, classes) }
 		{ attrs... }
@@ -90,6 +97,7 @@ templ SidebarGroup(classes string, attrs templ.Attributes) {
 
 templ SidebarGroupLabel(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="sidebar-group-label"
 		data-sidebar="group-label"
 		class={ twmerge.Merge(sidebarGroupLabelBaseClass, classes) }
 		{ attrs... }
@@ -100,6 +108,7 @@ templ SidebarGroupLabel(classes string, attrs templ.Attributes) {
 
 templ SidebarMenu(classes string, attrs templ.Attributes) {
 	<ul
+		data-slot="sidebar-menu"
 		data-sidebar="menu"
 		class={ twmerge.Merge(sidebarMenuBaseClass, classes) }
 		{ attrs... }
@@ -110,6 +119,7 @@ templ SidebarMenu(classes string, attrs templ.Attributes) {
 
 templ SidebarMenuItem(classes string, attrs templ.Attributes) {
 	<li
+		data-slot="sidebar-menu-item"
 		data-sidebar="menu-item"
 		class={ twmerge.Merge(sidebarMenuItemBaseClass, classes) }
 		{ attrs... }
@@ -120,6 +130,7 @@ templ SidebarMenuItem(classes string, attrs templ.Attributes) {
 
 templ SidebarMenuButton(isActive bool, classes string, attrs templ.Attributes) {
 	<button
+		data-slot="sidebar-menu-button"
 		data-sidebar="menu-button"
 		data-active={ boolStr(isActive) }
 		type="button"
@@ -133,6 +144,7 @@ templ SidebarMenuButton(isActive bool, classes string, attrs templ.Attributes) {
 templ SidebarMenuButtonLink(href string, isActive bool, classes string, attrs templ.Attributes) {
 	<a
 		href={ templ.SafeURL(href) }
+		data-slot="sidebar-menu-button"
 		data-sidebar="menu-button"
 		data-active={ boolStr(isActive) }
 		class={ twmerge.Merge(sidebarMenuButtonBaseClass, classes) }
@@ -145,6 +157,7 @@ templ SidebarMenuButtonLink(href string, isActive bool, classes string, attrs te
 templ SidebarTrigger(classes string, attrs templ.Attributes) {
 	<button
 		type="button"
+		data-slot="sidebar-trigger"
 		data-sidebar="trigger"
 		aria-label="Toggle sidebar"
 		class={ twmerge.Merge(sidebarTriggerBaseClass, classes) }
@@ -169,8 +182,19 @@ templ SidebarTrigger(classes string, attrs templ.Attributes) {
 	</button>
 }
 
+templ SidebarSeparator(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="sidebar-separator"
+		data-sidebar="separator"
+		role="none"
+		class={ twmerge.Merge(sidebarSeparatorBaseClass, classes) }
+		{ attrs... }
+	></div>
+}
+
 templ SidebarInset(classes string, attrs templ.Attributes) {
 	<main
+		data-slot="sidebar-inset"
 		class={ twmerge.Merge(sidebarInsetBaseClass, classes) }
 		{ attrs... }
 	>

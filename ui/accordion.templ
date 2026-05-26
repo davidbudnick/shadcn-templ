@@ -7,13 +7,14 @@ import (
 
 const (
 	accordionBaseClass        = "w-full"
-	accordionItemBaseClass    = "border-b"
-	accordionTriggerBaseClass = "flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline"
+	accordionItemBaseClass    = "border-b last:border-b-0"
+	accordionTriggerBaseClass = "flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
 	accordionContentBaseClass = "overflow-hidden text-sm"
 )
 
 templ Accordion(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="accordion"
 		class={ twmerge.Merge(accordionBaseClass, classes) }
 		{ attrs... }
 		x-data="{ current: '' }"
@@ -24,6 +25,7 @@ templ Accordion(classes string, attrs templ.Attributes) {
 
 templ AccordionItem(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="accordion-item"
 		class={ twmerge.Merge(accordionItemBaseClass, classes) }
 		{ attrs... }
 		x-id="['accordion-item']"
@@ -35,21 +37,24 @@ templ AccordionItem(classes string, attrs templ.Attributes) {
 templ AccordionTrigger(classes string, attrs templ.Attributes) {
 	<h3 class="flex">
 		<button
+			data-slot="accordion-trigger"
 			class={ twmerge.Merge(accordionTriggerBaseClass, classes) }
 			{ attrs... }
 			@click="current = current === $id('accordion-item') ? '' : $id('accordion-item')"
+			:data-state="current === $id('accordion-item') ? 'open' : 'closed'"
 			:class="current === $id('accordion-item') && '[&>svg]:rotate-180'"
 		>
 			{ children... }
 			@icons.ChevronDown(icons.Props{
-				Class: "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+				Class: "pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200",
 			})
 		</button>
 	</h3>
 }
 
-templ AccorionContent(classes string, attrs templ.Attributes) {
+templ AccordionContent(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="accordion-content"
 		class={ accordionContentBaseClass }
 		{ attrs... }
 		x-show="current === $id('accordion-item')"
@@ -57,9 +62,18 @@ templ AccorionContent(classes string, attrs templ.Attributes) {
 		x-cloak
 	>
 		<div
-			class={ twmerge.Merge("pb-4 pt-0", classes) }
+			class={ twmerge.Merge("pt-0 pb-4", classes) }
 		>
 			{ children... }
 		</div>
 	</div>
+}
+
+// AccorionContent is a deprecated alias kept for backwards compatibility.
+//
+// Deprecated: use AccordionContent (corrected spelling) instead.
+templ AccorionContent(classes string, attrs templ.Attributes) {
+	@AccordionContent(classes, attrs) {
+		{ children... }
+	}
 }

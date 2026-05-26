@@ -3,7 +3,7 @@ package ui
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	separatorBaseClass = "shrink-0 bg-border"
+	separatorBaseClass = "shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px"
 )
 
 type SeparatorOrientation int
@@ -33,12 +33,15 @@ const (
 
 templ Separator(orientation SeparatorOrientation, decorative bool, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="separator"
+		data-orientation={ orientation.String() }
 		if decorative {
 			role="none"
 		} else {
 			role="separator"
 			aria-orientation={ orientation.String() }
 		}
-		class={ twmerge.Merge(separatorBaseClass, orientation.Class(), classes) }
+		class={ twmerge.Merge(separatorBaseClass, classes) }
+		{ attrs... }
 	></div>
 }

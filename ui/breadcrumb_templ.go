@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	breadcrumbListBaseClass      = "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5"
+	breadcrumbListBaseClass      = "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2.5"
 	breadcrumbItemBaseClass      = "inline-flex items-center gap-1.5"
 	breadcrumbSeparatorBaseClass = "[&>svg]:size-3.5"
 	breadcrumbLinkBaseClass      = "transition-colors hover:text-foreground"
@@ -46,7 +46,7 @@ func Breadcrumb(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav aria-label=\"breadcrumb\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav data-slot=\"breadcrumb\" aria-label=\"breadcrumb\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -109,7 +109,7 @@ func BreadcrumbList(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<ol class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<ol data-slot=\"breadcrumb-list\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -172,7 +172,7 @@ func BreadcrumbItem(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li data-slot=\"breadcrumb-item\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -235,7 +235,7 @@ func BreadcrumbSeparator(classes string, attrs templ.Attributes) templ.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li role=\"presentation\" aria-hidden=\"true\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li data-slot=\"breadcrumb-separator\" role=\"presentation\" aria-hidden=\"true\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -260,9 +260,7 @@ func BreadcrumbSeparator(classes string, attrs templ.Attributes) templ.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = icons.ChevronRight(icons.Props{
-			Class: "h-4 w-4",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = icons.ChevronRight(icons.Props{}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -300,7 +298,7 @@ func BreadcrumbLink(href templ.SafeURL, classes string, attrs templ.Attributes) 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<a class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<a data-slot=\"breadcrumb-link\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -320,7 +318,7 @@ func BreadcrumbLink(href templ.SafeURL, classes string, attrs templ.Attributes) 
 		var templ_7745c5c3_Var16 templ.SafeURL
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(href)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/breadcrumb.templ`, Line: 59, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/breadcrumb.templ`, Line: 62, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -377,7 +375,7 @@ func BreadcrumbPage(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<span role=\"link\" aria-disabled=\"true\" aria-current=\"page\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<span data-slot=\"breadcrumb-page\" role=\"link\" aria-disabled=\"true\" aria-current=\"page\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -436,12 +434,12 @@ func BreadcrumbEllipsis(classes string, attrs templ.Attributes) templ.Component 
 			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var21 = []any{twmerge.Merge("flex h-9 w-9 items-center justify-center", classes)}
+		var templ_7745c5c3_Var21 = []any{twmerge.Merge("flex size-9 items-center justify-center", classes)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var21...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<span role=\"presentation\" aria-hidden=\"true\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<span data-slot=\"breadcrumb-ellipsis\" role=\"presentation\" aria-hidden=\"true\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -466,7 +464,7 @@ func BreadcrumbEllipsis(classes string, attrs templ.Attributes) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = icons.MoreHorizontal(icons.Props{Class: "h-4 w-4"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = icons.MoreHorizontal(icons.Props{Class: "size-4"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
