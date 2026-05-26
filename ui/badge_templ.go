@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	BadgeBaseClass = "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+	BadgeBaseClass = "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive [&>svg]:size-3 [&>svg]:pointer-events-none"
 )
 
 type BadgeVariant int
@@ -21,18 +21,24 @@ const (
 	BadgeVariantSecondary
 	BadgeVariantDestructive
 	BadgeVariantOutline
+	BadgeVariantGhost
+	BadgeVariantLink
 )
 
 func (v BadgeVariant) Class() string {
 	switch v {
 	case BadgeVariantSecondary:
-		return "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+		return "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90"
 	case BadgeVariantDestructive:
-		return "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80"
+		return "border-transparent bg-destructive text-white focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 [a&]:hover:bg-destructive/90"
 	case BadgeVariantOutline:
-		return "text-foreground"
+		return "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground"
+	case BadgeVariantGhost:
+		return "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground"
+	case BadgeVariantLink:
+		return "text-primary underline-offset-4 [a&]:hover:underline"
 	default:
-		return "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80"
+		return "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90"
 	}
 }
 
@@ -62,7 +68,7 @@ func Badge(variant BadgeVariant, classes string, attrs templ.Attributes) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span data-slot=\"badge\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -91,7 +97,7 @@ func Badge(variant BadgeVariant, classes string, attrs templ.Attributes) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

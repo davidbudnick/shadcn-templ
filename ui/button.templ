@@ -2,7 +2,7 @@ package ui
 
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
-const buttonBaseClass = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+const buttonBaseClass = "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 type ButtonType int
 
@@ -37,17 +37,17 @@ const (
 func (v ButtonVariant) Class() string {
 	switch v {
 	case ButtonVariantDestructive:
-		return "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
+		return "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40"
 	case ButtonVariantSecondary:
-		return "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80"
+		return "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80"
 	case ButtonVariantOutline:
-		return "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground"
+		return "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
 	case ButtonVariantGhost:
-		return "hover:bg-accent hover:text-accent-foreground"
+		return "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
 	case ButtonVariantLink:
 		return "text-primary underline-offset-4 hover:underline"
 	default:
-		return "bg-primary text-primary-foreground shadow hover:bg-primary/90"
+		return "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
 	}
 }
 
@@ -63,19 +63,20 @@ const (
 func (s ButtonSize) Class() string {
 	switch s {
 	case ButtonSizeSmall:
-		return "h-8 rounded-md px-3 text-xs"
+		return "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5"
 	case ButtonSizeLarge:
-		return "h-10 rounded-md px-8"
+		return "h-10 rounded-md px-6 has-[>svg]:px-4"
 	case ButtonSizeIcon:
-		return "h-9 w-9"
+		return "size-9"
 	default:
-		return "h-9 px-4 py-2"
+		return "h-9 px-4 py-2 has-[>svg]:px-3"
 	}
 }
 
 templ Button(buttonType ButtonType, variant ButtonVariant, size ButtonSize, classes string, attrs templ.Attributes) {
 	<button
 		type={ buttonType.String() }
+		data-slot="button"
 		class={ twmerge.Merge(buttonBaseClass, variant.Class(), size.Class(), classes) }
 		{ attrs... }
 	>

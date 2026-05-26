@@ -3,15 +3,15 @@ package ui
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	buttonGroupBaseClass = "inline-flex"
+	buttonGroupBaseClass = "flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 [&>input]:flex-1 [&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:first-child)]:-ml-px"
 )
 
 // ButtonGroup wraps multiple Buttons, removing internal border-radius so they appear joined.
-// Apply [&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md
-// to create the joined look.
 templ ButtonGroup(classes string, attrs templ.Attributes) {
 	<div
-		class={ twmerge.Merge(buttonGroupBaseClass, "[&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:first-child)]:-ml-px", classes) }
+		data-slot="button-group"
+		data-orientation="horizontal"
+		class={ twmerge.Merge(buttonGroupBaseClass, classes) }
 		role="group"
 		{ attrs... }
 	>

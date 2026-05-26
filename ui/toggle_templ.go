@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	toggleBaseClass = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
+	toggleBaseClass = "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-[color,box-shadow] outline-none hover:bg-muted hover:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 )
 
 type ToggleVariant int
@@ -22,7 +22,7 @@ type ToggleVariant int
 func (v ToggleVariant) Class() string {
 	switch v {
 	case ToggleVariantSecondary:
-		return "border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground"
+		return "border border-input bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground"
 	default:
 		return "bg-transparent"
 	}
@@ -38,11 +38,11 @@ type ToggleSize int
 func (s ToggleSize) Class() string {
 	switch s {
 	case ToggleSizeSmall:
-		return "h-8 px-2"
+		return "h-8 min-w-8 px-1.5"
 	case ToggleSizeLarge:
-		return "h-10 px-3"
+		return "h-10 min-w-10 px-2.5"
 	default:
-		return "h-9 px-3"
+		return "h-9 min-w-9 px-2"
 	}
 }
 
@@ -78,14 +78,14 @@ func Toggle(variant ToggleVariant, size ToggleSize, alpinePressed, classes strin
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<button type=\"button\" x-data :aria-pressed=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<button type=\"button\" data-slot=\"toggle\" x-data :aria-pressed=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(alpinePressed)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/toggle.templ`, Line: 51, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/toggle.templ`, Line: 52, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -98,7 +98,7 @@ func Toggle(variant ToggleVariant, size ToggleSize, alpinePressed, classes strin
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s ? 'on' : 'off'", alpinePressed))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/toggle.templ`, Line: 52, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/toggle.templ`, Line: 53, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -121,7 +121,7 @@ func Toggle(variant ToggleVariant, size ToggleSize, alpinePressed, classes strin
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s = ! %s", alpinePressed, alpinePressed))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/toggle.templ`, Line: 56, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/toggle.templ`, Line: 57, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
