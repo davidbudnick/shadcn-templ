@@ -12,7 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go-version: ["1.25", "1.26"]
+        # The race detector recompiles the whole tree (incl. the stdlib) and
+        # dominates CI time. Race bugs aren't Go-version-specific, so run -race
+        # only on the latest version; the floor version runs a plain (fast) test.
+        include:
+          - go-version: "1.25"
+          - go-version: "1.26"
+            race: true
     steps:
       - uses: actions/checkout@v6
 
@@ -37,7 +43,7 @@ jobs:
         run: go vet ./...
 
       - name: Test
-        run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
+        run: go test ${{ matrix.race && '-race' || '' }} -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: Coverage total
         run: go tool cover -func=coverage.out | tail -1
