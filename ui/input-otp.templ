@@ -6,17 +6,17 @@ import (
 )
 
 const (
-	inputOTPBaseClass       = "flex items-center gap-2"
-	inputOTPGroupBaseClass  = "flex items-center"
-	inputOTPSlotBaseClass   = "relative flex h-9 w-9 items-center justify-center border-y border-r border-input text-sm shadow-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md"
-	inputOTPSlotActiveClass = "z-10 ring-1 ring-ring"
-	inputOTPSeparatorClass  = "flex items-center [&>svg]:h-4 [&>svg]:w-4"
+	inputOTPBaseClass      = "flex items-center gap-2 has-disabled:opacity-50"
+	inputOTPGroupBaseClass = "flex items-center"
+	inputOTPSlotBaseClass  = "relative flex h-9 w-9 items-center justify-center border-y border-r border-input text-sm shadow-xs transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:ring-[3px] data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-destructive/20 dark:bg-input/30 dark:data-[active=true]:aria-invalid:ring-destructive/40"
+	inputOTPSeparatorClass = "flex items-center [&>svg]:size-4"
 )
 
 // InputOTP renders a one-time-password input row of `slots` individual character inputs.
 // The Alpine component tracks the values array and active index, auto-advancing focus on input.
 templ InputOTP(slots int, name string, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="input-otp"
 		class={ twmerge.Merge(inputOTPBaseClass, classes) }
 		x-data={ fmt.Sprintf(`{
 			otp: Array(%d).fill(''),
@@ -55,7 +55,7 @@ templ InputOTP(slots int, name string, classes string, attrs templ.Attributes) {
 		}`, slots, slots-1, slots-1, slots, slots) }
 		{ attrs... }
 	>
-		<div class={ inputOTPGroupBaseClass }>
+		<div class={ inputOTPGroupBaseClass } data-slot="input-otp-group">
 			for i := 0; i < slots; i++ {
 				<input
 					x-ref={ fmt.Sprintf("slot%d", i) }
@@ -63,13 +63,14 @@ templ InputOTP(slots int, name string, classes string, attrs templ.Attributes) {
 					inputmode="numeric"
 					maxlength="1"
 					name={ fmt.Sprintf("%s_%d", name, i) }
+					data-slot="input-otp-slot"
+					:data-active={ fmt.Sprintf("active === %d ? 'true' : 'false'", i) }
 					:value={ fmt.Sprintf("otp[%d]", i) }
 					x-on:input={ fmt.Sprintf("handleInput(%d, $event)", i) }
 					x-on:keydown={ fmt.Sprintf("handleKeydown(%d, $event)", i) }
 					x-on:paste="handlePaste($event)"
 					x-on:focus={ fmt.Sprintf("active = %d", i) }
 					x-on:blur="active = -1"
-					:class={ fmt.Sprintf(`active === %d ? '%s' : ''`, i, inputOTPSlotActiveClass) }
 					class={ inputOTPSlotBaseClass }
 					autocomplete="one-time-code"
 				/>
@@ -83,6 +84,7 @@ templ InputOTP(slots int, name string, classes string, attrs templ.Attributes) {
 templ InputOTPWithSeparator(groupSize, groups int, name string, classes string, attrs templ.Attributes) {
 	{{ totalSlots := groupSize * groups }}
 	<div
+		data-slot="input-otp"
 		class={ twmerge.Merge(inputOTPBaseClass, classes) }
 		x-data={ fmt.Sprintf(`{
 			otp: Array(%d).fill(''),
@@ -123,11 +125,11 @@ templ InputOTPWithSeparator(groupSize, groups int, name string, classes string, 
 	>
 		for g := 0; g < groups; g++ {
 			if g > 0 {
-				<div class={ inputOTPSeparatorClass } role="separator" aria-hidden="true">
+				<div class={ inputOTPSeparatorClass } data-slot="input-otp-separator" role="separator" aria-hidden="true">
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg>
 				</div>
 			}
-			<div class={ inputOTPGroupBaseClass }>
+			<div class={ inputOTPGroupBaseClass } data-slot="input-otp-group">
 				for s := 0; s < groupSize; s++ {
 					{{ idx := g*groupSize + s }}
 					<input
@@ -136,13 +138,14 @@ templ InputOTPWithSeparator(groupSize, groups int, name string, classes string, 
 						inputmode="numeric"
 						maxlength="1"
 						name={ fmt.Sprintf("%s_%d", name, idx) }
+						data-slot="input-otp-slot"
+						:data-active={ fmt.Sprintf("active === %d ? 'true' : 'false'", idx) }
 						:value={ fmt.Sprintf("otp[%d]", idx) }
 						x-on:input={ fmt.Sprintf("handleInput(%d, $event)", idx) }
 						x-on:keydown={ fmt.Sprintf("handleKeydown(%d, $event)", idx) }
 						x-on:paste="handlePaste($event)"
 						x-on:focus={ fmt.Sprintf("active = %d", idx) }
 						x-on:blur="active = -1"
-						:class={ fmt.Sprintf(`active === %d ? '%s' : ''`, idx, inputOTPSlotActiveClass) }
 						class={ inputOTPSlotBaseClass }
 						autocomplete="one-time-code"
 					/>

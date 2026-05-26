@@ -3,12 +3,13 @@ package ui
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	labelBaseClass = "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+	labelBaseClass = "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
 )
 
 templ Label(classes string, attrs templ.Attributes) {
 	<label
-		class={ twmerge.Merge(labelBaseClass, "[div:has(>div.font-medium:not(:empty))>&]:text-destructive", classes) }
+		data-slot="label"
+		class={ twmerge.Merge(labelBaseClass, classes) }
 		{ attrs... }
 	>
 		{ children... }
