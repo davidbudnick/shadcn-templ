@@ -39,7 +39,7 @@ func SonnerToaster(classes string, attrs templ.Attributes) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{twmerge.Merge("fixed bottom-4 right-4 z-[100] flex flex-col gap-2 w-full max-w-sm pointer-events-none", classes)}
+		var templ_7745c5c3_Var2 = []any{twmerge.Merge("toaster group fixed bottom-4 right-4 z-[100] flex flex-col gap-2 w-full max-w-sm pointer-events-none", classes)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -69,7 +69,7 @@ func SonnerToaster(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" role=\"region\" aria-label=\"Notifications\" data-slot=\"sonner-toaster\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -90,7 +90,7 @@ func SonnerToaster(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "><template x-for=\"toast in $store.sonner.toasts\" :key=\"toast.id\"><div class=\"pointer-events-auto flex w-full items-start gap-3 rounded-xl border bg-background p-4 shadow-lg transition-all\" :class=\"{\n\t\t\t\t\t'border-green-500/30 bg-green-50 dark:bg-green-950/20': toast.type === 'success',\n\t\t\t\t\t'border-red-500/30 bg-red-50 dark:bg-red-950/20': toast.type === 'error',\n\t\t\t\t\t'border-blue-500/30 bg-blue-50 dark:bg-blue-950/20': toast.type === 'info',\n\t\t\t\t\t'border-yellow-500/30 bg-yellow-50 dark:bg-yellow-950/20': toast.type === 'warning'\n\t\t\t\t}\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 translate-y-2\" x-transition:enter-end=\"opacity-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100 translate-y-0\" x-transition:leave-end=\"opacity-0 translate-y-2\"><div class=\"flex-1 min-w-0\"><p class=\"text-sm font-semibold\" x-show=\"toast.title\" x-text=\"toast.title\"></p><p class=\"text-sm text-muted-foreground\" x-text=\"toast.message\"></p></div><button type=\"button\" class=\"shrink-0 rounded-sm opacity-70 hover:opacity-100 focus:outline-none\" x-on:click=\"$store.sonner.remove(toast.id)\" aria-label=\"Dismiss\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 6 6 18\"></path><path d=\"m6 6 12 12\"></path></svg></button></div></template></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "><template x-for=\"toast in $store.sonner.toasts\" :key=\"toast.id\"><div role=\"status\" :aria-live=\"toast.type === 'error' ? 'assertive' : 'polite'\" aria-atomic=\"true\" data-slot=\"sonner-toast\" :data-type=\"toast.type\" class=\"pointer-events-auto flex w-full items-start gap-3 rounded-xl border bg-popover text-popover-foreground p-4 shadow-lg transition-all\" :class=\"{\n\t\t\t\t\t'border-green-500/30 bg-green-50 dark:bg-green-950/20': toast.type === 'success',\n\t\t\t\t\t'border-red-500/30 bg-red-50 dark:bg-red-950/20': toast.type === 'error',\n\t\t\t\t\t'border-blue-500/30 bg-blue-50 dark:bg-blue-950/20': toast.type === 'info',\n\t\t\t\t\t'border-yellow-500/30 bg-yellow-50 dark:bg-yellow-950/20': toast.type === 'warning'\n\t\t\t\t}\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 translate-y-2\" x-transition:enter-end=\"opacity-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100 translate-y-0\" x-transition:leave-end=\"opacity-0 translate-y-2\"><div class=\"flex-1 min-w-0\" data-slot=\"sonner-content\"><p data-slot=\"sonner-title\" class=\"text-sm font-semibold\" x-show=\"toast.title\" x-text=\"toast.title\"></p><p data-slot=\"sonner-description\" class=\"text-sm text-muted-foreground\" x-text=\"toast.message\"></p></div><button type=\"button\" data-slot=\"sonner-close\" class=\"shrink-0 rounded-sm opacity-70 hover:opacity-100 focus:outline-none\" x-on:click=\"$store.sonner.remove(toast.id)\" aria-label=\"Dismiss\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 6 6 18\"></path><path d=\"m6 6 12 12\"></path></svg></button></div></template></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

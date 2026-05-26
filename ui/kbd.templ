@@ -3,13 +3,26 @@ package ui
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	kbdBaseClass = "pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100"
+	kbdBaseClass      = "pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-sm bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none [&_svg:not([class*='size-'])]:size-3"
+	kbdGroupBaseClass = "inline-flex items-center gap-1"
 )
 
 // Kbd renders a keyboard shortcut badge.
 templ Kbd(classes string, attrs templ.Attributes) {
 	<kbd
+		data-slot="kbd"
 		class={ twmerge.Merge(kbdBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</kbd>
+}
+
+// KbdGroup groups multiple Kbd elements (e.g. "Ctrl + K").
+templ KbdGroup(classes string, attrs templ.Attributes) {
+	<kbd
+		data-slot="kbd-group"
+		class={ twmerge.Merge(kbdGroupBaseClass, classes) }
 		{ attrs... }
 	>
 		{ children... }

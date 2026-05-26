@@ -13,6 +13,7 @@ const (
 // Progress displays a progress bar. value is 0–100.
 templ Progress(value int, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="progress"
 		role="progressbar"
 		aria-valuemin="0"
 		aria-valuemax="100"
@@ -21,6 +22,7 @@ templ Progress(value int, classes string, attrs templ.Attributes) {
 		{ attrs... }
 	>
 		<div
+			data-slot="progress-indicator"
 			class={ progressIndicatorClass }
 			style={ fmt.Sprintf("transform: translateX(-%d%%)", 100-value) }
 		></div>

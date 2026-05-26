@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	skeletonBaseClass = "animate-pulse rounded-md bg-primary/10"
+	skeletonBaseClass = "animate-pulse rounded-md bg-accent"
 )
 
 func Skeleton(classes string, attrs templ.Attributes) templ.Component {
@@ -40,7 +40,7 @@ func Skeleton(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-slot=\"skeleton\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

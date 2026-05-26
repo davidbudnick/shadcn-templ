@@ -6,7 +6,7 @@ import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 // templ/HTML equivalent of shadcn/ui's DirectionProvider. Components inside
 // respect the direction via logical CSS properties.
 templ Direction(dir, classes string, attrs templ.Attributes) {
-	<div dir={ dir } class={ twmerge.Merge(classes) } { attrs... }>
+	<div data-slot="direction" dir={ dir } class={ twmerge.Merge(classes) } { attrs... }>
 		{ children... }
 	</div>
 }

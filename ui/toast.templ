@@ -35,11 +35,18 @@ templ ToastViewport(classes string, attrs templ.Attributes) {
       remove(id) { this.toasts = this.toasts.filter(t => t.id !== id); }
     });
   }` }
+		role="region"
+		aria-label="Notifications"
+		data-slot="toast-viewport"
 		class={ twmerge.Merge("fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]", classes) }
 		{ attrs... }
 	>
 		<template x-for="t in $store.toast.toasts" :key="t.id">
 			<div
+				role="status"
+				:aria-live="t.variant === 'destructive' ? 'assertive' : 'polite'"
+				aria-atomic="true"
+				data-slot="toast"
 				class={ toastBaseClass }
 				:class="t.variant === 'destructive' ? 'border-destructive bg-destructive text-destructive-foreground' : 'border bg-background text-foreground'"
 				x-transition:enter="transition ease-out duration-300"
@@ -50,11 +57,12 @@ templ ToastViewport(classes string, attrs templ.Attributes) {
 				x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 			>
 				<div class="grid gap-1">
-					<p class={ toastTitleClass } x-show="t.title" x-text="t.title"></p>
-					<p class={ toastDescriptionClass } x-show="t.description" x-text="t.description"></p>
+					<p data-slot="toast-title" class={ toastTitleClass } x-show="t.title" x-text="t.title"></p>
+					<p data-slot="toast-description" class={ toastDescriptionClass } x-show="t.description" x-text="t.description"></p>
 				</div>
 				<button
 					type="button"
+					data-slot="toast-close"
 					class={ toastCloseClass }
 					x-on:click="$store.toast.remove(t.id)"
 					aria-label="Close"
@@ -69,6 +77,14 @@ templ ToastViewport(classes string, attrs templ.Attributes) {
 // Toast renders a single standalone toast element (non-managed variant).
 templ Toast(variant string, classes string, attrs templ.Attributes) {
 	<div
+		role="status"
+		aria-atomic="true"
+		if variant == "destructive" {
+			aria-live="assertive"
+		} else {
+			aria-live="polite"
+		}
+		data-slot="toast"
 		class={ twmerge.Merge(toastBaseClass, func() string {
 			if variant == "destructive" {
 				return toastDestructiveClass
@@ -80,6 +96,7 @@ templ Toast(variant string, classes string, attrs templ.Attributes) {
 		{ children... }
 		<button
 			type="button"
+			data-slot="toast-close"
 			class={ toastCloseClass }
 			aria-label="Close"
 		>
@@ -90,6 +107,7 @@ templ Toast(variant string, classes string, attrs templ.Attributes) {
 
 templ ToastTitle(classes string, attrs templ.Attributes) {
 	<p
+		data-slot="toast-title"
 		class={ twmerge.Merge(toastTitleClass, classes) }
 		{ attrs... }
 	>
@@ -99,6 +117,7 @@ templ ToastTitle(classes string, attrs templ.Attributes) {
 
 templ ToastDescription(classes string, attrs templ.Attributes) {
 	<p
+		data-slot="toast-description"
 		class={ twmerge.Merge(toastDescriptionClass, classes) }
 		{ attrs... }
 	>
@@ -109,6 +128,7 @@ templ ToastDescription(classes string, attrs templ.Attributes) {
 templ ToastAction(classes string, attrs templ.Attributes) {
 	<button
 		type="button"
+		data-slot="toast-action"
 		class={ twmerge.Merge(toastActionClass, classes) }
 		{ attrs... }
 	>

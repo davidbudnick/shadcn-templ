@@ -6,13 +6,14 @@ import (
 )
 
 const (
-	spinnerBaseClass = "animate-spin"
+	spinnerBaseClass = "size-4 animate-spin"
 )
 
 // Spinner renders an animated loading indicator.
-// Pass size classes (e.g. "h-4 w-4") via classes — they are applied to the SVG icon.
+// Pass size classes (e.g. "size-6") via classes — they are applied to the SVG icon.
 templ Spinner(classes string, attrs templ.Attributes) {
 	<span
+		data-slot="spinner"
 		role="status"
 		aria-label="Loading"
 		class="inline-flex"
