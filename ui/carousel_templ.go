@@ -63,15 +63,17 @@ func CarouselRoot(count int, classes string, attrs templ.Attributes) templ.Compo
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(`{ current: 0, count: ` + itoa(count) + ` }`)
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(`{ current: 0, count: ` + itoa(count) + `,
+  scrollPrev() { if (this.current > 0) this.current--; },
+  scrollNext() { if (this.current < this.count - 1) this.current++; } }`)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/carousel.templ`, Line: 17, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/carousel.templ`, Line: 19, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" role=\"region\" aria-roledescription=\"carousel\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" data-slot=\"carousel\" role=\"region\" aria-roledescription=\"carousel\" tabindex=\"0\" x-on:keydown.arrow-left.prevent=\"scrollPrev()\" x-on:keydown.arrow-right.prevent=\"scrollNext()\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -117,7 +119,7 @@ func CarouselContent(classes string, attrs templ.Attributes) templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"overflow-hidden\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div data-slot=\"carousel-content\" class=\"overflow-hidden\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -203,7 +205,7 @@ func CarouselItem(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" role=\"group\" aria-roledescription=\"slide\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" data-slot=\"carousel-item\" role=\"group\" aria-roledescription=\"slide\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -227,7 +229,7 @@ func CarouselItem(classes string, attrs templ.Attributes) templ.Component {
 	})
 }
 
-// CarouselPrevious renders the previous-slide button.
+// CarouselPrevious renders the previous-slide button. It disables at the first slide.
 func CarouselPrevious(classes string, attrs templ.Attributes) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -249,12 +251,12 @@ func CarouselPrevious(classes string, attrs templ.Attributes) templ.Component {
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var12 = []any{twmerge.Merge("absolute left-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50", classes)}
+		var templ_7745c5c3_Var12 = []any{twmerge.Merge("absolute left-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none", classes)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button type=\"button\" x-on:click=\"current = current > 0 ? current - 1 : count - 1\" aria-label=\"Previous slide\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button type=\"button\" x-on:click=\"scrollPrev()\" :disabled=\"current === 0\" aria-label=\"Previous slide\" data-slot=\"carousel-previous\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -279,11 +281,11 @@ func CarouselPrevious(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = icons.ChevronLeft(icons.Props{Class: "h-4 w-4"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = icons.ChevronLeft(icons.Props{Class: "size-4"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<span class=\"sr-only\">Previous slide</span></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -291,7 +293,7 @@ func CarouselPrevious(classes string, attrs templ.Attributes) templ.Component {
 	})
 }
 
-// CarouselNext renders the next-slide button.
+// CarouselNext renders the next-slide button. It disables at the last slide.
 func CarouselNext(classes string, attrs templ.Attributes) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -313,12 +315,12 @@ func CarouselNext(classes string, attrs templ.Attributes) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var15 = []any{twmerge.Merge("absolute right-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50", classes)}
+		var templ_7745c5c3_Var15 = []any{twmerge.Merge("absolute right-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none", classes)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<button type=\"button\" x-on:click=\"current = current < count - 1 ? current + 1 : 0\" aria-label=\"Next slide\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<button type=\"button\" x-on:click=\"scrollNext()\" :disabled=\"current === count - 1\" aria-label=\"Next slide\" data-slot=\"carousel-next\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -343,11 +345,11 @@ func CarouselNext(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = icons.ChevronRight(icons.Props{Class: "h-4 w-4"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = icons.ChevronRight(icons.Props{Class: "size-4"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<span class=\"sr-only\">Next slide</span></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -14,9 +14,15 @@ const (
 templ CarouselRoot(count int, classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(carouselBaseClass, classes) }
-		x-data={ `{ current: 0, count: ` + itoa(count) + ` }` }
+		x-data={ `{ current: 0, count: ` + itoa(count) + `,
+  scrollPrev() { if (this.current > 0) this.current--; },
+  scrollNext() { if (this.current < this.count - 1) this.current++; } }` }
+		data-slot="carousel"
 		role="region"
 		aria-roledescription="carousel"
+		tabindex="0"
+		x-on:keydown.arrow-left.prevent="scrollPrev()"
+		x-on:keydown.arrow-right.prevent="scrollNext()"
 		{ attrs... }
 	>
 		{ children... }
@@ -25,7 +31,7 @@ templ CarouselRoot(count int, classes string, attrs templ.Attributes) {
 
 // CarouselContent is the scrolling flex container.
 templ CarouselContent(classes string, attrs templ.Attributes) {
-	<div class="overflow-hidden">
+	<div data-slot="carousel-content" class="overflow-hidden">
 		<div
 			class={ twmerge.Merge(carouselContentClass, classes) }
 			:style="'transform: translateX(-' + (current * 100) + '%)'"
@@ -40,6 +46,7 @@ templ CarouselContent(classes string, attrs templ.Attributes) {
 templ CarouselItem(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(carouselItemBaseClass, classes) }
+		data-slot="carousel-item"
 		role="group"
 		aria-roledescription="slide"
 		{ attrs... }
@@ -48,29 +55,35 @@ templ CarouselItem(classes string, attrs templ.Attributes) {
 	</div>
 }
 
-// CarouselPrevious renders the previous-slide button.
+// CarouselPrevious renders the previous-slide button. It disables at the first slide.
 templ CarouselPrevious(classes string, attrs templ.Attributes) {
 	<button
 		type="button"
-		x-on:click="current = current > 0 ? current - 1 : count - 1"
+		x-on:click="scrollPrev()"
+		:disabled="current === 0"
 		aria-label="Previous slide"
-		class={ twmerge.Merge("absolute left-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50", classes) }
+		data-slot="carousel-previous"
+		class={ twmerge.Merge("absolute left-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none", classes) }
 		{ attrs... }
 	>
-		@icons.ChevronLeft(icons.Props{Class: "h-4 w-4"})
+		@icons.ChevronLeft(icons.Props{Class: "size-4"})
+		<span class="sr-only">Previous slide</span>
 	</button>
 }
 
-// CarouselNext renders the next-slide button.
+// CarouselNext renders the next-slide button. It disables at the last slide.
 templ CarouselNext(classes string, attrs templ.Attributes) {
 	<button
 		type="button"
-		x-on:click="current = current < count - 1 ? current + 1 : 0"
+		x-on:click="scrollNext()"
+		:disabled="current === count - 1"
 		aria-label="Next slide"
-		class={ twmerge.Merge("absolute right-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50", classes) }
+		data-slot="carousel-next"
+		class={ twmerge.Merge("absolute right-[-12px] top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-8 rounded-full border bg-background shadow hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none", classes) }
 		{ attrs... }
 	>
-		@icons.ChevronRight(icons.Props{Class: "h-4 w-4"})
+		@icons.ChevronRight(icons.Props{Class: "size-4"})
+		<span class="sr-only">Next slide</span>
 	</button>
 }
 

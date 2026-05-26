@@ -63,7 +63,7 @@ func DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cla
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-slot=\"data-table\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -82,7 +82,9 @@ func DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cla
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf(`{
-  rows: %s,
+  // Stamp each source row with a stable id (_rid) derived from its index in the
+  // full dataset, so selection keys survive sorting/filtering reorder.
+  rows: (%s).map((row, i) => ({ ...row, _rid: i })),
   filter: '',
   sortKey: '',
   sortAsc: true,
@@ -94,7 +96,7 @@ func DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cla
     let r = this.rows;
     if (this.filter) {
       const f = this.filter.toLowerCase();
-      r = r.filter(row => Object.values(row).some(v => String(v).toLowerCase().includes(f)));
+      r = r.filter(row => Object.entries(row).some(([k,v]) => k !== '_rid' && String(v).toLowerCase().includes(f)));
     }
     if (this.sortKey) {
       const k = this.sortKey;
@@ -111,6 +113,12 @@ func DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cla
     return this.filtered.slice(s, s + this.pageSize);
   },
   get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.pageSize)); },
+  // sortState returns 'ascending' | 'descending' | 'none' for a given column key
+  // (matches the aria-sort token set).
+  sortState(key) {
+    if (this.sortKey !== key) return 'none';
+    return this.sortAsc ? 'ascending' : 'descending';
+  },
   toggleSort(key) {
     if (this.sortKey === key) { this.sortAsc = !this.sortAsc; } else { this.sortKey = key; this.sortAsc = true; }
     this.page = 0;
@@ -118,13 +126,13 @@ func DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cla
   toggleAll() {
     this.selectedAll = !this.selectedAll;
     if (this.selectedAll) {
-      this.paginated.forEach((r,i) => { this.selected[this.page+'_'+i] = true; });
+      this.paginated.forEach(r => { this.selected[r._rid] = true; });
     } else { this.selected = {}; }
   },
   selectedCount() { return Object.values(this.selected).filter(Boolean).length; }
 }`, string(rowsJSON), pageSize))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 78, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 87, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -138,26 +146,35 @@ func DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cla
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "><!-- Filter + selected count --><div class=\"flex items-center justify-between gap-2\"><input type=\"text\" x-model=\"filter\" x-on:input=\"page = 0\" placeholder=\"Filter...\" class=\"flex h-9 max-w-xs rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring\"> <span class=\"text-sm text-muted-foreground\" x-show=\"selectedCount() > 0\" x-cloak><span x-text=\"selectedCount()\"></span> row(s) selected</span></div><!-- Table --><div class=\"relative w-full overflow-auto rounded-md border\"><table class=\"w-full caption-bottom text-sm\"><thead class=\"[&_tr]:border-b\"><tr class=\"border-b transition-colors hover:bg-muted/50\"><!-- Select-all checkbox --><th class=\"h-10 px-2 text-left align-middle font-medium text-muted-foreground w-10\"><input type=\"checkbox\" x-model=\"selectedAll\" x-on:change=\"toggleAll()\" class=\"h-4 w-4 rounded border-primary\"></th>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "><!-- Filter + selected count --><div class=\"flex items-center justify-between gap-2\"><input type=\"text\" x-model=\"filter\" x-on:input=\"page = 0\" placeholder=\"Filter...\" class=\"flex h-9 max-w-xs rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring\"> <span class=\"text-sm text-muted-foreground\" x-show=\"selectedCount() > 0\" x-cloak><span x-text=\"selectedCount()\"></span> row(s) selected</span></div><!-- Table --><div data-slot=\"table-container\" class=\"relative w-full overflow-x-auto rounded-md border\"><table data-slot=\"table\" class=\"w-full caption-bottom text-sm\"><thead data-slot=\"table-header\" class=\"[&_tr]:border-b\"><tr data-slot=\"table-row\" class=\"border-b transition-colors hover:bg-muted/50\"><!-- Select-all checkbox --><th data-slot=\"table-head\" class=\"h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground w-10\"><input type=\"checkbox\" x-model=\"selectedAll\" x-on:change=\"toggleAll()\" aria-label=\"Select all rows\" class=\"size-4 rounded border-primary\"></th>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, col := range columns {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<th class=\"h-10 px-2 text-left align-middle font-medium text-muted-foreground\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			if col.Sortable {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button type=\"button\" class=\"inline-flex items-center gap-1 hover:text-foreground\" x-on:click=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<th data-slot=\"table-head\" class=\"h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground\" :aria-sort=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("toggleSort('%s')", col.Key))
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("sortState('%s')", col.Key))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 111, Col: 63}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 117, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"><button type=\"button\" class=\"inline-flex items-center gap-1 hover:text-foreground\" x-on:click=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var6 string
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("toggleSort('%s')", col.Key))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 122, Col: 63}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -165,63 +182,126 @@ func DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cla
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(col.Label)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 113, Col: 21}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = icons.ArrowUpDown(icons.Props{Class: "h-4 w-4"}).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(col.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 117, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 124, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</th>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " <span x-show=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("sortState('%s') === 'none'", col.Key))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 125, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = icons.ArrowUpDown(icons.Props{Class: "size-4"}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span> <span x-show=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("sortState('%s') === 'ascending'", col.Key))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 128, Col: 80}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" x-cloak>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = icons.ArrowUp(icons.Props{Class: "size-4"}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span> <span x-show=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("sortState('%s') === 'descending'", col.Key))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 131, Col: 81}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" x-cloak>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = icons.ArrowDown(icons.Props{Class: "size-4"}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</span></button></th>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<th data-slot=\"table-head\" class=\"h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(col.Label)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 141, Col: 20}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</th>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</tr></thead> <tbody class=\"[&_tr:last-child]:border-0\"><template x-for=\"(row, idx) in paginated\" :key=\"page + '_' + idx\"><tr class=\"border-b transition-colors hover:bg-muted/50\" :class=\"selected[page+'_'+idx] ? 'bg-muted' : ''\"><td class=\"p-2 align-middle\"><input type=\"checkbox\" x-model=\"selected[page+'_'+idx]\" class=\"h-4 w-4 rounded border-primary\"></td>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</tr></thead> <tbody data-slot=\"table-body\" class=\"[&_tr:last-child]:border-0\"><template x-for=\"row in paginated\" :key=\"row._rid\"><tr data-slot=\"table-row\" class=\"border-b transition-colors hover:bg-muted/50\" :class=\"selected[row._rid] ? 'bg-muted' : ''\" :data-state=\"selected[row._rid] ? 'selected' : null\"><td data-slot=\"table-cell\" class=\"p-2 align-middle\"><input type=\"checkbox\" x-model=\"selected[row._rid]\" aria-label=\"Select row\" class=\"size-4 rounded border-primary\"></td>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, col := range columns {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<td class=\"p-2 align-middle\" x-text=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<td data-slot=\"table-cell\" class=\"p-2 align-middle whitespace-nowrap\" x-text=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("row['%s'] || ''", col.Key))
+			var templ_7745c5c3_Var12 string
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("row['%s'] || ''", col.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 130, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 154, Col: 126}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"></td>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\"></td>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</tr></template><template x-if=\"filtered.length === 0\"><tr><td class=\"p-4 text-center text-muted-foreground\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</tr></template><template x-if=\"filtered.length === 0\"><tr data-slot=\"table-row\"><td data-slot=\"table-cell\" class=\"p-4 text-center text-muted-foreground\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -229,51 +309,51 @@ func DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cla
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, ">No results.</td></tr></template></tbody></table></div><!-- Pagination --><div class=\"flex items-center justify-between text-sm text-muted-foreground\"><span>Page <span x-text=\"page + 1\"></span> of <span x-text=\"totalPages\"></span></span><div class=\"flex gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, ">No results.</td></tr></template></tbody></table></div><!-- Pagination --><div class=\"flex items-center justify-between text-sm text-muted-foreground\"><span>Page <span x-text=\"page + 1\"></span> of <span x-text=\"totalPages\"></span></span><div class=\"flex gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{twmerge.Merge("inline-flex items-center justify-center h-8 px-3 rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none")}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
+		var templ_7745c5c3_Var13 = []any{twmerge.Merge("inline-flex items-center justify-center h-8 px-3 rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none")}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button type=\"button\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<button type=\"button\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var9).String())
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var13).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" x-on:click=\"if (page > 0) page--\" :disabled=\"page === 0\">Previous</button> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" x-on:click=\"if (page > 0) page--\" :disabled=\"page === 0\">Previous</button> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 = []any{twmerge.Merge("inline-flex items-center justify-center h-8 px-3 rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none")}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
+		var templ_7745c5c3_Var15 = []any{twmerge.Merge("inline-flex items-center justify-center h-8 px-3 rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none")}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button type=\"button\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<button type=\"button\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var11).String())
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var15).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/data-table.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" x-on:click=\"if (page < totalPages - 1) page++\" :disabled=\"page >= totalPages - 1\">Next</button></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" x-on:click=\"if (page < totalPages - 1) page++\" :disabled=\"page >= totalPages - 1\">Next</button></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

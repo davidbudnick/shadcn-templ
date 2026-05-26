@@ -9,15 +9,16 @@ const (
 	paginationBaseClass          = "mx-auto flex w-full justify-center"
 	paginationContentBaseClass   = "flex flex-row items-center gap-1"
 	paginationItemBaseClass      = ""
-	paginationLinkBaseClass      = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9"
+	paginationLinkBaseClass      = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground size-9"
 	paginationLinkActiveClass    = "border border-input bg-background shadow-sm"
-	paginationEllipsisBaseClass  = "flex h-9 w-9 items-center justify-center"
+	paginationEllipsisBaseClass  = "flex size-9 items-center justify-center"
 )
 
 templ Pagination(classes string, attrs templ.Attributes) {
 	<nav
 		role="navigation"
 		aria-label="pagination"
+		data-slot="pagination"
 		class={ twmerge.Merge(paginationBaseClass, classes) }
 		{ attrs... }
 	>
@@ -27,6 +28,7 @@ templ Pagination(classes string, attrs templ.Attributes) {
 
 templ PaginationContent(classes string, attrs templ.Attributes) {
 	<ul
+		data-slot="pagination-content"
 		class={ twmerge.Merge(paginationContentBaseClass, classes) }
 		{ attrs... }
 	>
@@ -36,6 +38,7 @@ templ PaginationContent(classes string, attrs templ.Attributes) {
 
 templ PaginationItem(classes string, attrs templ.Attributes) {
 	<li
+		data-slot="pagination-item"
 		class={ twmerge.Merge(paginationItemBaseClass, classes) }
 		{ attrs... }
 	>
@@ -48,6 +51,8 @@ templ PaginationLink(href templ.SafeURL, isActive bool, classes string, attrs te
 		<a
 			href={ href }
 			aria-current="page"
+			data-slot="pagination-link"
+			data-active="true"
 			class={ twmerge.Merge(paginationLinkBaseClass, paginationLinkActiveClass, classes) }
 			{ attrs... }
 		>
@@ -56,6 +61,7 @@ templ PaginationLink(href templ.SafeURL, isActive bool, classes string, attrs te
 	} else {
 		<a
 			href={ href }
+			data-slot="pagination-link"
 			class={ twmerge.Merge(paginationLinkBaseClass, classes) }
 			{ attrs... }
 		>
@@ -68,6 +74,7 @@ templ PaginationPrevious(href templ.SafeURL, classes string, attrs templ.Attribu
 	<a
 		href={ href }
 		aria-label="Go to previous page"
+		data-slot="pagination-link"
 		class={ twmerge.Merge(paginationLinkBaseClass, "gap-1 pl-2.5 w-auto px-4", classes) }
 		{ attrs... }
 	>
@@ -80,6 +87,7 @@ templ PaginationNext(href templ.SafeURL, classes string, attrs templ.Attributes)
 	<a
 		href={ href }
 		aria-label="Go to next page"
+		data-slot="pagination-link"
 		class={ twmerge.Merge(paginationLinkBaseClass, "gap-1 pr-2.5 w-auto px-4", classes) }
 		{ attrs... }
 	>
@@ -91,6 +99,7 @@ templ PaginationNext(href templ.SafeURL, classes string, attrs templ.Attributes)
 templ PaginationEllipsis(classes string, attrs templ.Attributes) {
 	<span
 		aria-hidden="true"
+		data-slot="pagination-ellipsis"
 		class={ twmerge.Merge(paginationEllipsisBaseClass, classes) }
 		{ attrs... }
 	>

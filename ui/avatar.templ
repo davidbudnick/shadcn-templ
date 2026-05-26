@@ -6,13 +6,40 @@ import (
 )
 
 const (
-	avatarBaseClass         = "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full"
-	avatarImageBaseClass    = "aspect-square h-full w-full"
-	avatarFallbackBaseClass = "flex h-full w-full items-center justify-center rounded-full bg-muted"
+	avatarBaseClass         = "group/avatar relative flex size-8 shrink-0 overflow-hidden rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6"
+	avatarImageBaseClass    = "aspect-square size-full"
+	avatarFallbackBaseClass = "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs"
+)
+
+// AvatarSize selects a predefined avatar size: "sm" (size-6), default (size-8)
+// or "lg" (size-10). It is consumed via the data-size attribute so the size
+// variants cascade to the fallback text size.
+type AvatarSize string
+
+const (
+	AvatarSizeSm      AvatarSize = "sm"
+	AvatarSizeDefault AvatarSize = ""
+	AvatarSizeLg      AvatarSize = "lg"
 )
 
 templ Avatar(classes string, attrs templ.Attributes) {
 	<span
+		data-slot="avatar"
+		class={ twmerge.Merge(avatarBaseClass, classes) }
+		{ attrs... }
+		x-data="{ status: 'loading' }"
+	>
+		{ children... }
+	</span>
+}
+
+// AvatarWithSize is an additive variant of Avatar that applies a size variant
+// via the data-size attribute (sm / "" / lg). The existing Avatar() signature
+// is preserved; pass AvatarSizeDefault for the standard size-8 avatar.
+templ AvatarWithSize(size AvatarSize, classes string, attrs templ.Attributes) {
+	<span
+		data-slot="avatar"
+		data-size={ string(size) }
 		class={ twmerge.Merge(avatarBaseClass, classes) }
 		{ attrs... }
 		x-data="{ status: 'loading' }"
@@ -38,6 +65,7 @@ templ AvatarImage(src, alt, classes string, attrs templ.Attributes) {
 		}`, src) }
 		src={ src }
 		alt={ alt }
+		data-slot="avatar-image"
 		class={ twmerge.Merge(avatarImageBaseClass, classes) }
 		{ attrs... }
 		x-cloak
@@ -47,6 +75,7 @@ templ AvatarImage(src, alt, classes string, attrs templ.Attributes) {
 
 templ AvatarFallback(classes string, attrs templ.Attributes) {
 	<span
+		data-slot="avatar-fallback"
 		class={ twmerge.Merge(avatarFallbackBaseClass, classes) }
 		{ attrs... }
 		x-cloak

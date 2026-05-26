@@ -26,7 +26,7 @@ func chartJSON(v any) string {
 // chartType is "bar", "line" or "area". Include ChartScripts() once on the page.
 // Chart.js is loaded from a CDN (client-side only) — it is not a Go dependency.
 templ ChartCanvas(id, chartType string, labels []string, values []float64, classes string, attrs templ.Attributes) {
-	<div class={ twmerge.Merge("relative h-[350px] w-full", classes) } { attrs... }>
+	<div data-slot="chart" class={ twmerge.Merge("relative h-[350px] w-full", classes) } { attrs... }>
 		<canvas
 			id={ id }
 			data-chart={ chartType }
@@ -40,7 +40,7 @@ templ ChartCanvas(id, chartType string, labels []string, values []float64, class
 // (e.g. the dashboard "Total Visitors" area chart). chartType is "area",
 // "line" or "bar".
 templ ChartCanvasMulti(id, chartType string, labels []string, series [][]float64, classes string, attrs templ.Attributes) {
-	<div class={ twmerge.Merge("relative h-[350px] w-full", classes) } { attrs... }>
+	<div data-slot="chart" class={ twmerge.Merge("relative h-[350px] w-full", classes) } { attrs... }>
 		<canvas
 			id={ id }
 			data-chart={ chartType }
@@ -60,17 +60,38 @@ templ ChartScripts() {
 			function renderCharts() {
 				if (!window.Chart) { setTimeout(renderCharts, 60); return; }
 				var cs = getComputedStyle(document.documentElement);
+				// Normalize a CSS custom-property value into a usable CSS color.
+				// Supports complete colors (oklch()/hsl()/rgb()/#hex/named) as well
+				// as bare HSL channels (e.g. "12 76% 61%") which get wrapped in hsl().
+				function toColor(raw, alpha) {
+					raw = (raw || '').trim();
+					if (!raw) return '';
+					var isComplete = /^(oklch|hsl|hsla|rgb|rgba|lab|lch|color|var)\(/i.test(raw) || raw[0] === '#';
+					if (isComplete) {
+						if (alpha == null) return raw;
+						// color-mix gives us per-color transparency for any color space.
+						return 'color-mix(in srgb, ' + raw + ' ' + Math.round(alpha * 100) + '%, transparent)';
+					}
+					return 'hsl(' + raw + (alpha == null ? '' : ' / ' + alpha) + ')';
+				}
 				var rawPrimary = cs.getPropertyValue('--primary').trim();
 				var rawMuted = cs.getPropertyValue('--muted-foreground').trim();
-				var mutedColor = 'hsl(' + rawMuted + ')';
-				var palette = [rawPrimary, rawMuted];
+				var mutedColor = toColor(rawMuted);
+				// Read the 5-color chart palette (--chart-1..--chart-5); fall back to
+				// the primary/muted-foreground pair when the chart vars are unset.
+				var palette = [];
+				for (var ci = 1; ci <= 5; ci++) {
+					var cv = cs.getPropertyValue('--chart-' + ci).trim();
+					if (cv) palette.push(cv);
+				}
+				if (palette.length === 0) palette = [rawPrimary, rawMuted];
 				function fillGrad(raw) {
 					return function (c) {
 						var area = c.chart.chartArea;
 						if (!area) return 'transparent';
 						var g = c.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
-						g.addColorStop(0, 'hsl(' + raw + ' / 0.4)');
-						g.addColorStop(1, 'hsl(' + raw + ' / 0)');
+						g.addColorStop(0, toColor(raw, 0.4));
+						g.addColorStop(1, toColor(raw, 0));
 						return g;
 					};
 				}
@@ -86,8 +107,8 @@ templ ChartScripts() {
 						var raw = palette[i % palette.length];
 						return {
 							data: s,
-							borderColor: 'hsl(' + raw + ')',
-							backgroundColor: type === 'bar' ? 'hsl(' + raw + ')' : (isArea ? fillGrad(raw) : 'transparent'),
+							borderColor: toColor(raw),
+							backgroundColor: type === 'bar' ? toColor(raw) : (isArea ? fillGrad(raw) : 'transparent'),
 							borderRadius: 6,
 							borderWidth: type === 'bar' ? 0 : 2,
 							fill: isArea,
@@ -158,6 +179,7 @@ templ BarChart(data []ChartDataPoint, title string, classes string, attrs templ.
 		_ = math.Ceil(0)
 	}}
 	<div
+		data-slot="chart"
 		class={ twmerge.Merge("rounded-xl border bg-card text-card-foreground shadow", classes) }
 		{ attrs... }
 	>
@@ -206,7 +228,7 @@ templ BarChart(data []ChartDataPoint, title string, classes string, attrs templ.
 						y={ fmt.Sprintf("%.1f", y) }
 						width={ fmt.Sprintf("%.1f", barW) }
 						height={ fmt.Sprintf("%.1f", bh) }
-						fill="hsl(var(--primary))"
+						fill="var(--chart-1, hsl(var(--primary)))"
 						rx="4"
 					/>
 					<text
@@ -275,6 +297,7 @@ templ LineChart(data []ChartDataPoint, title string, classes string, attrs templ
 		}
 	}}
 	<div
+		data-slot="chart"
 		class={ twmerge.Merge("rounded-xl border bg-card text-card-foreground shadow", classes) }
 		{ attrs... }
 	>
@@ -315,14 +338,14 @@ templ LineChart(data []ChartDataPoint, title string, classes string, attrs templ
 					<!-- Area fill -->
 					<path
 						d={ areaPath }
-						fill="hsl(var(--primary))"
+						fill="var(--chart-1, hsl(var(--primary)))"
 						fill-opacity="0.15"
 					/>
 					<!-- Line -->
 					<polyline
 						points={ polyline }
 						fill="none"
-						stroke="hsl(var(--primary))"
+						stroke="var(--chart-1, hsl(var(--primary)))"
 						stroke-width="2"
 						stroke-linejoin="round"
 						stroke-linecap="round"
@@ -333,7 +356,7 @@ templ LineChart(data []ChartDataPoint, title string, classes string, attrs templ
 							cx={ fmt.Sprintf("%.1f", pointX(i)) }
 							cy={ fmt.Sprintf("%.1f", pointY(d.Value)) }
 							r="4"
-							fill="hsl(var(--primary))"
+							fill="var(--chart-1, hsl(var(--primary)))"
 						/>
 						<text
 							x={ fmt.Sprintf("%.1f", pointX(i)) }
