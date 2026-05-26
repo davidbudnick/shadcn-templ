@@ -1,0 +1,131 @@
+package main
+
+import "github.com/davidbudnick/shadcn-templ/icons"
+
+// commandPalette renders the global search: a header trigger plus a Cmd/Ctrl+K
+// command-palette modal that filters every component and example page. The
+// trigger and modal share one Alpine scope; the modal is teleported to <body>
+// so it can't be clipped by the header's stacking/overflow context.
+templ commandPalette() {
+	<div
+		class="contents"
+		x-data="searchPalette()"
+		x-on:keydown.window.meta.k.prevent="show()"
+		x-on:keydown.window.ctrl.k.prevent="show()"
+	>
+		<button
+			type="button"
+			aria-label="Search"
+			x-on:click="show()"
+			class="inline-flex h-9 w-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-0 text-sm text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground sm:w-auto sm:min-w-[14rem] sm:justify-start sm:px-3"
+		>
+			@icons.Search(icons.Props{Class: "h-4 w-4 shrink-0"})
+			<span class="hidden flex-1 text-left sm:inline">Search...</span>
+			<kbd class="hidden h-5 select-none items-center gap-0.5 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:inline-flex">
+				<span class="text-xs">&#8984;</span>K
+			</kbd>
+		</button>
+		<template x-teleport="body">
+			<div
+				x-show="open"
+				x-cloak
+				x-on:keydown.esc.window="open = false"
+				x-effect="document.body.classList.toggle('overflow-hidden', open)"
+				class="fixed inset-0 z-[100] flex items-start justify-center p-4 sm:pt-[14vh]"
+				role="dialog"
+				aria-modal="true"
+				aria-label="Search"
+			>
+				<div
+					x-show="open"
+					x-transition.opacity
+					class="fixed inset-0 bg-black/50 backdrop-blur-sm"
+					x-on:click="open = false"
+				></div>
+				<div
+					x-show="open"
+					x-transition
+					x-trap="open"
+					class="relative z-10 w-full max-w-lg overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-lg"
+				>
+					<div class="flex items-center gap-2 border-b px-3">
+						@icons.Search(icons.Props{Class: "h-4 w-4 shrink-0 text-muted-foreground"})
+						<input
+							type="text"
+							x-ref="input"
+							x-model="q"
+							x-on:input="active = 0"
+							x-on:keydown.down.prevent="move(1)"
+							x-on:keydown.up.prevent="move(-1)"
+							x-on:keydown.enter.prevent="go()"
+							placeholder="Search components and examples..."
+							class="h-12 w-full bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+							autocomplete="off"
+							autocorrect="off"
+							spellcheck="false"
+						/>
+					</div>
+					<ul x-ref="list" class="max-h-[60vh] overflow-y-auto p-2">
+						<template x-for="(item, i) in results()" x-bind:key="item.u">
+							<li>
+								<a
+									x-bind:href="item.u"
+									x-bind:data-active="i === active"
+									x-on:mousemove="active = i"
+									x-on:click="open = false"
+									x-bind:class="i === active ? 'bg-accent text-accent-foreground' : 'text-foreground'"
+									class="flex items-center justify-between rounded-md px-3 py-2 text-sm"
+								>
+									<span x-text="item.t"></span>
+									<span class="text-xs text-muted-foreground" x-text="item.g"></span>
+								</a>
+							</li>
+						</template>
+						<li x-show="results().length === 0" class="px-3 py-10 text-center text-sm text-muted-foreground">
+							No results found.
+						</li>
+					</ul>
+				</div>
+			</div>
+		</template>
+	</div>
+	<div id="shadcn-search-index" data-index={ searchIndexJSON() } hidden></div>
+	<script>
+		window.SHADCN_SEARCH = (function () {
+			try { return JSON.parse(document.getElementById('shadcn-search-index').dataset.index); }
+			catch (e) { return []; }
+		})();
+		function searchPalette() {
+			return {
+				open: false,
+				q: '',
+				active: 0,
+				items: window.SHADCN_SEARCH || [],
+				show() {
+					this.open = true;
+					this.q = '';
+					this.active = 0;
+					this.$nextTick(() => { if (this.$refs.input) this.$refs.input.focus(); });
+				},
+				results() {
+					const q = this.q.trim().toLowerCase();
+					if (!q) return this.items;
+					return this.items.filter((it) => it.t.toLowerCase().includes(q));
+				},
+				move(d) {
+					const n = this.results().length;
+					if (!n) return;
+					this.active = (this.active + d + n) % n;
+					this.$nextTick(() => {
+						const el = this.$refs.list && this.$refs.list.querySelector('[data-active="true"]');
+						if (el) el.scrollIntoView({ block: 'nearest' });
+					});
+				},
+				go() {
+					const r = this.results()[this.active];
+					if (r) window.location.href = r.u;
+				},
+			};
+		}
+	</script>
+}

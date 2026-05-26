@@ -42,7 +42,7 @@ templ DashboardExample() {
 					@dashStatCard("Active Now", "+573", "+201 since last hour", icons.Activity(icons.Props{Class: "h-4 w-4 text-muted-foreground"}))
 				</div>
 				<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-					@ui.Card("lg:col-span-4", nil) {
+					@ui.Card("lg:col-span-4 min-w-0 overflow-hidden", nil) {
 						@ui.CardHeader("", nil) {
 							@ui.CardTitle("", nil) {
 								Overview
@@ -52,7 +52,7 @@ templ DashboardExample() {
 							@dashOverviewChart()
 						}
 					}
-					@ui.Card("lg:col-span-3", nil) {
+					@ui.Card("lg:col-span-3 min-w-0", nil) {
 						@ui.CardHeader("", nil) {
 							@ui.CardTitle("", nil) {
 								Recent Sales
@@ -88,9 +88,9 @@ templ DashboardExample() {
 // brand | nav links | search input + avatar (ml-auto).
 templ dashNav() {
 	<div class="border-b">
-		<div class="flex h-16 items-center gap-4 px-4">
+		<div class="flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8">
 			<span class="shrink-0 font-bold">Acme Inc</span>
-			<nav class="flex items-center space-x-4 overflow-x-auto text-sm font-medium lg:space-x-6">
+			<nav class="hidden items-center space-x-4 overflow-x-auto text-sm font-medium md:flex lg:space-x-6">
 				<a href="#" class="whitespace-nowrap transition-colors hover:text-primary">Overview</a>
 				<a href="#" class="whitespace-nowrap text-muted-foreground transition-colors hover:text-primary">Customers</a>
 				<a href="#" class="whitespace-nowrap text-muted-foreground transition-colors hover:text-primary">Products</a>
@@ -144,11 +144,11 @@ templ dashSaleRow(initials, name, email, amount string) {
 				{ initials }
 			}
 		}
-		<div class="ml-4 space-y-1">
-			<p class="text-sm font-medium leading-none">{ name }</p>
-			<p class="text-sm text-muted-foreground">{ email }</p>
+		<div class="ml-4 min-w-0 space-y-1">
+			<p class="truncate text-sm font-medium leading-none">{ name }</p>
+			<p class="truncate text-sm text-muted-foreground">{ email }</p>
 		</div>
-		<div class="ml-auto font-medium">{ amount }</div>
+		<div class="ml-auto shrink-0 pl-2 font-medium">{ amount }</div>
 	</div>
 }
 

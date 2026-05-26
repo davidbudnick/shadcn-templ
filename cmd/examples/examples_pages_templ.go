@@ -3192,7 +3192,7 @@ func MusicExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 161, "</div></aside><div class=\"col-span-3 lg:col-span-4 lg:border-l\"><div class=\"px-4 py-6 lg:px-8\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 161, "</div></aside><div class=\"min-w-0 lg:col-span-4 lg:border-l\"><div class=\"px-4 py-6 lg:px-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

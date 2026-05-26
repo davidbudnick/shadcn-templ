@@ -324,7 +324,7 @@ func DashboardExample() templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = ui.Card("lg:col-span-4", nil).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = ui.Card("lg:col-span-4 min-w-0 overflow-hidden", nil).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -466,7 +466,7 @@ func DashboardExample() templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = ui.Card("lg:col-span-3", nil).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = ui.Card("lg:col-span-3 min-w-0", nil).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -595,7 +595,7 @@ func dashNav() templ.Component {
 			templ_7745c5c3_Var22 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"border-b\"><div class=\"flex h-16 items-center gap-4 px-4\"><span class=\"shrink-0 font-bold\">Acme Inc</span><nav class=\"flex items-center space-x-4 overflow-x-auto text-sm font-medium lg:space-x-6\"><a href=\"#\" class=\"whitespace-nowrap transition-colors hover:text-primary\">Overview</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Customers</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Products</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Settings</a></nav><div class=\"ml-auto flex shrink-0 items-center space-x-2\"><div class=\"relative hidden md:block\"><span class=\"absolute left-2 top-2.5 text-muted-foreground\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"border-b\"><div class=\"flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8\"><span class=\"shrink-0 font-bold\">Acme Inc</span><nav class=\"hidden items-center space-x-4 overflow-x-auto text-sm font-medium md:flex lg:space-x-6\"><a href=\"#\" class=\"whitespace-nowrap transition-colors hover:text-primary\">Overview</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Customers</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Products</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Settings</a></nav><div class=\"ml-auto flex shrink-0 items-center space-x-2\"><div class=\"relative hidden md:block\"><span class=\"absolute left-2 top-2.5 text-muted-foreground\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -918,40 +918,40 @@ func dashSaleRow(initials, name, email, amount string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<div class=\"ml-4 space-y-1\"><p class=\"text-sm font-medium leading-none\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<div class=\"ml-4 min-w-0 space-y-1\"><p class=\"truncate text-sm font-medium leading-none\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var38 string
 		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/examples/ex_dashboard.templ`, Line: 148, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/examples/ex_dashboard.templ`, Line: 148, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</p><p class=\"text-sm text-muted-foreground\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</p><p class=\"truncate text-sm text-muted-foreground\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var39 string
 		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/examples/ex_dashboard.templ`, Line: 149, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/examples/ex_dashboard.templ`, Line: 149, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</p></div><div class=\"ml-auto font-medium\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</p></div><div class=\"ml-auto shrink-0 pl-2 font-medium\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var40 string
 		templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(amount)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/examples/ex_dashboard.templ`, Line: 151, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/examples/ex_dashboard.templ`, Line: 151, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 		if templ_7745c5c3_Err != nil {
