@@ -33,9 +33,12 @@ templ DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cl
 		_ = colsJSON
 	}}
 	<div
+		data-slot="data-table"
 		class={ twmerge.Merge("w-full space-y-4", classes) }
 		x-data={ fmt.Sprintf(`{
-  rows: %s,
+  // Stamp each source row with a stable id (_rid) derived from its index in the
+  // full dataset, so selection keys survive sorting/filtering reorder.
+  rows: (%s).map((row, i) => ({ ...row, _rid: i })),
   filter: '',
   sortKey: '',
   sortAsc: true,
@@ -47,7 +50,7 @@ templ DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cl
     let r = this.rows;
     if (this.filter) {
       const f = this.filter.toLowerCase();
-      r = r.filter(row => Object.values(row).some(v => String(v).toLowerCase().includes(f)));
+      r = r.filter(row => Object.entries(row).some(([k,v]) => k !== '_rid' && String(v).toLowerCase().includes(f)));
     }
     if (this.sortKey) {
       const k = this.sortKey;
@@ -64,6 +67,12 @@ templ DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cl
     return this.filtered.slice(s, s + this.pageSize);
   },
   get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.pageSize)); },
+  // sortState returns 'ascending' | 'descending' | 'none' for a given column key
+  // (matches the aria-sort token set).
+  sortState(key) {
+    if (this.sortKey !== key) return 'none';
+    return this.sortAsc ? 'ascending' : 'descending';
+  },
   toggleSort(key) {
     if (this.sortKey === key) { this.sortAsc = !this.sortAsc; } else { this.sortKey = key; this.sortAsc = true; }
     this.page = 0;
@@ -71,7 +80,7 @@ templ DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cl
   toggleAll() {
     this.selectedAll = !this.selectedAll;
     if (this.selectedAll) {
-      this.paginated.forEach((r,i) => { this.selected[this.page+'_'+i] = true; });
+      this.paginated.forEach(r => { this.selected[r._rid] = true; });
     } else { this.selected = {}; }
   },
   selectedCount() { return Object.values(this.selected).filter(Boolean).length; }
@@ -92,48 +101,64 @@ templ DataTable(columns []DataTableColumn, rows []DataTableRow, pageSize int, cl
 			</span>
 		</div>
 		<!-- Table -->
-		<div class="relative w-full overflow-auto rounded-md border">
-			<table class="w-full caption-bottom text-sm">
-				<thead class="[&_tr]:border-b">
-					<tr class="border-b transition-colors hover:bg-muted/50">
+		<div data-slot="table-container" class="relative w-full overflow-x-auto rounded-md border">
+			<table data-slot="table" class="w-full caption-bottom text-sm">
+				<thead data-slot="table-header" class="[&_tr]:border-b">
+					<tr data-slot="table-row" class="border-b transition-colors hover:bg-muted/50">
 						<!-- Select-all checkbox -->
-						<th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground w-10">
-							<input type="checkbox" x-model="selectedAll" x-on:change="toggleAll()" class="h-4 w-4 rounded border-primary"/>
+						<th data-slot="table-head" class="h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground w-10">
+							<input type="checkbox" x-model="selectedAll" x-on:change="toggleAll()" aria-label="Select all rows" class="size-4 rounded border-primary"/>
 						</th>
 						for _, col := range columns {
-							<th
-								class="h-10 px-2 text-left align-middle font-medium text-muted-foreground"
-							>
-								if col.Sortable {
+							if col.Sortable {
+								<th
+									data-slot="table-head"
+									class="h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground"
+									:aria-sort={ fmt.Sprintf("sortState('%s')", col.Key) }
+								>
 									<button
 										type="button"
 										class="inline-flex items-center gap-1 hover:text-foreground"
 										x-on:click={ fmt.Sprintf("toggleSort('%s')", col.Key) }
 									>
 										{ col.Label }
-										@icons.ArrowUpDown(icons.Props{Class: "h-4 w-4"})
+										<span x-show={ fmt.Sprintf("sortState('%s') === 'none'", col.Key) }>
+											@icons.ArrowUpDown(icons.Props{Class: "size-4"})
+										</span>
+										<span x-show={ fmt.Sprintf("sortState('%s') === 'ascending'", col.Key) } x-cloak>
+											@icons.ArrowUp(icons.Props{Class: "size-4"})
+										</span>
+										<span x-show={ fmt.Sprintf("sortState('%s') === 'descending'", col.Key) } x-cloak>
+											@icons.ArrowDown(icons.Props{Class: "size-4"})
+										</span>
 									</button>
-								} else {
+								</th>
+							} else {
+								<th
+									data-slot="table-head"
+									class="h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground"
+								>
 									{ col.Label }
-								}
-							</th>
+								</th>
+							}
 						}
 					</tr>
 				</thead>
-				<tbody class="[&_tr:last-child]:border-0">
-					<template x-for="(row, idx) in paginated" :key="page + '_' + idx">
-						<tr class="border-b transition-colors hover:bg-muted/50" :class="selected[page+'_'+idx] ? 'bg-muted' : ''">
-							<td class="p-2 align-middle">
-								<input type="checkbox" x-model="selected[page+'_'+idx]" class="h-4 w-4 rounded border-primary"/>
+				<tbody data-slot="table-body" class="[&_tr:last-child]:border-0">
+					<template x-for="row in paginated" :key="row._rid">
+						<tr data-slot="table-row" class="border-b transition-colors hover:bg-muted/50" :class="selected[row._rid] ? 'bg-muted' : ''" :data-state="selected[row._rid] ? 'selected' : null">
+							<td data-slot="table-cell" class="p-2 align-middle">
+								<input type="checkbox" x-model="selected[row._rid]" aria-label="Select row" class="size-4 rounded border-primary"/>
 							</td>
 							for _, col := range columns {
-								<td class="p-2 align-middle" x-text={ fmt.Sprintf("row['%s'] || ''", col.Key) }></td>
+								<td data-slot="table-cell" class="p-2 align-middle whitespace-nowrap" x-text={ fmt.Sprintf("row['%s'] || ''", col.Key) }></td>
 							}
 						</tr>
 					</template>
 					<template x-if="filtered.length === 0">
-						<tr>
+						<tr data-slot="table-row">
 							<td
+								data-slot="table-cell"
 								class="p-4 text-center text-muted-foreground"
 								{ templ.Attributes{"colspan": fmt.Sprintf("%d", len(columns)+1)}... }
 							>No results.</td>

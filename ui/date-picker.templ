@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
@@ -9,30 +8,25 @@ import (
 )
 
 // DatePicker renders a self-contained date-picker button + inline calendar popover.
-// year/month control the initial month shown in the calendar.
+// year/month control the initial month shown in the calendar. Month navigation
+// is client-side (Alpine), so it preserves both the open popover and the
+// selected value.
 templ DatePicker(year int, month time.Month, classes string, attrs templ.Attributes) {
-	{{
-		today := time.Now()
-		todayY, todayM, todayD := today.Date()
-		weeks := calendarDays(year, month)
-		prevMonth := time.Date(year, month-1, 1, 0, 0, 0, 0, time.UTC)
-		nextMonth := time.Date(year, month+1, 1, 0, 0, 0, 0, time.UTC)
-		_ = prevMonth
-		_ = nextMonth
-	}}
 	<div
 		class={ twmerge.Merge("relative inline-block", classes) }
-		x-data="{ open: false, selected: 0, label: 'Pick a date' }"
+		x-data={ calendarAlpineState(year, month, datePickerExtraState()) }
+		data-slot="date-picker"
 		{ attrs... }
 	>
 		<!-- Trigger button -->
 		<button
 			type="button"
-			class="inline-flex items-center gap-2 w-[240px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+			class="inline-flex items-center gap-2 w-[240px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-[3px] focus:ring-ring/50"
 			x-on:click="open = !open"
 			:aria-expanded="open"
+			data-slot="date-picker-trigger"
 		>
-			@icons.Calendar(icons.Props{Class: "h-4 w-4 opacity-50"})
+			@icons.Calendar(icons.Props{Class: "size-4 opacity-50"})
 			<span x-text="label" class="text-muted-foreground flex-1 text-left"></span>
 		</button>
 		<!-- Popover calendar -->
@@ -43,57 +37,23 @@ templ DatePicker(year int, month time.Month, classes string, attrs templ.Attribu
 			x-on:mousedown.outside="open = false"
 			x-transition
 			class="absolute z-50 mt-1 rounded-md border bg-popover p-3 shadow-md w-fit"
+			data-slot="date-picker-popover"
 		>
-			<!-- Header nav -->
-			<div class="flex items-center justify-between mb-2">
-				<button
-					type="button"
-					class="inline-flex items-center justify-center h-7 w-7 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
-					x-on:click={ fmt.Sprintf("window.location.href='?year=%d&month=%d'", prevMonth.Year(), int(prevMonth.Month())) }
-					aria-label="Previous month"
-				>
-					@icons.ChevronLeft(icons.Props{Class: "h-4 w-4"})
-				</button>
-				<span class="text-sm font-medium">{ calendarMonthName(year, month) }</span>
-				<button
-					type="button"
-					class="inline-flex items-center justify-center h-7 w-7 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
-					x-on:click={ fmt.Sprintf("window.location.href='?year=%d&month=%d'", nextMonth.Year(), int(nextMonth.Month())) }
-					aria-label="Next month"
-				>
-					@icons.ChevronRight(icons.Props{Class: "h-4 w-4"})
-				</button>
-			</div>
-			<!-- Day headers -->
-			<div class="grid grid-cols-7 mb-1">
-				for _, h := range []string{"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"} {
-					<div class="text-muted-foreground text-[0.8rem] font-normal flex items-center justify-center w-9 h-9">{ h }</div>
-				}
-			</div>
-			<!-- Weeks -->
-			for _, week := range weeks {
-				<div class="grid grid-cols-7">
-					for _, day := range week {
-						if day == 0 {
-							<div class="w-9 h-9"></div>
-						} else if todayY == year && todayM == month && todayD == day {
-							<button
-								type="button"
-								class="w-9 h-9 rounded-md text-sm bg-accent text-accent-foreground font-semibold hover:bg-primary hover:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-								:class={ fmt.Sprintf("selected === %d ? 'bg-primary text-primary-foreground' : ''", day) }
-								x-on:click={ fmt.Sprintf("selected = %d; label = '%s %d, %d'; open = false", day, month.String(), day, year) }
-							>{ fmt.Sprintf("%d", day) }</button>
-						} else {
-							<button
-								type="button"
-								class="w-9 h-9 rounded-md text-sm hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-								:class={ fmt.Sprintf("selected === %d ? 'bg-primary text-primary-foreground' : ''", day) }
-								x-on:click={ fmt.Sprintf("selected = %d; label = '%s %d, %d'; open = false", day, month.String(), day, year) }
-							>{ fmt.Sprintf("%d", day) }</button>
-						}
-					}
-				</div>
-			}
+			@calendarBody()
 		</div>
 	</div>
+}
+
+// datePickerExtraState adds the popover open state + selection label, and
+// overrides the day-select handler so picking a date also sets the trigger
+// label and closes the popover (while keeping the selection client-side).
+func datePickerExtraState() string {
+	return `open: false,
+  label: 'Pick a date',
+  selectDay(d) {
+    const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    this.selected = this.dayKey(d);
+    this.label = names[this.month.month - 1] + ' ' + d + ', ' + this.month.year;
+    this.open = false;
+  }`
 }

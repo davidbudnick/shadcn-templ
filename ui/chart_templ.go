@@ -59,7 +59,7 @@ func ChartCanvas(id, chartType string, labels []string, values []float64, classe
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-slot=\"chart\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -169,7 +169,7 @@ func ChartCanvasMulti(id, chartType string, labels []string, series [][]float64,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div data-slot=\"chart\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -274,7 +274,7 @@ func ChartScripts() templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<script src=\"https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js\"></script><script>\n\t\t(function () {\n\t\t\tfunction renderCharts() {\n\t\t\t\tif (!window.Chart) { setTimeout(renderCharts, 60); return; }\n\t\t\t\tvar cs = getComputedStyle(document.documentElement);\n\t\t\t\tvar rawPrimary = cs.getPropertyValue('--primary').trim();\n\t\t\t\tvar rawMuted = cs.getPropertyValue('--muted-foreground').trim();\n\t\t\t\tvar mutedColor = 'hsl(' + rawMuted + ')';\n\t\t\t\tvar palette = [rawPrimary, rawMuted];\n\t\t\t\tfunction fillGrad(raw) {\n\t\t\t\t\treturn function (c) {\n\t\t\t\t\t\tvar area = c.chart.chartArea;\n\t\t\t\t\t\tif (!area) return 'transparent';\n\t\t\t\t\t\tvar g = c.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);\n\t\t\t\t\t\tg.addColorStop(0, 'hsl(' + raw + ' / 0.4)');\n\t\t\t\t\t\tg.addColorStop(1, 'hsl(' + raw + ' / 0)');\n\t\t\t\t\t\treturn g;\n\t\t\t\t\t};\n\t\t\t\t}\n\t\t\t\tdocument.querySelectorAll('canvas[data-chart]').forEach(function (el) {\n\t\t\t\t\tif (el._chart) { el._chart.destroy(); }\n\t\t\t\t\tvar type = el.getAttribute('data-chart');\n\t\t\t\t\tvar labels = JSON.parse(el.getAttribute('data-labels') || '[]');\n\t\t\t\t\tvar values = JSON.parse(el.getAttribute('data-values') || '[]');\n\t\t\t\t\tvar series = Array.isArray(values[0]) ? values : [values];\n\t\t\t\t\tvar isArea = type === 'area';\n\t\t\t\t\tvar renderType = isArea ? 'line' : type;\n\t\t\t\t\tvar datasets = series.map(function (s, i) {\n\t\t\t\t\t\tvar raw = palette[i % palette.length];\n\t\t\t\t\t\treturn {\n\t\t\t\t\t\t\tdata: s,\n\t\t\t\t\t\t\tborderColor: 'hsl(' + raw + ')',\n\t\t\t\t\t\t\tbackgroundColor: type === 'bar' ? 'hsl(' + raw + ')' : (isArea ? fillGrad(raw) : 'transparent'),\n\t\t\t\t\t\t\tborderRadius: 6,\n\t\t\t\t\t\t\tborderWidth: type === 'bar' ? 0 : 2,\n\t\t\t\t\t\t\tfill: isArea,\n\t\t\t\t\t\t\ttension: 0.4,\n\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\tmaxBarThickness: 48\n\t\t\t\t\t\t};\n\t\t\t\t\t});\n\t\t\t\t\tel._chart = new window.Chart(el, {\n\t\t\t\t\t\ttype: renderType,\n\t\t\t\t\t\tdata: { labels: labels, datasets: datasets },\n\t\t\t\t\t\toptions: {\n\t\t\t\t\t\t\tresponsive: true, maintainAspectRatio: false,\n\t\t\t\t\t\t\tinteraction: { intersect: false, mode: 'index' },\n\t\t\t\t\t\t\tplugins: { legend: { display: false }, tooltip: { enabled: true } },\n\t\t\t\t\t\t\tscales: {\n\t\t\t\t\t\t\t\tx: { grid: { display: false }, border: { display: false }, ticks: { color: mutedColor, font: { size: 12 }, autoSkip: true, maxTicksLimit: 8, maxRotation: 0 } },\n\t\t\t\t\t\t\t\ty: { display: false, beginAtZero: true, grid: { display: false } }\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t}\n\t\t\tif (document.readyState !== 'loading') renderCharts();\n\t\t\telse document.addEventListener('DOMContentLoaded', renderCharts);\n\t\t\tnew MutationObserver(renderCharts).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });\n\t\t})();\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<script src=\"https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js\"></script><script>\n\t\t(function () {\n\t\t\tfunction renderCharts() {\n\t\t\t\tif (!window.Chart) { setTimeout(renderCharts, 60); return; }\n\t\t\t\tvar cs = getComputedStyle(document.documentElement);\n\t\t\t\t// Normalize a CSS custom-property value into a usable CSS color.\n\t\t\t\t// Supports complete colors (oklch()/hsl()/rgb()/#hex/named) as well\n\t\t\t\t// as bare HSL channels (e.g. \"12 76% 61%\") which get wrapped in hsl().\n\t\t\t\tfunction toColor(raw, alpha) {\n\t\t\t\t\traw = (raw || '').trim();\n\t\t\t\t\tif (!raw) return '';\n\t\t\t\t\tvar isComplete = /^(oklch|hsl|hsla|rgb|rgba|lab|lch|color|var)\\(/i.test(raw) || raw[0] === '#';\n\t\t\t\t\tif (isComplete) {\n\t\t\t\t\t\tif (alpha == null) return raw;\n\t\t\t\t\t\t// color-mix gives us per-color transparency for any color space.\n\t\t\t\t\t\treturn 'color-mix(in srgb, ' + raw + ' ' + Math.round(alpha * 100) + '%, transparent)';\n\t\t\t\t\t}\n\t\t\t\t\treturn 'hsl(' + raw + (alpha == null ? '' : ' / ' + alpha) + ')';\n\t\t\t\t}\n\t\t\t\tvar rawPrimary = cs.getPropertyValue('--primary').trim();\n\t\t\t\tvar rawMuted = cs.getPropertyValue('--muted-foreground').trim();\n\t\t\t\tvar mutedColor = toColor(rawMuted);\n\t\t\t\t// Read the 5-color chart palette (--chart-1..--chart-5); fall back to\n\t\t\t\t// the primary/muted-foreground pair when the chart vars are unset.\n\t\t\t\tvar palette = [];\n\t\t\t\tfor (var ci = 1; ci <= 5; ci++) {\n\t\t\t\t\tvar cv = cs.getPropertyValue('--chart-' + ci).trim();\n\t\t\t\t\tif (cv) palette.push(cv);\n\t\t\t\t}\n\t\t\t\tif (palette.length === 0) palette = [rawPrimary, rawMuted];\n\t\t\t\tfunction fillGrad(raw) {\n\t\t\t\t\treturn function (c) {\n\t\t\t\t\t\tvar area = c.chart.chartArea;\n\t\t\t\t\t\tif (!area) return 'transparent';\n\t\t\t\t\t\tvar g = c.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);\n\t\t\t\t\t\tg.addColorStop(0, toColor(raw, 0.4));\n\t\t\t\t\t\tg.addColorStop(1, toColor(raw, 0));\n\t\t\t\t\t\treturn g;\n\t\t\t\t\t};\n\t\t\t\t}\n\t\t\t\tdocument.querySelectorAll('canvas[data-chart]').forEach(function (el) {\n\t\t\t\t\tif (el._chart) { el._chart.destroy(); }\n\t\t\t\t\tvar type = el.getAttribute('data-chart');\n\t\t\t\t\tvar labels = JSON.parse(el.getAttribute('data-labels') || '[]');\n\t\t\t\t\tvar values = JSON.parse(el.getAttribute('data-values') || '[]');\n\t\t\t\t\tvar series = Array.isArray(values[0]) ? values : [values];\n\t\t\t\t\tvar isArea = type === 'area';\n\t\t\t\t\tvar renderType = isArea ? 'line' : type;\n\t\t\t\t\tvar datasets = series.map(function (s, i) {\n\t\t\t\t\t\tvar raw = palette[i % palette.length];\n\t\t\t\t\t\treturn {\n\t\t\t\t\t\t\tdata: s,\n\t\t\t\t\t\t\tborderColor: toColor(raw),\n\t\t\t\t\t\t\tbackgroundColor: type === 'bar' ? toColor(raw) : (isArea ? fillGrad(raw) : 'transparent'),\n\t\t\t\t\t\t\tborderRadius: 6,\n\t\t\t\t\t\t\tborderWidth: type === 'bar' ? 0 : 2,\n\t\t\t\t\t\t\tfill: isArea,\n\t\t\t\t\t\t\ttension: 0.4,\n\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\tmaxBarThickness: 48\n\t\t\t\t\t\t};\n\t\t\t\t\t});\n\t\t\t\t\tel._chart = new window.Chart(el, {\n\t\t\t\t\t\ttype: renderType,\n\t\t\t\t\t\tdata: { labels: labels, datasets: datasets },\n\t\t\t\t\t\toptions: {\n\t\t\t\t\t\t\tresponsive: true, maintainAspectRatio: false,\n\t\t\t\t\t\t\tinteraction: { intersect: false, mode: 'index' },\n\t\t\t\t\t\t\tplugins: { legend: { display: false }, tooltip: { enabled: true } },\n\t\t\t\t\t\t\tscales: {\n\t\t\t\t\t\t\t\tx: { grid: { display: false }, border: { display: false }, ticks: { color: mutedColor, font: { size: 12 }, autoSkip: true, maxTicksLimit: 8, maxRotation: 0 } },\n\t\t\t\t\t\t\t\ty: { display: false, beginAtZero: true, grid: { display: false } }\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t}\n\t\t\tif (document.readyState !== 'loading') renderCharts();\n\t\t\telse document.addEventListener('DOMContentLoaded', renderCharts);\n\t\t\tnew MutationObserver(renderCharts).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });\n\t\t})();\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -344,7 +344,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div data-slot=\"chart\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -377,7 +377,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 166, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 188, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -395,7 +395,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("0 0 %d %d", svgW, svgH))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 171, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 193, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {
@@ -408,7 +408,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 173, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 195, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 		if templ_7745c5c3_Err != nil {
@@ -428,7 +428,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 182, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 204, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 			if templ_7745c5c3_Err != nil {
@@ -441,7 +441,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", y))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 183, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 205, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
 			if templ_7745c5c3_Err != nil {
@@ -454,7 +454,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", svgW-padR))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 184, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 206, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
 			if templ_7745c5c3_Err != nil {
@@ -467,7 +467,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", y))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 185, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 207, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var25)
 			if templ_7745c5c3_Err != nil {
@@ -480,7 +480,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padL-4))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 190, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 212, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
 			if templ_7745c5c3_Err != nil {
@@ -493,7 +493,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var27 string
 			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", y+4))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 191, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 213, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var27)
 			if templ_7745c5c3_Err != nil {
@@ -506,7 +506,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var28 string
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 195, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 217, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
@@ -532,7 +532,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", x))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 205, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 227, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 			if templ_7745c5c3_Err != nil {
@@ -545,7 +545,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", y))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 206, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 228, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
 			if templ_7745c5c3_Err != nil {
@@ -558,7 +558,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var31 string
 			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", barW))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 207, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 229, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
 			if templ_7745c5c3_Err != nil {
@@ -571,20 +571,20 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var32 string
 			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", bh))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 208, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 230, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\" fill=\"hsl(var(--primary))\" rx=\"4\"></rect> <text x=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\" fill=\"var(--chart-1, hsl(var(--primary)))\" rx=\"4\"></rect> <text x=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", x+barW/2))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 213, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 235, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
 			if templ_7745c5c3_Err != nil {
@@ -597,7 +597,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", svgH-padB+15))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 214, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 236, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
 			if templ_7745c5c3_Err != nil {
@@ -610,7 +610,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 			var templ_7745c5c3_Var35 string
 			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(d.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 218, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 240, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 			if templ_7745c5c3_Err != nil {
@@ -628,7 +628,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 		var templ_7745c5c3_Var36 string
 		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 222, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 244, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
 		if templ_7745c5c3_Err != nil {
@@ -641,7 +641,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 		var templ_7745c5c3_Var37 string
 		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padT+plotH))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 223, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 245, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var37)
 		if templ_7745c5c3_Err != nil {
@@ -654,7 +654,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 		var templ_7745c5c3_Var38 string
 		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", svgW-padR))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 224, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 246, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var38)
 		if templ_7745c5c3_Err != nil {
@@ -667,7 +667,7 @@ func BarChart(data []ChartDataPoint, title string, classes string, attrs templ.A
 		var templ_7745c5c3_Var39 string
 		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padT+plotH))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 225, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 247, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var39)
 		if templ_7745c5c3_Err != nil {
@@ -747,7 +747,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div data-slot=\"chart\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -780,7 +780,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var43 string
 			templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 283, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 306, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 			if templ_7745c5c3_Err != nil {
@@ -798,7 +798,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 		var templ_7745c5c3_Var44 string
 		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("0 0 %d %d", svgW, svgH))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 288, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 311, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var44)
 		if templ_7745c5c3_Err != nil {
@@ -811,7 +811,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 		var templ_7745c5c3_Var45 string
 		templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 290, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 313, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 		if templ_7745c5c3_Err != nil {
@@ -831,7 +831,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var46 string
 			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 299, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 322, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 			if templ_7745c5c3_Err != nil {
@@ -844,7 +844,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var47 string
 			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", y))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 300, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 323, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var47)
 			if templ_7745c5c3_Err != nil {
@@ -857,7 +857,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var48 string
 			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", svgW-padR))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 301, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 324, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var48)
 			if templ_7745c5c3_Err != nil {
@@ -870,7 +870,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var49 string
 			templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", y))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 302, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 325, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var49)
 			if templ_7745c5c3_Err != nil {
@@ -883,7 +883,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var50 string
 			templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padL-4))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 307, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 330, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var50)
 			if templ_7745c5c3_Err != nil {
@@ -896,7 +896,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var51 string
 			templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", y+4))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 308, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 331, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var51)
 			if templ_7745c5c3_Err != nil {
@@ -909,7 +909,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var52 string
 			templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 312, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 335, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 			if templ_7745c5c3_Err != nil {
@@ -928,26 +928,26 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 			var templ_7745c5c3_Var53 string
 			templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.ResolveAttributeValue(areaPath)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 317, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 340, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var53)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\" fill=\"hsl(var(--primary))\" fill-opacity=\"0.15\"></path><!-- Line --> <polyline points=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\" fill=\"var(--chart-1, hsl(var(--primary)))\" fill-opacity=\"0.15\"></path><!-- Line --> <polyline points=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var54 string
 			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(polyline)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 323, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 346, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "\" fill=\"none\" stroke=\"hsl(var(--primary))\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></polyline><!-- Dots + labels -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "\" fill=\"none\" stroke=\"var(--chart-1, hsl(var(--primary)))\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></polyline><!-- Dots + labels -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -959,7 +959,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 				var templ_7745c5c3_Var55 string
 				templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", pointX(i)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 333, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 356, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var55)
 				if templ_7745c5c3_Err != nil {
@@ -972,20 +972,20 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 				var templ_7745c5c3_Var56 string
 				templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", pointY(d.Value)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 334, Col: 48}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 357, Col: 48}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var56)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "\" r=\"4\" fill=\"hsl(var(--primary))\"></circle> <text x=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "\" r=\"4\" fill=\"var(--chart-1, hsl(var(--primary)))\"></circle> <text x=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var57 string
 				templ_7745c5c3_Var57, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%.1f", pointX(i)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 339, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 362, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var57)
 				if templ_7745c5c3_Err != nil {
@@ -998,7 +998,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 				var templ_7745c5c3_Var58 string
 				templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padT+plotH+15))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 340, Col: 43}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 363, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var58)
 				if templ_7745c5c3_Err != nil {
@@ -1011,7 +1011,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 				var templ_7745c5c3_Var59 string
 				templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(d.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 344, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 367, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 				if templ_7745c5c3_Err != nil {
@@ -1030,7 +1030,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 		var templ_7745c5c3_Var60 string
 		templ_7745c5c3_Var60, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 349, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 372, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var60)
 		if templ_7745c5c3_Err != nil {
@@ -1043,7 +1043,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 		var templ_7745c5c3_Var61 string
 		templ_7745c5c3_Var61, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padT+plotH))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 350, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 373, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var61)
 		if templ_7745c5c3_Err != nil {
@@ -1056,7 +1056,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 		var templ_7745c5c3_Var62 string
 		templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", svgW-padR))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 351, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 374, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var62)
 		if templ_7745c5c3_Err != nil {
@@ -1069,7 +1069,7 @@ func LineChart(data []ChartDataPoint, title string, classes string, attrs templ.
 		var templ_7745c5c3_Var63 string
 		templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", padT+plotH))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 352, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/chart.templ`, Line: 375, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var63)
 		if templ_7745c5c3_Err != nil {
