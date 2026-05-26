@@ -5,7 +5,48 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0] - 2026-05-26
+
+### Changed
+
+- **All 59 components updated to match current shadcn/ui (Tailwind v4 /
+  new-york).** Every element now carries a `data-slot` attribute, and the
+  class set was modernized: the v4 focus ring (`focus-visible:ring-[3px]`
+  `ring-ring/50` + `aria-invalid:*` error styling), `size-*` utilities,
+  `shadow-xs`, and `transition-[color,box-shadow]`. The embedded stylesheet
+  (`shadcntempl.CSS`) is regenerated accordingly. Component function APIs are
+  unchanged; rendered markup/styling now tracks upstream more closely.
+
+### Added
+
+- **Accessibility & keyboard support** across interactive components:
+  `aria-labelledby`/`aria-describedby` wiring and focus management for
+  dialog/alert-dialog/sheet/drawer/popover; roving tabindex + arrow keys for
+  tabs and radio-group; Space-to-toggle for checkbox; type-ahead-free arrow
+  navigation, submenus and checkbox/radio items for dropdown/context/menubar;
+  keyboard nav for command; `role="status"`/`aria-live` for toast and sonner;
+  end-disabling + arrow keys for carousel; `role="grid"` semantics for calendar.
+- New sub-components to match shadcn/ui: Field (Group/Set/Legend/Content/
+  Title/Separator), Item (variants/sizes + Group/Header/Footer/Separator),
+  Empty (Header/Media/Content), Kbd (Group), and Sub/Checkbox/Radio items for
+  the menu components.
+- Docs site: a global **⌘K / Ctrl+K command palette** searching every
+  component and example, a **"Components" dropdown menu** in the nav, fully
+  mobile-friendly example pages, and a clean SVG favicon.
+
+### Fixed
+
+- Renamed the misspelled `AccorionContent` component to `AccordionContent`
+  (a deprecated `AccorionContent` alias is kept so existing callers compile).
+- `Separator` now spreads `attrs` onto its root; fixed an invalid
+  `botton-full` class in the dropdown menu.
+- Calendar now gives each day a correct `aria-label` and navigates months
+  client-side (no full page reload); data-table row selection is keyed by a
+  stable id and exposes `aria-sort`.
+- The docs component preview no longer clips overlays (calendar, popovers,
+  dropdowns), and the desktop "Components" dropdown renders at full width.
+- CI runs the race detector only on the latest Go version, balancing the
+  build matrix.
 
 ## [0.2.0] - 2026-05-25
 
@@ -70,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   GitHub Pages deploy workflow.
 - `AGENTS.md` skill file documenting the API and conventions for AI assistants.
 
-[Unreleased]: https://github.com/davidbudnick/shadcn-templ/compare/v0.2.0...HEAD
+[0.3.0]: https://github.com/davidbudnick/shadcn-templ/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/davidbudnick/shadcn-templ/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/davidbudnick/shadcn-templ/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/davidbudnick/shadcn-templ/releases/tag/v0.1.0
