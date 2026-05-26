@@ -3,18 +3,136 @@ package ui
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	itemBaseClass            = "flex items-center gap-4 py-3"
-	itemMediaBaseClass       = "flex shrink-0 items-center justify-center"
-	itemContentBaseClass     = "flex min-w-0 flex-1 flex-col gap-0.5"
-	itemTitleBaseClass       = "truncate text-sm font-medium leading-none"
-	itemDescriptionBaseClass = "truncate text-sm text-muted-foreground"
-	itemActionsBaseClass     = "flex shrink-0 items-center gap-1"
+	// itemBaseClass is the shared base for every Item variant (shadcn v4).
+	itemBaseClass            = "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-accent/50"
+	itemGroupBaseClass       = "group/item-group flex flex-col"
+	itemHeaderBaseClass      = "flex basis-full items-center justify-between gap-2"
+	itemFooterBaseClass      = "flex basis-full items-center justify-between gap-2"
+	itemSeparatorBaseClass   = "my-0 h-px w-full shrink-0 bg-border"
+	itemMediaBaseClass       = "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none"
+	itemContentBaseClass     = "flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none"
+	itemTitleBaseClass       = "flex w-fit items-center gap-2 text-sm leading-snug font-medium"
+	itemDescriptionBaseClass = "line-clamp-2 text-sm leading-normal font-normal text-balance text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary"
+	itemActionsBaseClass     = "flex items-center gap-2"
 )
 
+// ItemVariant selects the visual style of an Item (shadcn: default | outline | muted).
+type ItemVariant int
+
+const (
+	ItemVariantDefault ItemVariant = iota
+	ItemVariantOutline
+	ItemVariantMuted
+)
+
+func (v ItemVariant) String() string {
+	switch v {
+	case ItemVariantOutline:
+		return "outline"
+	case ItemVariantMuted:
+		return "muted"
+	default:
+		return "default"
+	}
+}
+
+func (v ItemVariant) Class() string {
+	switch v {
+	case ItemVariantOutline:
+		return "border-border"
+	case ItemVariantMuted:
+		return "bg-muted/50"
+	default:
+		return "bg-transparent"
+	}
+}
+
+// ItemSize selects the padding/gap of an Item (shadcn: default | sm).
+type ItemSize int
+
+const (
+	ItemSizeDefault ItemSize = iota
+	ItemSizeSm
+)
+
+func (s ItemSize) String() string {
+	switch s {
+	case ItemSizeSm:
+		return "sm"
+	default:
+		return "default"
+	}
+}
+
+func (s ItemSize) Class() string {
+	switch s {
+	case ItemSizeSm:
+		return "gap-2.5 px-4 py-3"
+	default:
+		return "gap-4 p-4"
+	}
+}
+
 // Item is a flex row container for a list row.
+// It uses the default variant and size; use ItemWith for other variants.
 templ Item(classes string, attrs templ.Attributes) {
+	@ItemWith(ItemVariantDefault, ItemSizeDefault, classes, attrs) {
+		{ children... }
+	}
+}
+
+// ItemWith is an Item with explicit variant and size (shadcn-style).
+templ ItemWith(variant ItemVariant, size ItemSize, classes string, attrs templ.Attributes) {
 	<div
-		class={ twmerge.Merge(itemBaseClass, classes) }
+		data-slot="item"
+		data-variant={ variant.String() }
+		data-size={ size.String() }
+		class={ twmerge.Merge(itemBaseClass, variant.Class(), size.Class(), classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ItemGroup is a vertical list container for Items.
+templ ItemGroup(classes string, attrs templ.Attributes) {
+	<div
+		role="list"
+		data-slot="item-group"
+		class={ twmerge.Merge(itemGroupBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ItemSeparator draws a horizontal divider between Items.
+templ ItemSeparator(classes string, attrs templ.Attributes) {
+	<div
+		role="separator"
+		aria-orientation="horizontal"
+		data-slot="item-separator"
+		class={ twmerge.Merge(itemSeparatorBaseClass, classes) }
+		{ attrs... }
+	></div>
+}
+
+// ItemHeader spans the full width at the top of an Item.
+templ ItemHeader(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="item-header"
+		class={ twmerge.Merge(itemHeaderBaseClass, classes) }
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ItemFooter spans the full width at the bottom of an Item.
+templ ItemFooter(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="item-footer"
+		class={ twmerge.Merge(itemFooterBaseClass, classes) }
 		{ attrs... }
 	>
 		{ children... }
@@ -24,6 +142,8 @@ templ Item(classes string, attrs templ.Attributes) {
 // ItemMedia holds a leading image, icon, or avatar.
 templ ItemMedia(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="item-media"
+		data-variant="default"
 		class={ twmerge.Merge(itemMediaBaseClass, classes) }
 		{ attrs... }
 	>
@@ -34,6 +154,7 @@ templ ItemMedia(classes string, attrs templ.Attributes) {
 // ItemContent is the main text area of an Item.
 templ ItemContent(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="item-content"
 		class={ twmerge.Merge(itemContentBaseClass, classes) }
 		{ attrs... }
 	>
@@ -44,6 +165,7 @@ templ ItemContent(classes string, attrs templ.Attributes) {
 // ItemTitle is the primary label of an Item.
 templ ItemTitle(classes string, attrs templ.Attributes) {
 	<p
+		data-slot="item-title"
 		class={ twmerge.Merge(itemTitleBaseClass, classes) }
 		{ attrs... }
 	>
@@ -54,6 +176,7 @@ templ ItemTitle(classes string, attrs templ.Attributes) {
 // ItemDescription is the secondary label of an Item.
 templ ItemDescription(classes string, attrs templ.Attributes) {
 	<p
+		data-slot="item-description"
 		class={ twmerge.Merge(itemDescriptionBaseClass, classes) }
 		{ attrs... }
 	>
@@ -64,6 +187,7 @@ templ ItemDescription(classes string, attrs templ.Attributes) {
 // ItemActions holds trailing buttons, badges, or other controls.
 templ ItemActions(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="item-actions"
 		class={ twmerge.Merge(itemActionsBaseClass, classes) }
 		{ attrs... }
 	>

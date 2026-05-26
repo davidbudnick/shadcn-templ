@@ -15,7 +15,8 @@ const (
 	typographySmallBaseClass       = "text-sm font-medium leading-none"
 	typographyMutedBaseClass       = "text-sm text-muted-foreground"
 	typographyListBaseClass        = "my-6 ml-6 list-disc [&>li]:mt-2"
-	typographyInlineCodeBaseClass  = "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold"
+	// typographyInlineCodeBaseClass is identical to typographyCodeBaseClass; kept as an alias for clarity.
+	typographyInlineCodeBaseClass  = typographyCodeBaseClass
 )
 
 templ TypographyH1(classes string, attrs templ.Attributes) {
@@ -72,13 +73,12 @@ templ TypographyBlockquote(classes string, attrs templ.Attributes) {
 	</blockquote>
 }
 
+// TypographyCode renders inline code. It delegates to TypographyInlineCode,
+// which renders an identical <code> element (the two are kept as aliases).
 templ TypographyCode(classes string, attrs templ.Attributes) {
-	<code
-		class={ twmerge.Merge(typographyCodeBaseClass, classes) }
-		{ attrs... }
-	>
+	@TypographyInlineCode(classes, attrs) {
 		{ children... }
-	</code>
+	}
 }
 
 templ TypographyLead(classes string, attrs templ.Attributes) {

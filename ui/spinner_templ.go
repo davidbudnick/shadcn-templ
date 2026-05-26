@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	spinnerBaseClass = "animate-spin"
+	spinnerBaseClass = "size-4 animate-spin"
 )
 
 // Spinner renders an animated loading indicator.
-// Pass size classes (e.g. "h-4 w-4") via classes — they are applied to the SVG icon.
+// Pass size classes (e.g. "size-6") via classes — they are applied to the SVG icon.
 func Spinner(classes string, attrs templ.Attributes) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -40,7 +40,7 @@ func Spinner(classes string, attrs templ.Attributes) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span role=\"status\" aria-label=\"Loading\" class=\"inline-flex\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span data-slot=\"spinner\" role=\"status\" aria-label=\"Loading\" class=\"inline-flex\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

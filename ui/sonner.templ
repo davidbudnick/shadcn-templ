@@ -26,12 +26,20 @@ templ SonnerToaster(classes string, attrs templ.Attributes) {
       remove(id) { this.toasts = this.toasts.filter(t => t.id !== id); }
     });
   }` }
-		class={ twmerge.Merge("fixed bottom-4 right-4 z-[100] flex flex-col gap-2 w-full max-w-sm pointer-events-none", classes) }
+		role="region"
+		aria-label="Notifications"
+		data-slot="sonner-toaster"
+		class={ twmerge.Merge("toaster group fixed bottom-4 right-4 z-[100] flex flex-col gap-2 w-full max-w-sm pointer-events-none", classes) }
 		{ attrs... }
 	>
 		<template x-for="toast in $store.sonner.toasts" :key="toast.id">
 			<div
-				class="pointer-events-auto flex w-full items-start gap-3 rounded-xl border bg-background p-4 shadow-lg transition-all"
+				role="status"
+				:aria-live="toast.type === 'error' ? 'assertive' : 'polite'"
+				aria-atomic="true"
+				data-slot="sonner-toast"
+				:data-type="toast.type"
+				class="pointer-events-auto flex w-full items-start gap-3 rounded-xl border bg-popover text-popover-foreground p-4 shadow-lg transition-all"
 				:class="{
 					'border-green-500/30 bg-green-50 dark:bg-green-950/20': toast.type === 'success',
 					'border-red-500/30 bg-red-50 dark:bg-red-950/20': toast.type === 'error',
@@ -45,12 +53,13 @@ templ SonnerToaster(classes string, attrs templ.Attributes) {
 				x-transition:leave-start="opacity-100 translate-y-0"
 				x-transition:leave-end="opacity-0 translate-y-2"
 			>
-				<div class="flex-1 min-w-0">
-					<p class="text-sm font-semibold" x-show="toast.title" x-text="toast.title"></p>
-					<p class="text-sm text-muted-foreground" x-text="toast.message"></p>
+				<div class="flex-1 min-w-0" data-slot="sonner-content">
+					<p data-slot="sonner-title" class="text-sm font-semibold" x-show="toast.title" x-text="toast.title"></p>
+					<p data-slot="sonner-description" class="text-sm text-muted-foreground" x-text="toast.message"></p>
 				</div>
 				<button
 					type="button"
+					data-slot="sonner-close"
 					class="shrink-0 rounded-sm opacity-70 hover:opacity-100 focus:outline-none"
 					x-on:click="$store.sonner.remove(toast.id)"
 					aria-label="Dismiss"

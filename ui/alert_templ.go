@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	alertBaseClass            = "[&>svg]:text-foreground relative w-full rounded-lg border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7"
-	alertTitleBaseClass       = "mb-1 font-medium leading-none tracking-tight"
-	alertDescriptionBaseClass = "text-sm [&_p]:leading-relaxed"
+	alertBaseClass            = "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current"
+	alertTitleBaseClass       = "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight"
+	alertDescriptionBaseClass = "col-start-2 grid justify-items-start gap-1 text-sm text-muted-foreground [&_p]:leading-relaxed"
 )
 
 type AlertVariant int
@@ -29,9 +29,9 @@ const (
 func (v AlertVariant) Class() string {
 	switch v {
 	case AlertVariantDestructive:
-		return "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive"
+		return "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current"
 	default:
-		return "bg-background text-foreground"
+		return "bg-card text-card-foreground"
 	}
 }
 
@@ -74,7 +74,7 @@ func Alert(variant AlertVariant, classes string, attrs templ.Attributes) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-slot=\"alert\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -141,7 +141,7 @@ func AlertTitle(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<h5 class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<h5 data-slot=\"alert-title\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -204,7 +204,7 @@ func AlertDescription(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div data-slot=\"alert-description\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

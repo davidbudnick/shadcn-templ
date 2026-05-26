@@ -3,11 +3,12 @@ package ui
 import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-  skeletonBaseClass = "animate-pulse rounded-md bg-primary/10"
+  skeletonBaseClass = "animate-pulse rounded-md bg-accent"
 )
 
 templ Skeleton(classes string, attrs templ.Attributes) {
   <div
+    data-slot="skeleton"
     class={ twmerge.Merge(skeletonBaseClass, classes) }
     { attrs... }
   ></div>
