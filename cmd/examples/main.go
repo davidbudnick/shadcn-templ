@@ -63,8 +63,8 @@ type ExamplePage struct {
 
 // examplePages is the registry of full-page examples, in sidebar order.
 var examplePages = []ExamplePage{
-	{Slug: "authentication", Title: "Authentication", Component: AuthenticationExample()},
 	{Slug: "dashboard", Title: "Dashboard", Component: DashboardExample()},
+	{Slug: "authentication", Title: "Authentication", Component: AuthenticationExample()},
 	{Slug: "cards", Title: "Cards", Component: CardsExample()},
 	{Slug: "tasks", Title: "Tasks", Component: TasksExample()},
 	{Slug: "forms", Title: "Forms", Component: SettingsExample()},

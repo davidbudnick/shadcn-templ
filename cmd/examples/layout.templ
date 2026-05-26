@@ -29,6 +29,7 @@ templ document(title string) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{ title } — shadcn-templ</title>
+			<link rel="icon" type="image/svg+xml" href={ faviconDataURL() }/>
 			@shadcntempl.Head()
 			<link rel="stylesheet" href={ urlCSS() }/>
 		</head>
@@ -44,6 +45,7 @@ templ siteHeader(section string) {
 	<header
 		class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
 		x-data="{ mobileOpen: false }"
+		x-on:open-mobile-nav.window="mobileOpen = true"
 	>
 		<div class="container flex h-14 max-w-screen-2xl items-center gap-2 sm:gap-4">
 			<button
@@ -61,10 +63,11 @@ templ siteHeader(section string) {
 			</button>
 			<a href={ urlHome() } class="mr-2 shrink-0 whitespace-nowrap font-bold">shadcn-templ</a>
 			<nav class="hidden items-center gap-1 text-sm font-medium md:flex">
-				@topNavLink(urlComponent("accordion"), "Components", section == "components")
+				@componentsMenu(section == "components")
 				@topNavLink(urlExample("dashboard"), "Examples", section == "examples")
 			</nav>
-			<div class="ml-auto flex items-center gap-1">
+			<div class="ml-auto flex items-center gap-1.5 sm:gap-2">
+				@commandPalette()
 				<a href="https://ui.shadcn.com" target="_blank" rel="noreferrer" class="hidden h-9 items-center rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground lg:inline-flex">shadcn/ui</a>
 				<a href={ templ.SafeURL(repoURL) } target="_blank" rel="noreferrer" aria-label="GitHub repository" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
 					@icons.Github(icons.Props{Class: "h-4 w-4"})
@@ -99,6 +102,53 @@ templ siteHeader(section string) {
 			</div>
 		</div>
 	</header>
+}
+
+// componentsMenu is the desktop "Components" top-nav item: a button that opens
+// a dropdown listing every component (scrollable, two columns), instead of
+// jumping straight to the first one.
+templ componentsMenu(active bool) {
+	<div class="relative" x-data="{ open: false }" x-on:keydown.esc="open = false">
+		<button
+			type="button"
+			aria-haspopup="true"
+			x-bind:aria-expanded="open"
+			x-on:click="open = !open"
+			x-on:click.outside="open = false"
+			if active {
+				class="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-foreground"
+			} else {
+				class="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
+			}
+		>
+			Components
+			<span x-bind:class="open && 'rotate-180'" class="transition-transform">
+				@icons.ChevronDown(icons.Props{Class: "h-3.5 w-3.5"})
+			</span>
+		</button>
+		@componentsMenuPanel()
+	</div>
+}
+
+// componentsMenuPanel is the shared dropdown panel listing every component,
+// used by both the header "Components" menu and the component-page breadcrumb.
+// It expects an Alpine `open` boolean in the surrounding x-data scope.
+templ componentsMenuPanel() {
+	<div
+		x-show="open"
+		x-cloak
+		x-transition
+		class="absolute left-0 z-50 mt-2 w-[34rem] max-w-[calc(100vw-2rem)] rounded-md border bg-popover p-2 text-popover-foreground shadow-md"
+	>
+		<div class="grid max-h-[70vh] grid-cols-2 gap-0.5 overflow-y-auto">
+			for _, item := range componentNav() {
+				<a
+					href={ urlComponent(item.Slug) }
+					class="block truncate rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+				>{ item.Title }</a>
+			}
+		</div>
+	</div>
 }
 
 templ topNavLink(href templ.SafeURL, label string, active bool) {
@@ -193,7 +243,22 @@ templ ComponentPage(nav []NavItem, s Section) {
 	@Layout(nav, s.Slug, s.Title) {
 		<div class="mx-auto w-full min-w-0 max-w-3xl">
 			<div class="mb-2 flex items-center gap-1.5 text-sm text-muted-foreground">
-				<a href={ urlComponent("accordion") } class="transition-colors hover:text-foreground">Components</a>
+				<div class="relative" x-data="{ open: false }" x-on:keydown.esc="open = false">
+					<button
+						type="button"
+						aria-haspopup="true"
+						x-bind:aria-expanded="open"
+						x-on:click="window.matchMedia('(min-width: 768px)').matches ? (open = !open) : $dispatch('open-mobile-nav')"
+						x-on:click.outside="open = false"
+						class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+					>
+						Components
+						<span x-bind:class="open && 'rotate-180'" class="transition-transform">
+							@icons.ChevronDown(icons.Props{Class: "h-3 w-3"})
+						</span>
+					</button>
+					@componentsMenuPanel()
+				</div>
 				@icons.ChevronRight(icons.Props{Class: "h-3.5 w-3.5"})
 				<span class="text-foreground">{ s.Title }</span>
 			</div>
@@ -209,7 +274,7 @@ templ ComponentPage(nav []NavItem, s Section) {
 						if ex.Name != "" {
 							<h2 class="text-sm font-medium text-muted-foreground">{ ex.Name }</h2>
 						}
-						<div class="flex min-h-[350px] w-full items-center justify-center overflow-x-auto rounded-md border p-4 sm:p-10">
+						<div class="flex min-h-[350px] w-full items-center justify-center rounded-md border p-4 sm:p-10">
 							@ex.Component
 						</div>
 						@codeBlock(demoCodeHTML(ex.Func))
