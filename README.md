@@ -3,7 +3,7 @@
 [![CI](https://github.com/davidbudnick/shadcn-templ/actions/workflows/go.yml/badge.svg)](https://github.com/davidbudnick/shadcn-templ/actions/workflows/go.yml)
 [![Deploy docs](https://github.com/davidbudnick/shadcn-templ/actions/workflows/pages.yml/badge.svg)](https://github.com/davidbudnick/shadcn-templ/actions/workflows/pages.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/davidbudnick/shadcn-templ.svg)](https://pkg.go.dev/github.com/davidbudnick/shadcn-templ)
-[![Go Report Card](https://goreportcard.com/badge/github.com/davidbudnick/shadcn-templ)](https://goreportcard.com/report/github.com/davidbudnick/shadcn-templ)
+[![Go Report Card](https://goreportcard.com/badge/github.com/davidbudnick/shadcn-templ?cache=v0.2.0)](https://goreportcard.com/report/github.com/davidbudnick/shadcn-templ)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 A complete port of [shadcn/ui](https://ui.shadcn.com/) to **Go**, **[Templ](https://templ.guide/)**, **[Alpine.js](https://alpinejs.dev/)** and **[Tailwind CSS](https://tailwindcss.com/)** — every component and page example, rendered on the server. No React and no Node build step; interactivity is sprinkled in with Alpine.js, and charts use Chart.js — both loaded from a CDN, so the Go module itself has a single dependency (`a-h/templ`).
