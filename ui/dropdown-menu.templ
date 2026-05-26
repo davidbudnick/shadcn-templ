@@ -27,18 +27,22 @@ const (
 )
 
 const (
-	dropdownMenuContentBaseClass   = "absolute botton-full mt-2 z-50 min-w-[8rem] rounded-md border bg-popover p-1 text-popover-foreground shadow-md focus:outline-none"
-	dropdownMenuItemBaseClass      = "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-	dropdownMenuSeparatorBaseClass = "-mx-1 my-1 h-px bg-muted"
-	dropdownMenuShortcutBaseClass  = "ml-auto text-xs tracking-widest opacity-60"
-	dropdownMenuLabelBaseClass     = "px-2 py-1.5 text-sm font-semibold"
+	dropdownMenuContentBaseClass    = "absolute top-full mt-2 z-50 min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md focus:outline-none"
+	dropdownMenuItemBaseClass       = "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+	dropdownMenuCheckItemBaseClass  = "relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+	dropdownMenuSeparatorBaseClass  = "-mx-1 my-1 h-px bg-border"
+	dropdownMenuShortcutBaseClass   = "ml-auto text-xs tracking-widest text-muted-foreground"
+	dropdownMenuLabelBaseClass      = "px-2 py-1.5 text-sm font-medium data-[inset]:pl-8"
+	dropdownMenuSubTriggerBaseClass = "flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[inset]:pl-8 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+	dropdownMenuSubContentBaseClass = "absolute left-full top-0 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg"
 )
 
 templ DropdownMenu(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="dropdown-menu"
 		class={ twmerge.Merge("relative", classes) }
 		{ attrs... }
-		x-data="{ open: false }"
+		x-data="{ open: false, shadcntempl_kbd: false }"
 		x-on:keydown.esc.window="open = false"
 	>
 		{ children... }
@@ -47,17 +51,19 @@ templ DropdownMenu(classes string, attrs templ.Attributes) {
 
 // There is no element for dropdown menu trigger, just add these attributes to your component.
 var DropdownMenuTriggerAttrs = templ.Attributes{
-	"x-on:mousedown":             "open = true",
+	"data-slot":                  "dropdown-menu-trigger",
+	"x-on:mousedown":             "shadcntempl_kbd = false; open = true",
 	"aria-haspopup":              "menu",
 	":aria-expanded":             "open",
 	"x-data":                     true,
-	"x-on:keydown.enter.prevent": "open = true",
-	"x-on:keydown.space.prevent": "open = true",
-	"x-on:keydown.down.prevent":  "open = true",
+	"x-on:keydown.enter.prevent": "shadcntempl_kbd = true; open = true",
+	"x-on:keydown.space.prevent": "shadcntempl_kbd = true; open = true",
+	"x-on:keydown.down.prevent":  "shadcntempl_kbd = true; open = true",
 }
 
 templ DropdownMenuContent(align DropdownMenuAlign, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="dropdown-menu-content"
 		role="menu"
 		class={ twmerge.Merge(dropdownMenuContentBaseClass, align.Class(), classes) }
 		{ attrs... }
@@ -65,6 +71,7 @@ templ DropdownMenuContent(align DropdownMenuAlign, classes string, attrs templ.A
 		x-show="open"
 		x-transition
 		x-trap.inert.noscroll="open"
+		x-effect="if (open && shadcntempl_kbd) { $nextTick(() => { let f = $el.querySelector('[role^=menuitem]:not([data-disabled])'); f && f.focus() }) }"
 		x-on:keydown.down.prevent="$focus.wrap().next()"
 		x-on:keydown.up.prevent="$focus.wrap().previous()"
 		x-cloak
@@ -75,6 +82,8 @@ templ DropdownMenuContent(align DropdownMenuAlign, classes string, attrs templ.A
 
 templ DropdownMenuItem(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="dropdown-menu-item"
+		role="menuitem"
 		class={ twmerge.Merge(dropdownMenuItemBaseClass, classes) }
 		{ attrs... }
 		x-data
@@ -88,6 +97,8 @@ templ DropdownMenuItem(classes string, attrs templ.Attributes) {
 
 templ DropdownMenuSeparator(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="dropdown-menu-separator"
+		role="separator"
 		class={ twmerge.Merge(dropdownMenuSeparatorBaseClass, classes) }
 		{ attrs... }
 	></div>
@@ -95,6 +106,7 @@ templ DropdownMenuSeparator(classes string, attrs templ.Attributes) {
 
 templ DropdownMenuShortcut(classes string, attrs templ.Attributes) {
 	<span
+		data-slot="dropdown-menu-shortcut"
 		class={ twmerge.Merge(dropdownMenuShortcutBaseClass, classes) }
 		{ attrs... }
 	>
@@ -104,6 +116,7 @@ templ DropdownMenuShortcut(classes string, attrs templ.Attributes) {
 
 templ DropdownMenuLabel(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="dropdown-menu-label"
 		class={ twmerge.Merge(dropdownMenuLabelBaseClass, classes) }
 		{ attrs... }
 	>
@@ -113,7 +126,7 @@ templ DropdownMenuLabel(classes string, attrs templ.Attributes) {
 
 // DropdownMenuGroup groups related items.
 templ DropdownMenuGroup(classes string, attrs templ.Attributes) {
-	<div role="group" class={ twmerge.Merge(classes) } { attrs... }>
+	<div data-slot="dropdown-menu-group" role="group" class={ twmerge.Merge(classes) } { attrs... }>
 		{ children... }
 	</div>
 }
@@ -122,16 +135,19 @@ templ DropdownMenuGroup(classes string, attrs templ.Attributes) {
 // an Alpine expression for the boolean state (define it in the menu's x-data).
 templ DropdownMenuCheckboxItem(alpineChecked, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="dropdown-menu-checkbox-item"
 		role="menuitemcheckbox"
 		x-data
+		tabindex="0"
 		:aria-checked={ alpineChecked }
 		x-on:click={ alpineChecked + " = ! " + alpineChecked }
-		class={ twmerge.Merge("relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground", classes) }
+		x-on:keydown.enter={ alpineChecked + " = ! " + alpineChecked }
+		class={ twmerge.Merge(dropdownMenuCheckItemBaseClass, classes) }
 		{ attrs... }
 	>
-		<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+		<span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
 			<span x-show={ alpineChecked } x-cloak>
-				@icons.Check(icons.Props{Class: "h-4 w-4"})
+				@icons.Check(icons.Props{Class: "size-4"})
 			</span>
 		</span>
 		{ children... }
@@ -141,7 +157,7 @@ templ DropdownMenuCheckboxItem(alpineChecked, classes string, attrs templ.Attrib
 // DropdownMenuRadioGroup holds a set of radio items bound to `alpineValue`
 // (an Alpine variable in the menu's x-data).
 templ DropdownMenuRadioGroup(classes string, attrs templ.Attributes) {
-	<div role="group" class={ twmerge.Merge(classes) } { attrs... }>
+	<div data-slot="dropdown-menu-radio-group" role="group" class={ twmerge.Merge(classes) } { attrs... }>
 		{ children... }
 	</div>
 }
@@ -149,18 +165,76 @@ templ DropdownMenuRadioGroup(classes string, attrs templ.Attributes) {
 // DropdownMenuRadioItem selects `value` into the Alpine variable `alpineValue`.
 templ DropdownMenuRadioItem(alpineValue, value, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="dropdown-menu-radio-item"
 		role="menuitemradio"
 		x-data
+		tabindex="0"
 		:aria-checked={ alpineValue + " === '" + value + "'" }
 		x-on:click={ alpineValue + " = '" + value + "'" }
-		class={ twmerge.Merge("relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground", classes) }
+		x-on:keydown.enter={ alpineValue + " = '" + value + "'" }
+		class={ twmerge.Merge(dropdownMenuCheckItemBaseClass, classes) }
 		{ attrs... }
 	>
-		<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+		<span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
 			<span x-show={ alpineValue + " === '" + value + "'" } x-cloak>
-				@icons.Circle(icons.Props{Class: "h-2 w-2 fill-current"})
+				@icons.Circle(icons.Props{Class: "size-2 fill-current"})
 			</span>
 		</span>
+		{ children... }
+	</div>
+}
+
+// DropdownMenuSub wraps a submenu trigger and content. It owns its own open state
+// so it can be nested inside a DropdownMenuContent.
+templ DropdownMenuSub(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="dropdown-menu-sub"
+		class={ twmerge.Merge("relative", classes) }
+		x-data="{ shadcntempl_subopen: false }"
+		x-on:mouseleave="shadcntempl_subopen = false"
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// DropdownMenuSubTrigger opens the adjacent DropdownMenuSubContent.
+templ DropdownMenuSubTrigger(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="dropdown-menu-sub-trigger"
+		role="menuitem"
+		aria-haspopup="menu"
+		tabindex="0"
+		:aria-expanded="shadcntempl_subopen"
+		:data-state="shadcntempl_subopen ? 'open' : 'closed'"
+		class={ twmerge.Merge(dropdownMenuSubTriggerBaseClass, classes) }
+		{ attrs... }
+		x-on:click="shadcntempl_subopen = !shadcntempl_subopen"
+		x-on:mouseenter="shadcntempl_subopen = true"
+		x-on:keydown.enter.prevent="shadcntempl_subopen = !shadcntempl_subopen"
+		x-on:keydown.right.prevent="shadcntempl_subopen = true"
+		x-on:keydown.left.prevent="shadcntempl_subopen = false"
+	>
+		{ children... }
+		@icons.ChevronRight(icons.Props{Class: "ml-auto size-4"})
+	</div>
+}
+
+// DropdownMenuSubContent is the submenu popover, shown when its sibling
+// DropdownMenuSubTrigger is active.
+templ DropdownMenuSubContent(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="dropdown-menu-sub-content"
+		role="menu"
+		class={ twmerge.Merge(dropdownMenuSubContentBaseClass, classes) }
+		{ attrs... }
+		x-show="shadcntempl_subopen"
+		x-transition
+		x-cloak
+		x-on:keydown.down.prevent="$focus.wrap().next()"
+		x-on:keydown.up.prevent="$focus.wrap().previous()"
+		x-on:keydown.left.prevent="shadcntempl_subopen = false"
+	>
 		{ children... }
 	</div>
 }

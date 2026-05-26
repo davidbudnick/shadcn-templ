@@ -1,20 +1,27 @@
 package ui
 
-import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+import (
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
 
 const (
-	menubarBaseClass          = "flex h-9 items-center space-x-1 rounded-md border bg-background p-1 shadow-sm"
-	menubarMenuBaseClass      = "relative"
-	menubarTriggerBaseClass   = "flex cursor-default select-none items-center rounded-sm px-3 py-1 text-sm font-medium outline-none focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
-	menubarContentBaseClass   = "absolute left-0 top-full z-50 mt-1 min-w-[12rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
-	menubarItemBaseClass      = "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-	menubarSeparatorBaseClass = "-mx-1 my-1 h-px bg-muted"
-	menubarShortcutBaseClass  = "ml-auto text-xs tracking-widest text-muted-foreground"
-	menubarLabelBaseClass     = "px-2 py-1.5 text-sm font-semibold"
+	menubarBaseClass            = "flex h-9 items-center gap-1 rounded-md border bg-background p-1 shadow-xs"
+	menubarMenuBaseClass        = "relative"
+	menubarTriggerBaseClass     = "flex items-center rounded-sm px-2 py-1 text-sm font-medium outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+	menubarContentBaseClass     = "absolute left-0 top-full z-50 mt-1 min-w-[12rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+	menubarItemBaseClass        = "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+	menubarCheckItemBaseClass   = "relative flex cursor-default items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+	menubarSeparatorBaseClass   = "-mx-1 my-1 h-px bg-border"
+	menubarShortcutBaseClass    = "ml-auto text-xs tracking-widest text-muted-foreground"
+	menubarLabelBaseClass       = "px-2 py-1.5 text-sm font-medium data-[inset]:pl-8"
+	menubarSubTriggerBaseClass  = "flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground data-[inset]:pl-8 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+	menubarSubContentBaseClass  = "absolute left-full top-0 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg"
 )
 
 templ Menubar(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="menubar"
 		role="menubar"
 		class={ twmerge.Merge(menubarBaseClass, classes) }
 		{ attrs... }
@@ -25,6 +32,7 @@ templ Menubar(classes string, attrs templ.Attributes) {
 
 templ MenubarMenu(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="menubar-menu"
 		class={ twmerge.Merge(menubarMenuBaseClass, classes) }
 		{ attrs... }
 		x-data="{ open: false }"
@@ -36,6 +44,7 @@ templ MenubarMenu(classes string, attrs templ.Attributes) {
 
 templ MenubarTrigger(classes string, attrs templ.Attributes) {
 	<button
+		data-slot="menubar-trigger"
 		type="button"
 		role="menuitem"
 		aria-haspopup="menu"
@@ -47,7 +56,9 @@ templ MenubarTrigger(classes string, attrs templ.Attributes) {
 		x-on:mousedown.prevent
 		x-on:keydown.enter.prevent="open = !open"
 		x-on:keydown.space.prevent="open = !open"
-		x-on:keydown.down.prevent="open = true"
+		x-on:keydown.down.prevent="open = true; $nextTick(() => { let c = $el.parentElement.querySelector('[role=menu]'); let f = c && c.querySelector('[role^=menuitem]:not([data-disabled])'); f && f.focus() })"
+		x-on:keydown.right.prevent="((m) => { let s = m.nextElementSibling; if (s && s.matches('[data-slot=menubar-menu]')) { let wasOpen = open; open = false; let t = s.querySelector('[data-slot=menubar-trigger]'); t && t.focus(); if (wasOpen && t) t.click() } })($el.closest('[data-slot=menubar-menu]'))"
+		x-on:keydown.left.prevent="((m) => { let s = m.previousElementSibling; if (s && s.matches('[data-slot=menubar-menu]')) { let wasOpen = open; open = false; let t = s.querySelector('[data-slot=menubar-trigger]'); t && t.focus(); if (wasOpen && t) t.click() } })($el.closest('[data-slot=menubar-menu]'))"
 	>
 		{ children... }
 	</button>
@@ -55,6 +66,7 @@ templ MenubarTrigger(classes string, attrs templ.Attributes) {
 
 templ MenubarContent(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="menubar-content"
 		role="menu"
 		class={ twmerge.Merge(menubarContentBaseClass, classes) }
 		{ attrs... }
@@ -72,6 +84,7 @@ templ MenubarContent(classes string, attrs templ.Attributes) {
 
 templ MenubarItem(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="menubar-item"
 		role="menuitem"
 		tabindex="0"
 		class={ twmerge.Merge(menubarItemBaseClass, classes) }
@@ -84,8 +97,69 @@ templ MenubarItem(classes string, attrs templ.Attributes) {
 	</div>
 }
 
+// MenubarGroup groups related items.
+templ MenubarGroup(classes string, attrs templ.Attributes) {
+	<div data-slot="menubar-group" role="group" class={ twmerge.Merge(classes) } { attrs... }>
+		{ children... }
+	</div>
+}
+
+// MenubarCheckboxItem is a menu item with a checkmark bound to `alpineChecked`
+// (an Alpine boolean expression defined in the menu's x-data).
+templ MenubarCheckboxItem(alpineChecked, classes string, attrs templ.Attributes) {
+	<div
+		data-slot="menubar-checkbox-item"
+		role="menuitemcheckbox"
+		x-data
+		tabindex="0"
+		:aria-checked={ alpineChecked }
+		x-on:click={ alpineChecked + " = ! " + alpineChecked }
+		x-on:keydown.enter={ alpineChecked + " = ! " + alpineChecked }
+		class={ twmerge.Merge(menubarCheckItemBaseClass, classes) }
+		{ attrs... }
+	>
+		<span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+			<span x-show={ alpineChecked } x-cloak>
+				@icons.Check(icons.Props{Class: "size-4"})
+			</span>
+		</span>
+		{ children... }
+	</div>
+}
+
+// MenubarRadioGroup holds radio items bound to `alpineValue` (an Alpine variable
+// in the menu's x-data).
+templ MenubarRadioGroup(classes string, attrs templ.Attributes) {
+	<div data-slot="menubar-radio-group" role="group" class={ twmerge.Merge(classes) } { attrs... }>
+		{ children... }
+	</div>
+}
+
+// MenubarRadioItem selects `value` into the Alpine variable `alpineValue`.
+templ MenubarRadioItem(alpineValue, value, classes string, attrs templ.Attributes) {
+	<div
+		data-slot="menubar-radio-item"
+		role="menuitemradio"
+		x-data
+		tabindex="0"
+		:aria-checked={ alpineValue + " === '" + value + "'" }
+		x-on:click={ alpineValue + " = '" + value + "'" }
+		x-on:keydown.enter={ alpineValue + " = '" + value + "'" }
+		class={ twmerge.Merge(menubarCheckItemBaseClass, classes) }
+		{ attrs... }
+	>
+		<span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+			<span x-show={ alpineValue + " === '" + value + "'" } x-cloak>
+				@icons.Circle(icons.Props{Class: "size-2 fill-current"})
+			</span>
+		</span>
+		{ children... }
+	</div>
+}
+
 templ MenubarSeparator(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="menubar-separator"
 		role="separator"
 		class={ twmerge.Merge(menubarSeparatorBaseClass, classes) }
 		{ attrs... }
@@ -94,6 +168,7 @@ templ MenubarSeparator(classes string, attrs templ.Attributes) {
 
 templ MenubarShortcut(classes string, attrs templ.Attributes) {
 	<span
+		data-slot="menubar-shortcut"
 		class={ twmerge.Merge(menubarShortcutBaseClass, classes) }
 		{ attrs... }
 	>
@@ -103,8 +178,63 @@ templ MenubarShortcut(classes string, attrs templ.Attributes) {
 
 templ MenubarLabel(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="menubar-label"
 		class={ twmerge.Merge(menubarLabelBaseClass, classes) }
 		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// MenubarSub wraps a submenu trigger and content, owning its own open state.
+templ MenubarSub(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="menubar-sub"
+		class={ twmerge.Merge("relative", classes) }
+		x-data="{ shadcntempl_subopen: false }"
+		x-on:mouseleave="shadcntempl_subopen = false"
+		{ attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// MenubarSubTrigger opens the adjacent MenubarSubContent.
+templ MenubarSubTrigger(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="menubar-sub-trigger"
+		role="menuitem"
+		aria-haspopup="menu"
+		tabindex="0"
+		:aria-expanded="shadcntempl_subopen"
+		:data-state="shadcntempl_subopen ? 'open' : 'closed'"
+		class={ twmerge.Merge(menubarSubTriggerBaseClass, classes) }
+		{ attrs... }
+		x-on:click="shadcntempl_subopen = !shadcntempl_subopen"
+		x-on:mouseenter="shadcntempl_subopen = true"
+		x-on:keydown.enter.prevent="shadcntempl_subopen = !shadcntempl_subopen"
+		x-on:keydown.right.prevent="shadcntempl_subopen = true"
+		x-on:keydown.left.prevent="shadcntempl_subopen = false"
+	>
+		{ children... }
+		@icons.ChevronRight(icons.Props{Class: "ml-auto h-4 w-4"})
+	</div>
+}
+
+// MenubarSubContent is the submenu popover, shown when its sibling
+// MenubarSubTrigger is active.
+templ MenubarSubContent(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="menubar-sub-content"
+		role="menu"
+		class={ twmerge.Merge(menubarSubContentBaseClass, classes) }
+		{ attrs... }
+		x-show="shadcntempl_subopen"
+		x-transition
+		x-cloak
+		x-on:keydown.down.prevent="$focus.wrap().next()"
+		x-on:keydown.up.prevent="$focus.wrap().previous()"
+		x-on:keydown.left.prevent="shadcntempl_subopen = false"
 	>
 		{ children... }
 	</div>
