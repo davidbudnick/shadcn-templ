@@ -37,7 +37,7 @@ func AuthenticationExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"container relative h-[calc(100vh-3.5rem)] flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"relative grid h-[calc(100vh-3.5rem)] w-full flex-col items-center justify-center lg:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -148,7 +148,7 @@ func authRightPanel() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"lg:p-8\"><div class=\"mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]\"><div class=\"flex flex-col space-y-2 text-center\"><h1 class=\"text-2xl font-semibold tracking-tight\">Create an account</h1><p class=\"text-sm text-muted-foreground\">Enter your email below to create your account</p></div><div class=\"grid gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"flex items-center justify-center p-4 sm:p-6 lg:p-8\"><div class=\"mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]\"><div class=\"flex flex-col space-y-2 text-center\"><h1 class=\"text-2xl font-semibold tracking-tight\">Create an account</h1><p class=\"text-sm text-muted-foreground\">Enter your email below to create your account</p></div><div class=\"grid gap-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -10,7 +10,7 @@ import (
 // =====================================================================
 
 templ CardsExample() {
-	<div class="p-8">
+	<div class="p-4 sm:p-6 lg:p-8">
 		<div class="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
 			@createAccountCard()
 			@cardsNotifications()
@@ -259,7 +259,7 @@ templ shareCard() {
 // =====================================================================
 
 templ SettingsExample() {
-	<div class="space-y-6 p-10 pb-16" x-data="{ tab: 'profile' }">
+	<div class="space-y-6 p-4 pb-16 sm:p-6 lg:p-10" x-data="{ tab: 'profile' }">
 		<div class="space-y-0.5">
 			<h2 class="text-2xl font-bold tracking-tight">Settings</h2>
 			<p class="text-muted-foreground">Manage your account settings and set e-mail preferences.</p>
@@ -267,7 +267,7 @@ templ SettingsExample() {
 		@ui.Separator(ui.SeparatorOrientationHorizontal, false, "my-6", nil)
 		<div class="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
 			<aside class="lg:w-1/5">
-				<nav class="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
+				<nav class="-mx-4 flex space-x-2 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-col lg:space-x-0 lg:space-y-1 lg:overflow-visible lg:px-0 lg:pb-0">
 					@settingsNavLink("profile", "Profile")
 					@settingsNavLink("account", "Account")
 					@settingsNavLink("appearance", "Appearance")
@@ -301,7 +301,7 @@ templ settingsNavLink(id, label string) {
 		type="button"
 		x-on:click={ "tab = '" + id + "'" }
 		x-bind:class={ "tab === '" + id + "' ? 'bg-muted' : 'text-muted-foreground hover:underline'" }
-		class="inline-flex h-9 items-center justify-start rounded-md px-4 py-2 text-sm font-medium transition-colors"
+		class="inline-flex h-9 shrink-0 items-center justify-start whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors lg:w-full"
 	>{ label }</button>
 }
 
@@ -536,8 +536,8 @@ templ MusicExample() {
 		<div class="col-span-3 lg:col-span-4 lg:border-l">
 			<div class="px-4 py-6 lg:px-8">
 				@ui.Tabs("music", "", nil) {
-					<div class="flex items-center justify-between">
-						@ui.TabsList("", nil) {
+					<div class="flex flex-wrap items-center justify-between gap-2">
+						@ui.TabsList("max-w-full overflow-x-auto", nil) {
 							@ui.TabsTrigger("music", "", nil) {
 								Music
 							}
@@ -641,8 +641,8 @@ templ MailExample() {
 			@mailFolder(icons.Archive(icons.Props{Class: "mr-2 h-4 w-4"}), "Archive", "", false)
 			@mailFolder(icons.Trash(icons.Props{Class: "mr-2 h-4 w-4"}), "Trash", "", false)
 		</nav>
-		<div class="flex flex-col border-r">
-			<div class="flex items-center justify-between px-4 py-3">
+		<div class="flex min-w-0 flex-col md:border-r">
+			<div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
 				<h1 class="text-xl font-bold">Inbox</h1>
 				@ui.Tabs("all", "", nil) {
 					@ui.TabsList("", nil) {

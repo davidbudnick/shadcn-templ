@@ -35,7 +35,7 @@ func TasksExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"h-full flex-1 flex-col space-y-8 p-8 md:flex\"><!-- Heading row --><div class=\"flex items-center justify-between space-y-2\"><div><h2 class=\"text-2xl font-bold tracking-tight\">Welcome back!</h2><p class=\"text-muted-foreground\">Here's a list of your tasks for this month.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex h-full flex-1 flex-col space-y-8 p-4 sm:p-6 lg:p-8\"><!-- Heading row --><div class=\"flex items-center justify-between gap-4 space-y-2\"><div><h2 class=\"text-2xl font-bold tracking-tight\">Welcome back!</h2><p class=\"text-muted-foreground\">Here's a list of your tasks for this month.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -87,7 +87,7 @@ func TasksExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Toolbar row --><div class=\"flex items-center justify-between\"><div class=\"flex flex-1 items-center space-x-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Toolbar row --><div class=\"flex flex-wrap items-center justify-between gap-2\"><div class=\"flex flex-1 flex-wrap items-center gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -527,7 +527,7 @@ func TasksExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<!-- Footer / Pagination row --><div class=\"flex items-center justify-between px-2\"><p class=\"text-sm text-muted-foreground\">0 of 100 row(s) selected.</p><div class=\"flex items-center space-x-6 lg:space-x-8\"><div class=\"flex items-center space-x-2\"><p class=\"text-sm font-medium\">Rows per page</p><select class=\"h-8 w-[70px] rounded-md border border-input bg-transparent px-2 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring\"><option value=\"10\">10</option> <option value=\"20\">20</option> <option value=\"25\" selected>25</option> <option value=\"50\">50</option> <option value=\"100\">100</option></select></div><div class=\"flex w-[100px] items-center justify-center text-sm font-medium\">Page 1 of 10</div><div class=\"flex items-center space-x-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<!-- Footer / Pagination row --><div class=\"flex flex-wrap items-center justify-between gap-4 px-2\"><p class=\"text-sm text-muted-foreground\">0 of 100 row(s) selected.</p><div class=\"flex flex-wrap items-center gap-x-6 gap-y-2 lg:gap-x-8\"><div class=\"flex items-center space-x-2\"><p class=\"text-sm font-medium\">Rows per page</p><select class=\"h-8 w-[70px] rounded-md border border-input bg-transparent px-2 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring\"><option value=\"10\">10</option> <option value=\"20\">20</option> <option value=\"25\" selected>25</option> <option value=\"50\">50</option> <option value=\"100\">100</option></select></div><div class=\"flex w-[100px] items-center justify-center text-sm font-medium\">Page 1 of 10</div><div class=\"flex items-center space-x-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

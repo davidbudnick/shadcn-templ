@@ -40,7 +40,7 @@ func DashboardExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex-1 space-y-4 p-8 pt-6\"><div class=\"flex items-center justify-between space-y-2\"><h2 class=\"text-3xl font-bold tracking-tight\">Dashboard</h2><div class=\"flex items-center space-x-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex-1 space-y-4 p-4 pt-6 sm:p-6 lg:p-8\"><div class=\"flex flex-wrap items-center justify-between gap-2 space-y-2\"><h2 class=\"text-3xl font-bold tracking-tight\">Dashboard</h2><div class=\"flex items-center space-x-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -200,7 +200,7 @@ func DashboardExample() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = ui.TabsList("", nil).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ui.TabsList("max-w-full justify-start overflow-x-auto", nil).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -595,7 +595,7 @@ func dashNav() templ.Component {
 			templ_7745c5c3_Var22 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"border-b\"><div class=\"flex h-16 items-center px-4\"><span class=\"font-bold\">Acme Inc</span><nav class=\"mx-6 flex items-center space-x-4 text-sm font-medium lg:space-x-6\"><a href=\"#\" class=\"transition-colors hover:text-primary\">Overview</a> <a href=\"#\" class=\"text-muted-foreground transition-colors hover:text-primary\">Customers</a> <a href=\"#\" class=\"text-muted-foreground transition-colors hover:text-primary\">Products</a> <a href=\"#\" class=\"text-muted-foreground transition-colors hover:text-primary\">Settings</a></nav><div class=\"ml-auto flex items-center space-x-2\"><div class=\"relative hidden md:block\"><span class=\"absolute left-2 top-2.5 text-muted-foreground\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"border-b\"><div class=\"flex h-16 items-center gap-4 px-4\"><span class=\"shrink-0 font-bold\">Acme Inc</span><nav class=\"flex items-center space-x-4 overflow-x-auto text-sm font-medium lg:space-x-6\"><a href=\"#\" class=\"whitespace-nowrap transition-colors hover:text-primary\">Overview</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Customers</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Products</a> <a href=\"#\" class=\"whitespace-nowrap text-muted-foreground transition-colors hover:text-primary\">Settings</a></nav><div class=\"ml-auto flex shrink-0 items-center space-x-2\"><div class=\"relative hidden md:block\"><span class=\"absolute left-2 top-2.5 text-muted-foreground\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
