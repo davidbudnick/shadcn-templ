@@ -12,7 +12,7 @@ import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
 	tooltipBaseClass    = "relative inline-flex"
-	tooltipContentClass = "absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95"
+	tooltipContentClass = "absolute bottom-full left-1/2 z-50 mb-2 w-fit -translate-x-1/2 origin-(--radix-tooltip-content-transform-origin) overflow-hidden rounded-md bg-foreground px-3 py-1.5 text-xs text-balance text-background animate-in fade-in-0 zoom-in-95"
 )
 
 // Tooltip wraps a trigger element and shows a tooltip on hover/focus.
@@ -56,7 +56,7 @@ func Tooltip(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" x-data=\"{ open: false }\" x-on:mouseenter=\"open = true\" x-on:mouseleave=\"open = false\" x-on:focusin=\"open = true\" x-on:focusout=\"open = false\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-slot=\"tooltip\" x-data=\"{ open: false }\" x-id=\"['shadcntempl-tooltip-content']\" x-on:mouseenter=\"open = true\" x-on:mouseleave=\"open = false\" x-on:focusin=\"open = true\" x-on:focusout=\"open = false\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -108,7 +108,7 @@ func TooltipContent(side string, classes string, attrs templ.Attributes) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div x-cloak x-show=\"open\" x-transition:enter=\"transition ease-out duration-100\" x-transition:enter-start=\"opacity-0 scale-95\" x-transition:enter-end=\"opacity-100 scale-100\" x-transition:leave=\"transition ease-in duration-75\" x-transition:leave-start=\"opacity-100 scale-100\" x-transition:leave-end=\"opacity-0 scale-95\" role=\"tooltip\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div x-cloak x-show=\"open\" x-transition:enter=\"transition ease-out duration-100\" x-transition:enter-start=\"opacity-0 scale-95\" x-transition:enter-end=\"opacity-100 scale-100\" x-transition:leave=\"transition ease-in duration-75\" x-transition:leave-start=\"opacity-100 scale-100\" x-transition:leave-end=\"opacity-0 scale-95\" role=\"tooltip\" data-slot=\"tooltip-content\" :id=\"$id('shadcntempl-tooltip-content')\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -186,7 +186,7 @@ func TooltipTrigger(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" tabindex=\"0\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" data-slot=\"tooltip-trigger\" :aria-describedby=\"open ? $id('shadcntempl-tooltip-content') : null\" tabindex=\"0\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

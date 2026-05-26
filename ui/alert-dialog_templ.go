@@ -11,10 +11,10 @@ import templruntime "github.com/a-h/templ/runtime"
 import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	alertDialogOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
-	alertDialogContentBaseClass     = "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg fill-mode-forwards"
-	alertDialogHeaderBaseClass      = "flex flex-col space-y-2 text-center sm:text-left"
-	alertDialogFooterBaseClass      = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
+	alertDialogOverlayBaseClass     = "fixed inset-0 z-50 bg-black/50 fill-mode-forwards"
+	alertDialogContentBaseClass     = "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 sm:max-w-lg fill-mode-forwards"
+	alertDialogHeaderBaseClass      = "flex flex-col gap-2 text-center sm:text-left"
+	alertDialogFooterBaseClass      = "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"
 	alertDialogTitleBaseClass       = "text-lg font-semibold"
 	alertDialogDescriptionBaseClass = "text-sm text-muted-foreground"
 	alertDialogCancelBaseClass      = "mt-2 sm:mt-0"
@@ -60,7 +60,7 @@ func AlertDialog(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-slot=\"alert-dialog\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -68,7 +68,7 @@ func AlertDialog(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\" x-id=\"['shadcntempl-alert-dialog-title', 'shadcntempl-alert-dialog-description']\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -88,6 +88,7 @@ func AlertDialog(classes string, attrs templ.Attributes) templ.Component {
 var AlertDialogTriggerAttrs = templ.Attributes{
 	"aria-haspopup":  "dialog",
 	":aria-expanded": "shadcntempl_open",
+	"data-slot":      "alert-dialog-trigger",
 	"x-data":         true,
 	"x-on:click":     "shadcntempl_open = true",
 }
@@ -131,7 +132,7 @@ func AlertDialogContent(classes string, attrs templ.Attributes) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-cloak x-show=\"shadcntempl_open\" aria-hidden=\"true\" x-transition:enter=\"animate-in fade-in-0\" x-transition:leave=\"animate-out fade-out-0\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" data-slot=\"alert-dialog-overlay\" x-cloak x-show=\"shadcntempl_open\" aria-hidden=\"true\" x-transition:enter=\"animate-in fade-in-0\" x-transition:leave=\"animate-out fade-out-0\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -153,7 +154,7 @@ func AlertDialogContent(classes string, attrs templ.Attributes) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" data-slot=\"alert-dialog-content\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -161,7 +162,7 @@ func AlertDialogContent(classes string, attrs templ.Attributes) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " x-cloak x-show=\"shadcntempl_open\" x-trap.inert.noscroll=\"shadcntempl_open\" x-on:keydown.esc.window=\"shadcntempl_open = false\" role=\"alertdialog\" aria-modal=\"true\" x-transition:enter=\"animate-in fade-in-0 zoom-in-95 slide-in-from-top-[48%] slide-in-from-left-1/2\" x-transition:leave=\"animate-out fade-out-0 zoom-out-95 slide-out-to-top-[48%] slide-out-to-left-1/2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " x-cloak x-show=\"shadcntempl_open\" x-trap.inert.noscroll=\"shadcntempl_open\" x-on:keydown.esc.window=\"shadcntempl_open = false\" x-effect=\"if (shadcntempl_open) { $nextTick(() => $refs.shadcntempl_cancel && $refs.shadcntempl_cancel.focus()) }\" role=\"alertdialog\" aria-modal=\"true\" :aria-labelledby=\"$id('shadcntempl-alert-dialog-title')\" :aria-describedby=\"$id('shadcntempl-alert-dialog-description')\" x-transition:enter=\"animate-in fade-in-0 zoom-in-95 slide-in-from-top-[48%] slide-in-from-left-1/2\" x-transition:leave=\"animate-out fade-out-0 zoom-out-95 slide-out-to-top-[48%] slide-out-to-left-1/2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -216,7 +217,7 @@ func AlertDialogHeader(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" data-slot=\"alert-dialog-header\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -279,7 +280,7 @@ func AlertDialogFooter(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" data-slot=\"alert-dialog-footer\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -342,7 +343,7 @@ func AlertDialogTitle(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" data-slot=\"alert-dialog-title\" :id=\"$id('shadcntempl-alert-dialog-title')\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -405,7 +406,7 @@ func AlertDialogDescription(classes string, attrs templ.Attributes) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" data-slot=\"alert-dialog-description\" :id=\"$id('shadcntempl-alert-dialog-description')\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -429,13 +430,17 @@ func AlertDialogDescription(classes string, attrs templ.Attributes) templ.Compon
 	})
 }
 
-// AlertDialogCancelAttrs closes the dialog without confirming.
+// AlertDialogCancelAttrs closes the dialog without confirming. It also marks the
+// element as the initial focus target when the alert dialog opens.
 var AlertDialogCancelAttrs = templ.Attributes{
+	"data-slot":  "alert-dialog-cancel",
+	"x-ref":      "shadcntempl_cancel",
 	"x-on:click": "shadcntempl_open = false",
 }
 
 // AlertDialogActionAttrs confirms the action and closes the dialog.
 var AlertDialogActionAttrs = templ.Attributes{
+	"data-slot":  "alert-dialog-action",
 	"x-on:click": "shadcntempl_open = false",
 }
 

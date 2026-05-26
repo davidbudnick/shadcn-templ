@@ -3,14 +3,15 @@ package ui
 import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	hoverCardContentBaseClass = "z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none"
+	hoverCardContentBaseClass = "z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden"
 )
 
 templ HoverCard(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge("relative inline-block", classes) }
+		data-slot="hover-card"
 		{ attrs... }
-		x-data="{ shadcntempl_open: false }"
+		x-data="{ shadcntempl_open: false, shadcntempl_timer: null, shadcntempl_show() { clearTimeout(this.shadcntempl_timer); this.shadcntempl_timer = setTimeout(() => this.shadcntempl_open = true, 700) }, shadcntempl_hide() { clearTimeout(this.shadcntempl_timer); this.shadcntempl_timer = setTimeout(() => this.shadcntempl_open = false, 300) } }"
 	>
 		{ children... }
 	</div>
@@ -18,19 +19,23 @@ templ HoverCard(classes string, attrs templ.Attributes) {
 
 // There is no element for hover-card trigger, just add these attributes to your component.
 var HoverCardTriggerAttrs = templ.Attributes{
+	"data-slot":       "hover-card-trigger",
 	"x-data":          true,
-	"x-on:mouseenter": "shadcntempl_open = true",
-	"x-on:mouseleave": "shadcntempl_open = false",
+	"x-on:mouseenter": "shadcntempl_show()",
+	"x-on:mouseleave": "shadcntempl_hide()",
+	"x-on:focusin":    "shadcntempl_show()",
+	"x-on:focusout":   "shadcntempl_hide()",
 }
 
 templ HoverCardContent(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(hoverCardContentBaseClass, classes) }
+		data-slot="hover-card-content"
 		{ attrs... }
 		x-cloak
 		x-show="shadcntempl_open"
-		x-on:mouseenter="shadcntempl_open = true"
-		x-on:mouseleave="shadcntempl_open = false"
+		x-on:mouseenter="shadcntempl_show()"
+		x-on:mouseleave="shadcntempl_hide()"
 		x-transition:enter="animate-in fade-in-0 zoom-in-95"
 		x-transition:leave="animate-out fade-out-0 zoom-out-95"
 		style="position:absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%);"

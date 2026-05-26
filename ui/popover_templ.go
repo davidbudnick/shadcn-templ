@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	popoverContentBaseClass = "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none"
+	popoverContentBaseClass = "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden"
 )
 
 func Popover(classes string, attrs templ.Attributes) templ.Component {
@@ -53,7 +53,7 @@ func Popover(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-slot=\"popover\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -61,7 +61,7 @@ func Popover(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\" x-on:keydown.esc.window=\"shadcntempl_open = false\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\" x-id=\"['shadcntempl-popover-content']\" x-on:keydown.esc.window=\"shadcntempl_open = false\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -81,6 +81,8 @@ func Popover(classes string, attrs templ.Attributes) templ.Component {
 var PopoverTriggerAttrs = templ.Attributes{
 	"aria-haspopup":  "dialog",
 	":aria-expanded": "shadcntempl_open",
+	":aria-controls": "$id('shadcntempl-popover-content')",
+	"data-slot":      "popover-trigger",
 	"x-data":         true,
 	"x-on:click":     "shadcntempl_open = !shadcntempl_open",
 }
@@ -124,7 +126,7 @@ func PopoverContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" data-slot=\"popover-content\" :id=\"$id('shadcntempl-popover-content')\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,7 +134,7 @@ func PopoverContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " x-cloak x-show=\"shadcntempl_open\" x-on:mousedown.outside=\"shadcntempl_open = false\" x-transition:enter=\"animate-in fade-in-0 zoom-in-95\" x-transition:leave=\"animate-out fade-out-0 zoom-out-95\" role=\"dialog\" style=\"position:absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " x-cloak x-show=\"shadcntempl_open\" x-trap=\"shadcntempl_open\" x-on:mousedown.outside=\"shadcntempl_open = false\" x-transition:enter=\"animate-in fade-in-0 zoom-in-95\" x-transition:leave=\"animate-out fade-out-0 zoom-out-95\" style=\"position:absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%);\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

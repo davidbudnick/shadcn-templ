@@ -3,20 +3,22 @@ package ui
 import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	drawerOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
-	drawerContentBaseClass     = "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background"
-	drawerHandleBaseClass      = "mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted"
-	drawerHeaderBaseClass      = "grid gap-1.5 p-4 text-center sm:text-left"
+	drawerOverlayBaseClass     = "fixed inset-0 z-50 bg-black/50 fill-mode-forwards"
+	drawerContentBaseClass     = "group/drawer-content fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background"
+	drawerHandleBaseClass      = "mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-muted"
+	drawerHeaderBaseClass      = "flex flex-col gap-0.5 p-4 text-center md:gap-1.5 md:text-left"
 	drawerFooterBaseClass      = "mt-auto flex flex-col gap-2 p-4"
-	drawerTitleBaseClass       = "text-lg font-semibold leading-none tracking-tight"
+	drawerTitleBaseClass       = "font-semibold text-foreground"
 	drawerDescriptionBaseClass = "text-sm text-muted-foreground"
 )
 
 templ Drawer(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(classes) }
+		data-slot="drawer"
 		{ attrs... }
 		x-data="{ shadcntempl_open: false }"
+		x-id="['shadcntempl-drawer-title', 'shadcntempl-drawer-description']"
 	>
 		{ children... }
 	</div>
@@ -26,6 +28,7 @@ templ Drawer(classes string, attrs templ.Attributes) {
 var DrawerTriggerAttrs = templ.Attributes{
 	"aria-haspopup":  "dialog",
 	":aria-expanded": "shadcntempl_open",
+	"data-slot":      "drawer-trigger",
 	"x-data":         true,
 	"x-on:click":     "shadcntempl_open = true",
 }
@@ -33,6 +36,7 @@ var DrawerTriggerAttrs = templ.Attributes{
 templ DrawerContent(classes string, attrs templ.Attributes) {
 	<div
 		class={ drawerOverlayBaseClass }
+		data-slot="drawer-overlay"
 		x-cloak
 		x-show="shadcntempl_open"
 		aria-hidden="true"
@@ -42,6 +46,7 @@ templ DrawerContent(classes string, attrs templ.Attributes) {
 	></div>
 	<div
 		class={ twmerge.Merge(drawerContentBaseClass, classes) }
+		data-slot="drawer-content"
 		{ attrs... }
 		x-cloak
 		x-show="shadcntempl_open"
@@ -49,22 +54,26 @@ templ DrawerContent(classes string, attrs templ.Attributes) {
 		x-on:keydown.esc.window="shadcntempl_open = false"
 		role="dialog"
 		aria-modal="true"
+		:aria-labelledby="$id('shadcntempl-drawer-title')"
+		:aria-describedby="$id('shadcntempl-drawer-description')"
 		x-transition:enter="animate-in slide-in-from-bottom"
 		x-transition:leave="animate-out slide-out-to-bottom"
 	>
-		<div class={ drawerHandleBaseClass }></div>
+		<div class={ drawerHandleBaseClass } aria-hidden="true"></div>
 		{ children... }
 	</div>
 }
 
 // If you want to close the drawer, add these attributes to your component.
 var DrawerCloseAttrs = templ.Attributes{
+	"data-slot":  "drawer-close",
 	"x-on:click": "shadcntempl_open = false",
 }
 
 templ DrawerHeader(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(drawerHeaderBaseClass, classes) }
+		data-slot="drawer-header"
 		{ attrs... }
 	>
 		{ children... }
@@ -74,6 +83,7 @@ templ DrawerHeader(classes string, attrs templ.Attributes) {
 templ DrawerFooter(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(drawerFooterBaseClass, classes) }
+		data-slot="drawer-footer"
 		{ attrs... }
 	>
 		{ children... }
@@ -83,6 +93,8 @@ templ DrawerFooter(classes string, attrs templ.Attributes) {
 templ DrawerTitle(classes string, attrs templ.Attributes) {
 	<h2
 		class={ twmerge.Merge(drawerTitleBaseClass, classes) }
+		data-slot="drawer-title"
+		:id="$id('shadcntempl-drawer-title')"
 		{ attrs... }
 	>
 		{ children... }
@@ -92,6 +104,8 @@ templ DrawerTitle(classes string, attrs templ.Attributes) {
 templ DrawerDescription(classes string, attrs templ.Attributes) {
 	<p
 		class={ twmerge.Merge(drawerDescriptionBaseClass, classes) }
+		data-slot="drawer-description"
+		:id="$id('shadcntempl-drawer-description')"
 		{ attrs... }
 	>
 		{ children... }

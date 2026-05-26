@@ -11,12 +11,12 @@ import templruntime "github.com/a-h/templ/runtime"
 import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	drawerOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
-	drawerContentBaseClass     = "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background"
-	drawerHandleBaseClass      = "mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted"
-	drawerHeaderBaseClass      = "grid gap-1.5 p-4 text-center sm:text-left"
+	drawerOverlayBaseClass     = "fixed inset-0 z-50 bg-black/50 fill-mode-forwards"
+	drawerContentBaseClass     = "group/drawer-content fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background"
+	drawerHandleBaseClass      = "mx-auto mt-4 h-2 w-[100px] shrink-0 rounded-full bg-muted"
+	drawerHeaderBaseClass      = "flex flex-col gap-0.5 p-4 text-center md:gap-1.5 md:text-left"
 	drawerFooterBaseClass      = "mt-auto flex flex-col gap-2 p-4"
-	drawerTitleBaseClass       = "text-lg font-semibold leading-none tracking-tight"
+	drawerTitleBaseClass       = "font-semibold text-foreground"
 	drawerDescriptionBaseClass = "text-sm text-muted-foreground"
 )
 
@@ -59,7 +59,7 @@ func Drawer(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-slot=\"drawer\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -67,7 +67,7 @@ func Drawer(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\" x-id=\"['shadcntempl-drawer-title', 'shadcntempl-drawer-description']\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -87,6 +87,7 @@ func Drawer(classes string, attrs templ.Attributes) templ.Component {
 var DrawerTriggerAttrs = templ.Attributes{
 	"aria-haspopup":  "dialog",
 	":aria-expanded": "shadcntempl_open",
+	"data-slot":      "drawer-trigger",
 	"x-data":         true,
 	"x-on:click":     "shadcntempl_open = true",
 }
@@ -130,7 +131,7 @@ func DrawerContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-cloak x-show=\"shadcntempl_open\" aria-hidden=\"true\" x-transition:enter=\"animate-in fade-in-0\" x-transition:leave=\"animate-out fade-out-0\" x-on:click=\"shadcntempl_open = false\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" data-slot=\"drawer-overlay\" x-cloak x-show=\"shadcntempl_open\" aria-hidden=\"true\" x-transition:enter=\"animate-in fade-in-0\" x-transition:leave=\"animate-out fade-out-0\" x-on:click=\"shadcntempl_open = false\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -152,7 +153,7 @@ func DrawerContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" data-slot=\"drawer-content\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -160,7 +161,7 @@ func DrawerContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " x-cloak x-show=\"shadcntempl_open\" x-trap.inert.noscroll=\"shadcntempl_open\" x-on:keydown.esc.window=\"shadcntempl_open = false\" role=\"dialog\" aria-modal=\"true\" x-transition:enter=\"animate-in slide-in-from-bottom\" x-transition:leave=\"animate-out slide-out-to-bottom\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " x-cloak x-show=\"shadcntempl_open\" x-trap.inert.noscroll=\"shadcntempl_open\" x-on:keydown.esc.window=\"shadcntempl_open = false\" role=\"dialog\" aria-modal=\"true\" :aria-labelledby=\"$id('shadcntempl-drawer-title')\" :aria-describedby=\"$id('shadcntempl-drawer-description')\" x-transition:enter=\"animate-in slide-in-from-bottom\" x-transition:leave=\"animate-out slide-out-to-bottom\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -182,7 +183,7 @@ func DrawerContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" aria-hidden=\"true\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -200,6 +201,7 @@ func DrawerContent(classes string, attrs templ.Attributes) templ.Component {
 
 // If you want to close the drawer, add these attributes to your component.
 var DrawerCloseAttrs = templ.Attributes{
+	"data-slot":  "drawer-close",
 	"x-on:click": "shadcntempl_open = false",
 }
 
@@ -242,7 +244,7 @@ func DrawerHeader(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" data-slot=\"drawer-header\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -305,7 +307,7 @@ func DrawerFooter(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" data-slot=\"drawer-footer\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -368,7 +370,7 @@ func DrawerTitle(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" data-slot=\"drawer-title\" :id=\"$id('shadcntempl-drawer-title')\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -431,7 +433,7 @@ func DrawerDescription(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" data-slot=\"drawer-description\" :id=\"$id('shadcntempl-drawer-description')\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

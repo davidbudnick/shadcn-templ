@@ -3,10 +3,10 @@ package ui
 import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	alertDialogOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
-	alertDialogContentBaseClass     = "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg fill-mode-forwards"
-	alertDialogHeaderBaseClass      = "flex flex-col space-y-2 text-center sm:text-left"
-	alertDialogFooterBaseClass      = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
+	alertDialogOverlayBaseClass     = "fixed inset-0 z-50 bg-black/50 fill-mode-forwards"
+	alertDialogContentBaseClass     = "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 sm:max-w-lg fill-mode-forwards"
+	alertDialogHeaderBaseClass      = "flex flex-col gap-2 text-center sm:text-left"
+	alertDialogFooterBaseClass      = "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"
 	alertDialogTitleBaseClass       = "text-lg font-semibold"
 	alertDialogDescriptionBaseClass = "text-sm text-muted-foreground"
 	alertDialogCancelBaseClass      = "mt-2 sm:mt-0"
@@ -16,8 +16,10 @@ const (
 templ AlertDialog(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(classes) }
+		data-slot="alert-dialog"
 		{ attrs... }
 		x-data="{ shadcntempl_open: false }"
+		x-id="['shadcntempl-alert-dialog-title', 'shadcntempl-alert-dialog-description']"
 	>
 		{ children... }
 	</div>
@@ -27,6 +29,7 @@ templ AlertDialog(classes string, attrs templ.Attributes) {
 var AlertDialogTriggerAttrs = templ.Attributes{
 	"aria-haspopup":  "dialog",
 	":aria-expanded": "shadcntempl_open",
+	"data-slot":      "alert-dialog-trigger",
 	"x-data":         true,
 	"x-on:click":     "shadcntempl_open = true",
 }
@@ -34,6 +37,7 @@ var AlertDialogTriggerAttrs = templ.Attributes{
 templ AlertDialogContent(classes string, attrs templ.Attributes) {
 	<div
 		class={ alertDialogOverlayBaseClass }
+		data-slot="alert-dialog-overlay"
 		x-cloak
 		x-show="shadcntempl_open"
 		aria-hidden="true"
@@ -42,13 +46,17 @@ templ AlertDialogContent(classes string, attrs templ.Attributes) {
 	></div>
 	<div
 		class={ twmerge.Merge(alertDialogContentBaseClass, classes) }
+		data-slot="alert-dialog-content"
 		{ attrs... }
 		x-cloak
 		x-show="shadcntempl_open"
 		x-trap.inert.noscroll="shadcntempl_open"
 		x-on:keydown.esc.window="shadcntempl_open = false"
+		x-effect="if (shadcntempl_open) { $nextTick(() => $refs.shadcntempl_cancel && $refs.shadcntempl_cancel.focus()) }"
 		role="alertdialog"
 		aria-modal="true"
+		:aria-labelledby="$id('shadcntempl-alert-dialog-title')"
+		:aria-describedby="$id('shadcntempl-alert-dialog-description')"
 		x-transition:enter="animate-in fade-in-0 zoom-in-95 slide-in-from-top-[48%] slide-in-from-left-1/2"
 		x-transition:leave="animate-out fade-out-0 zoom-out-95 slide-out-to-top-[48%] slide-out-to-left-1/2"
 	>
@@ -59,6 +67,7 @@ templ AlertDialogContent(classes string, attrs templ.Attributes) {
 templ AlertDialogHeader(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(alertDialogHeaderBaseClass, classes) }
+		data-slot="alert-dialog-header"
 		{ attrs... }
 	>
 		{ children... }
@@ -68,6 +77,7 @@ templ AlertDialogHeader(classes string, attrs templ.Attributes) {
 templ AlertDialogFooter(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(alertDialogFooterBaseClass, classes) }
+		data-slot="alert-dialog-footer"
 		{ attrs... }
 	>
 		{ children... }
@@ -77,6 +87,8 @@ templ AlertDialogFooter(classes string, attrs templ.Attributes) {
 templ AlertDialogTitle(classes string, attrs templ.Attributes) {
 	<h2
 		class={ twmerge.Merge(alertDialogTitleBaseClass, classes) }
+		data-slot="alert-dialog-title"
+		:id="$id('shadcntempl-alert-dialog-title')"
 		{ attrs... }
 	>
 		{ children... }
@@ -86,18 +98,24 @@ templ AlertDialogTitle(classes string, attrs templ.Attributes) {
 templ AlertDialogDescription(classes string, attrs templ.Attributes) {
 	<p
 		class={ twmerge.Merge(alertDialogDescriptionBaseClass, classes) }
+		data-slot="alert-dialog-description"
+		:id="$id('shadcntempl-alert-dialog-description')"
 		{ attrs... }
 	>
 		{ children... }
 	</p>
 }
 
-// AlertDialogCancelAttrs closes the dialog without confirming.
+// AlertDialogCancelAttrs closes the dialog without confirming. It also marks the
+// element as the initial focus target when the alert dialog opens.
 var AlertDialogCancelAttrs = templ.Attributes{
+	"data-slot":  "alert-dialog-cancel",
+	"x-ref":      "shadcntempl_cancel",
 	"x-on:click": "shadcntempl_open = false",
 }
 
 // AlertDialogActionAttrs confirms the action and closes the dialog.
 var AlertDialogActionAttrs = templ.Attributes{
+	"data-slot":  "alert-dialog-action",
 	"x-on:click": "shadcntempl_open = false",
 }

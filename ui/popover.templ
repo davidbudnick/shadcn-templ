@@ -3,14 +3,16 @@ package ui
 import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	popoverContentBaseClass = "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none"
+	popoverContentBaseClass = "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden"
 )
 
 templ Popover(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge("relative inline-block", classes) }
+		data-slot="popover"
 		{ attrs... }
 		x-data="{ shadcntempl_open: false }"
+		x-id="['shadcntempl-popover-content']"
 		x-on:keydown.esc.window="shadcntempl_open = false"
 	>
 		{ children... }
@@ -21,6 +23,8 @@ templ Popover(classes string, attrs templ.Attributes) {
 var PopoverTriggerAttrs = templ.Attributes{
 	"aria-haspopup":  "dialog",
 	":aria-expanded": "shadcntempl_open",
+	":aria-controls": "$id('shadcntempl-popover-content')",
+	"data-slot":      "popover-trigger",
 	"x-data":         true,
 	"x-on:click":     "shadcntempl_open = !shadcntempl_open",
 }
@@ -28,13 +32,15 @@ var PopoverTriggerAttrs = templ.Attributes{
 templ PopoverContent(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(popoverContentBaseClass, classes) }
+		data-slot="popover-content"
+		:id="$id('shadcntempl-popover-content')"
 		{ attrs... }
 		x-cloak
 		x-show="shadcntempl_open"
+		x-trap="shadcntempl_open"
 		x-on:mousedown.outside="shadcntempl_open = false"
 		x-transition:enter="animate-in fade-in-0 zoom-in-95"
 		x-transition:leave="animate-out fade-out-0 zoom-out-95"
-		role="dialog"
 		style="position:absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%);"
 	>
 		{ children... }
