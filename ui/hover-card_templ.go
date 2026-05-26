@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import twmerge "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
-	hoverCardContentBaseClass = "z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none"
+	hoverCardContentBaseClass = "z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden"
 )
 
 func HoverCard(classes string, attrs templ.Attributes) templ.Component {
@@ -53,7 +53,7 @@ func HoverCard(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-slot=\"hover-card\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -61,7 +61,7 @@ func HoverCard(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false, shadcntempl_timer: null, shadcntempl_show() { clearTimeout(this.shadcntempl_timer); this.shadcntempl_timer = setTimeout(() => this.shadcntempl_open = true, 700) }, shadcntempl_hide() { clearTimeout(this.shadcntempl_timer); this.shadcntempl_timer = setTimeout(() => this.shadcntempl_open = false, 300) } }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,9 +79,12 @@ func HoverCard(classes string, attrs templ.Attributes) templ.Component {
 
 // There is no element for hover-card trigger, just add these attributes to your component.
 var HoverCardTriggerAttrs = templ.Attributes{
+	"data-slot":       "hover-card-trigger",
 	"x-data":          true,
-	"x-on:mouseenter": "shadcntempl_open = true",
-	"x-on:mouseleave": "shadcntempl_open = false",
+	"x-on:mouseenter": "shadcntempl_show()",
+	"x-on:mouseleave": "shadcntempl_hide()",
+	"x-on:focusin":    "shadcntempl_show()",
+	"x-on:focusout":   "shadcntempl_hide()",
 }
 
 func HoverCardContent(classes string, attrs templ.Attributes) templ.Component {
@@ -123,7 +126,7 @@ func HoverCardContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" data-slot=\"hover-card-content\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -131,7 +134,7 @@ func HoverCardContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " x-cloak x-show=\"shadcntempl_open\" x-on:mouseenter=\"shadcntempl_open = true\" x-on:mouseleave=\"shadcntempl_open = false\" x-transition:enter=\"animate-in fade-in-0 zoom-in-95\" x-transition:leave=\"animate-out fade-out-0 zoom-out-95\" style=\"position:absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " x-cloak x-show=\"shadcntempl_open\" x-on:mouseenter=\"shadcntempl_show()\" x-on:mouseleave=\"shadcntempl_hide()\" x-transition:enter=\"animate-in fade-in-0 zoom-in-95\" x-transition:leave=\"animate-out fade-out-0 zoom-out-95\" style=\"position:absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%);\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

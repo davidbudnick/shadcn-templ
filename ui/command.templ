@@ -1,33 +1,84 @@
 package ui
 
-import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
+import (
+	"github.com/davidbudnick/shadcn-templ/internal/twmerge"
+	"github.com/davidbudnick/shadcn-templ/icons"
+)
 
 const (
 	commandBaseClass          = "flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground"
-	commandInputWrapperClass  = "flex items-center border-b px-3"
-	commandInputBaseClass     = "flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-	commandListBaseClass      = "max-h-[300px] overflow-y-auto overflow-x-hidden"
-	commandEmptyBaseClass     = "py-6 text-center text-sm text-muted-foreground"
+	commandDialogClass        = "overflow-hidden p-0"
+	commandInputWrapperClass  = "flex h-9 items-center gap-2 border-b px-3"
+	commandInputBaseClass     = "flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+	commandListBaseClass      = "max-h-[300px] scroll-py-1 overflow-y-auto overflow-x-hidden"
+	commandEmptyBaseClass     = "py-6 text-center text-sm"
 	commandGroupBaseClass     = "overflow-hidden p-1 text-foreground"
 	commandGroupLabelClass    = "px-2 py-1.5 text-xs font-medium text-muted-foreground"
-	commandItemBaseClass      = "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50"
+	commandItemBaseClass      = "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
 	commandSeparatorBaseClass = "-mx-1 h-px bg-border"
+	commandShortcutBaseClass  = "ml-auto text-xs tracking-widest text-muted-foreground"
 )
+
+// commandData is the Alpine x-data expression backing the Command component.
+// It tracks the search query plus a reactive registry of items so that the
+// visible (matching) count is always known. CommandEmpty uses this count
+// instead of a fragile DOM heuristic, and ArrowUp/Down move a "selected"
+// pointer across the visible items (mirroring data-[selected=true]).
+const commandData = `{
+	query: '',
+	listId: '',
+	items: {},
+	selected: -1,
+	register(value) {
+		const id = 'cmd-item-' + (this._seq = (this._seq || 0) + 1);
+		this.items[id] = { value: (value || '').toLowerCase(), el: null };
+		return id;
+	},
+	bind(id, el) { if (this.items[id]) this.items[id].el = el; },
+	matches(value) {
+		if (this.query === '') return true;
+		return (value || '').toLowerCase().includes(this.query.toLowerCase());
+	},
+	visibleIds() {
+		return Object.keys(this.items).filter(id => this.matches(this.items[id].value) && this.items[id].el);
+	},
+	get visibleCount() { return this.visibleIds().length; },
+	move(dir) {
+		const ids = this.visibleIds();
+		if (ids.length === 0) { this.selected = -1; return; }
+		let idx = ids.indexOf(this.selectedId);
+		idx = idx === -1 ? (dir > 0 ? 0 : ids.length - 1) : (idx + dir + ids.length) % ids.length;
+		this.selectedId = ids[idx];
+		const el = this.items[this.selectedId] && this.items[this.selectedId].el;
+		if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+	},
+	selectedId: '',
+	activate() {
+		const el = this.items[this.selectedId] && this.items[this.selectedId].el;
+		if (el) el.click();
+	}
+}`
 
 templ Command(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(commandBaseClass, classes) }
+		data-slot="command"
 		{ attrs... }
-		x-data="{ query: '' }"
+		x-data={ commandData }
+		x-id="['shadcntempl-command-list']"
+		x-init="listId = $id('shadcntempl-command-list')"
+		x-on:keydown.down.prevent="move(1)"
+		x-on:keydown.up.prevent="move(-1)"
+		x-on:keydown.enter.prevent="activate()"
 	>
 		{ children... }
 	</div>
 }
 
 templ CommandInput(placeholder, classes string, attrs templ.Attributes) {
-	<div class={ commandInputWrapperClass }>
+	<div class={ commandInputWrapperClass } data-slot="command-input-wrapper">
 		<svg
-			class="mr-2 h-4 w-4 shrink-0 opacity-50"
+			class="size-4 shrink-0 opacity-50"
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
 			fill="none"
@@ -42,10 +93,13 @@ templ CommandInput(placeholder, classes string, attrs templ.Attributes) {
 		</svg>
 		<input
 			type="text"
-			role="searchbox"
+			role="combobox"
 			autocomplete="off"
+			aria-expanded="true"
+			:aria-controls="listId"
 			placeholder={ placeholder }
 			class={ twmerge.Merge(commandInputBaseClass, classes) }
+			data-slot="command-input"
 			{ attrs... }
 			x-model="query"
 		/>
@@ -55,7 +109,9 @@ templ CommandInput(placeholder, classes string, attrs templ.Attributes) {
 templ CommandList(classes string, attrs templ.Attributes) {
 	<div
 		role="listbox"
+		:id="listId"
 		class={ twmerge.Merge(commandListBaseClass, classes) }
+		data-slot="command-list"
 		{ attrs... }
 	>
 		{ children... }
@@ -65,8 +121,10 @@ templ CommandList(classes string, attrs templ.Attributes) {
 templ CommandEmpty(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(commandEmptyBaseClass, classes) }
+		data-slot="command-empty"
+		role="presentation"
 		{ attrs... }
-		x-show="$el.parentElement.querySelector('[x-show]') === null || Array.from($el.parentElement.querySelectorAll('[data-command-item]')).every(el => el.style.display === 'none')"
+		x-show="visibleCount === 0"
 	>
 		{ children... }
 	</div>
@@ -76,10 +134,11 @@ templ CommandGroup(heading, classes string, attrs templ.Attributes) {
 	<div
 		role="group"
 		class={ twmerge.Merge(commandGroupBaseClass, classes) }
+		data-slot="command-group"
 		{ attrs... }
 	>
 		if heading != "" {
-			<div class={ commandGroupLabelClass }>{ heading }</div>
+			<div class={ commandGroupLabelClass } data-slot="command-group-heading">{ heading }</div>
 		}
 		{ children... }
 	</div>
@@ -90,9 +149,15 @@ templ CommandItem(value, classes string, attrs templ.Attributes) {
 		role="option"
 		data-command-item="true"
 		class={ twmerge.Merge(commandItemBaseClass, classes) }
+		data-slot="command-item"
 		{ attrs... }
-		x-show={ "query === '' || '" + value + "'.toLowerCase().includes(query.toLowerCase())" }
-		tabindex="0"
+		x-data={ "{ cmdId: '' }" }
+		x-init={ "cmdId = register('" + value + "'); bind(cmdId, $el)" }
+		x-show={ "matches('" + value + "')" }
+		:data-selected="selectedId === cmdId"
+		:aria-selected="selectedId === cmdId"
+		x-on:mousemove="selectedId = cmdId"
+		tabindex="-1"
 	>
 		{ children... }
 	</div>
@@ -101,6 +166,93 @@ templ CommandItem(value, classes string, attrs templ.Attributes) {
 templ CommandSeparator(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(commandSeparatorBaseClass, classes) }
+		data-slot="command-separator"
+		role="separator"
 		{ attrs... }
 	></div>
+}
+
+templ CommandShortcut(classes string, attrs templ.Attributes) {
+	<span
+		class={ twmerge.Merge(commandShortcutBaseClass, classes) }
+		data-slot="command-shortcut"
+		{ attrs... }
+	>
+		{ children... }
+	</span>
+}
+
+// CommandDialog renders a Command palette inside a modal dialog overlay,
+// reusing the dialog overlay + focus trap. The search input is autofocused
+// when the dialog opens. Drive open state via the exposed shadcntempl_open
+// Alpine variable (use CommandDialogTriggerAttrs / CommandDialogCloseAttrs).
+templ CommandDialog(classes string, attrs templ.Attributes) {
+	<div
+		data-slot="command-dialog-root"
+		{ attrs... }
+		x-data="{ shadcntempl_open: false }"
+		x-id="['shadcntempl-command-dialog-title', 'shadcntempl-command-dialog-description']"
+	>
+		{ children... }
+	</div>
+}
+
+// CommandDialogTriggerAttrs opens the command dialog. Attach to your trigger.
+var CommandDialogTriggerAttrs = templ.Attributes{
+	"aria-haspopup":  "dialog",
+	":aria-expanded": "shadcntempl_open",
+	"data-slot":      "command-dialog-trigger",
+	"x-data":         true,
+	"x-on:click":     "shadcntempl_open = true",
+}
+
+// CommandDialogCloseAttrs closes the command dialog.
+var CommandDialogCloseAttrs = templ.Attributes{
+	"x-on:click": "shadcntempl_open = false",
+}
+
+// CommandDialogContent is the modal surface that hosts a Command. Place a
+// Command (with CommandInput/CommandList/...) as its children.
+templ CommandDialogContent(classes string, attrs templ.Attributes) {
+	<div
+		class={ dialogOverlayBaseClass }
+		data-slot="command-dialog-overlay"
+		x-cloak
+		x-show="shadcntempl_open"
+		aria-hidden="true"
+		x-transition:enter="animate-in fade-in-0"
+		x-transition:leave="animate-out fade-out-0"
+		x-on:mousedown="shadcntempl_open = false"
+	></div>
+	<div
+		class={ twmerge.Merge(dialogContentBaseClass, commandDialogClass, classes) }
+		data-slot="command-dialog-content"
+		{ attrs... }
+		x-cloak
+		x-show="shadcntempl_open"
+		x-trap.inert.noscroll="shadcntempl_open"
+		x-on:keydown.esc.window="shadcntempl_open = false"
+		x-effect="if (shadcntempl_open) { $nextTick(() => { const i = $el.querySelector('[data-slot=command-input]'); if (i) i.focus() }) }"
+		role="dialog"
+		aria-modal="true"
+		:aria-labelledby="$id('shadcntempl-command-dialog-title')"
+		:aria-describedby="$id('shadcntempl-command-dialog-description')"
+		x-transition:enter="animate-in fade-in-0 zoom-in-95 slide-in-from-top-[48%] slide-in-from-left-1/2"
+		x-transition:leave="animate-out fade-out-0 zoom-out-95 slide-out-to-top-[48%] slide-out-to-left-1/2"
+	>
+		<span class="sr-only" :id="$id('shadcntempl-command-dialog-title')">Command Palette</span>
+		<span class="sr-only" :id="$id('shadcntempl-command-dialog-description')">Search for a command to run...</span>
+		<button
+			type="button"
+			class={ dialogCloseBaseClass }
+			data-slot="command-dialog-close"
+			{ CommandDialogCloseAttrs... }
+		>
+			@icons.X(icons.Props{
+				Class: "h-4 w-4",
+			})
+			<span class="sr-only">Close</span>
+		</button>
+		{ children... }
+	</div>
 }

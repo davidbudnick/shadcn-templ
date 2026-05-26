@@ -54,20 +54,22 @@ func (s SheetSide) LeaveClass() string {
 }
 
 const (
-	sheetOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
-	sheetContentBaseClass     = "fixed z-50 gap-4 bg-background p-6 shadow-lg duration-200 fill-mode-forwards"
-	sheetCloseBaseClass       = "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-	sheetHeaderBaseClass      = "flex flex-col space-y-2 text-center sm:text-left"
-	sheetFooterBaseClass      = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
-	sheetTitleBaseClass       = "text-lg font-semibold text-foreground"
+	sheetOverlayBaseClass     = "fixed inset-0 z-50 bg-black/50 fill-mode-forwards"
+	sheetContentBaseClass     = "fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out duration-300 fill-mode-forwards"
+	sheetCloseBaseClass       = "absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-[3px] focus:ring-ring/50 disabled:pointer-events-none"
+	sheetHeaderBaseClass      = "flex flex-col gap-1.5 p-4"
+	sheetFooterBaseClass      = "mt-auto flex flex-col gap-2 p-4"
+	sheetTitleBaseClass       = "font-semibold text-foreground"
 	sheetDescriptionBaseClass = "text-sm text-muted-foreground"
 )
 
 templ Sheet(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(classes) }
+		data-slot="sheet"
 		{ attrs... }
 		x-data="{ shadcntempl_open: false }"
+		x-id="['shadcntempl-sheet-title', 'shadcntempl-sheet-description']"
 	>
 		{ children... }
 	</div>
@@ -77,6 +79,7 @@ templ Sheet(classes string, attrs templ.Attributes) {
 var SheetTriggerAttrs = templ.Attributes{
 	"aria-haspopup":  "dialog",
 	":aria-expanded": "shadcntempl_open",
+	"data-slot":      "sheet-trigger",
 	"x-data":         true,
 	"x-on:click":     "shadcntempl_open = true",
 }
@@ -84,6 +87,7 @@ var SheetTriggerAttrs = templ.Attributes{
 templ SheetContent(side SheetSide, classes string, attrs templ.Attributes) {
 	<div
 		class={ sheetOverlayBaseClass }
+		data-slot="sheet-overlay"
 		x-cloak
 		x-show="shadcntempl_open"
 		aria-hidden="true"
@@ -93,6 +97,7 @@ templ SheetContent(side SheetSide, classes string, attrs templ.Attributes) {
 	></div>
 	<div
 		class={ twmerge.Merge(sheetContentBaseClass, side.Class(), classes) }
+		data-slot="sheet-content"
 		{ attrs... }
 		x-cloak
 		x-show="shadcntempl_open"
@@ -100,6 +105,8 @@ templ SheetContent(side SheetSide, classes string, attrs templ.Attributes) {
 		x-on:keydown.esc.window="shadcntempl_open = false"
 		role="dialog"
 		aria-modal="true"
+		:aria-labelledby="$id('shadcntempl-sheet-title')"
+		:aria-describedby="$id('shadcntempl-sheet-description')"
 		x-transition:enter={ "animate-in fade-in-0 " + side.EnterClass() }
 		x-transition:leave={ "animate-out fade-out-0 " + side.LeaveClass() }
 	>
@@ -107,6 +114,7 @@ templ SheetContent(side SheetSide, classes string, attrs templ.Attributes) {
 		<button
 			type="button"
 			class={ sheetCloseBaseClass }
+			data-slot="sheet-close"
 			{ SheetCloseAttrs... }
 		>
 			@icons.X(icons.Props{
@@ -125,6 +133,7 @@ var SheetCloseAttrs = templ.Attributes{
 templ SheetHeader(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(sheetHeaderBaseClass, classes) }
+		data-slot="sheet-header"
 		{ attrs... }
 	>
 		{ children... }
@@ -134,6 +143,7 @@ templ SheetHeader(classes string, attrs templ.Attributes) {
 templ SheetFooter(classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(sheetFooterBaseClass, classes) }
+		data-slot="sheet-footer"
 		{ attrs... }
 	>
 		{ children... }
@@ -143,6 +153,8 @@ templ SheetFooter(classes string, attrs templ.Attributes) {
 templ SheetTitle(classes string, attrs templ.Attributes) {
 	<h2
 		class={ twmerge.Merge(sheetTitleBaseClass, classes) }
+		data-slot="sheet-title"
+		:id="$id('shadcntempl-sheet-title')"
 		{ attrs... }
 	>
 		{ children... }
@@ -152,6 +164,8 @@ templ SheetTitle(classes string, attrs templ.Attributes) {
 templ SheetDescription(classes string, attrs templ.Attributes) {
 	<p
 		class={ twmerge.Merge(sheetDescriptionBaseClass, classes) }
+		data-slot="sheet-description"
+		:id="$id('shadcntempl-sheet-description')"
 		{ attrs... }
 	>
 		{ children... }

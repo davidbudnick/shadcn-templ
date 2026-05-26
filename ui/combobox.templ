@@ -10,7 +10,12 @@ type ComboboxOption struct {
 
 const (
 	comboboxBaseClass    = "relative"
-	comboboxPopoverClass = "absolute left-0 top-full z-50 mt-1 min-w-[var(--combobox-width,12rem)] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+	comboboxTriggerClass = "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50"
+	comboboxPopoverClass = "absolute left-0 top-full z-50 mt-1 min-w-[var(--combobox-width,12rem)] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden"
+	comboboxInputWrapper = "flex h-9 items-center gap-2 border-b px-3"
+	comboboxInputClass   = "flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+	comboboxListClass    = "max-h-[300px] scroll-py-1 overflow-y-auto overflow-x-hidden p-1"
+	comboboxItemClass    = "relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 pl-8 pr-2 text-sm outline-hidden data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 )
 
 // Combobox renders a self-contained combobox with a button trigger and a
@@ -18,17 +23,21 @@ const (
 templ Combobox(placeholder string, options []ComboboxOption, classes string, attrs templ.Attributes) {
 	<div
 		class={ twmerge.Merge(comboboxBaseClass, classes) }
+		data-slot="combobox"
 		{ attrs... }
 		x-data={ comboboxData(placeholder, options) }
+		x-id="['shadcntempl-combobox-list']"
 		x-init="$el.style.setProperty('--combobox-width', $el.offsetWidth + 'px')"
 		x-on:keydown.esc.window="open = false"
 	>
 		<button
 			type="button"
 			role="combobox"
+			data-slot="combobox-trigger"
 			aria-haspopup="listbox"
 			:aria-expanded="open"
-			class="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+			:aria-controls="$id('shadcntempl-combobox-list')"
+			class={ comboboxTriggerClass }
 			x-on:click="open = !open"
 		>
 			<span x-text="selectedLabel || placeholder" :class="selectedLabel ? '' : 'text-muted-foreground'"></span>
@@ -49,14 +58,15 @@ templ Combobox(placeholder string, options []ComboboxOption, classes string, att
 		</button>
 		<div
 			class={ comboboxPopoverClass }
+			data-slot="combobox-content"
 			x-show="open"
 			x-transition
 			x-cloak
 			x-on:mousedown.outside="open = false"
 		>
-			<div class="flex items-center border-b px-3">
+			<div class={ comboboxInputWrapper } data-slot="command-input-wrapper">
 				<svg
-					class="mr-2 h-4 w-4 shrink-0 opacity-50"
+					class="size-4 shrink-0 opacity-50"
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 24 24"
 					fill="none"
@@ -71,22 +81,28 @@ templ Combobox(placeholder string, options []ComboboxOption, classes string, att
 				</svg>
 				<input
 					type="text"
-					role="searchbox"
+					role="combobox"
 					autocomplete="off"
+					aria-autocomplete="list"
+					:aria-expanded="open"
+					:aria-controls="$id('shadcntempl-combobox-list')"
 					placeholder="Search..."
-					class="flex h-10 w-full bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+					class={ comboboxInputClass }
+					data-slot="command-input"
 					x-model="query"
 					x-ref="searchInput"
 					x-on:keydown.down.prevent="$focus.wrap().next()"
 					x-on:keydown.up.prevent="$focus.wrap().previous()"
 				/>
 			</div>
-			<div role="listbox" class="max-h-[200px] overflow-y-auto overflow-x-hidden p-1">
+			<div role="listbox" :id="$id('shadcntempl-combobox-list')" class={ comboboxListClass } data-slot="command-list">
 				<template x-for="option in options" :key="option.value">
 					<div
 						role="option"
+						data-slot="command-item"
 						:aria-selected="selectedValue === option.value"
-						class="relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+						:data-selected="selectedValue === option.value"
+						class={ comboboxItemClass }
 						tabindex="0"
 						x-show="query === '' || option.label.toLowerCase().includes(query.toLowerCase())"
 						x-on:click="select(option)"
@@ -113,6 +129,7 @@ templ Combobox(placeholder string, options []ComboboxOption, classes string, att
 				</template>
 				<div
 					class="py-6 text-center text-sm text-muted-foreground"
+					data-slot="command-empty"
 					x-show="options.filter(o => query === '' || o.label.toLowerCase().includes(query.toLowerCase())).length === 0"
 				>No results found.</div>
 			</div>

@@ -14,12 +14,12 @@ import (
 )
 
 const (
-	dialogContentBaseClass     = "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg fill-mode-forwards"
-	dialogCloseBaseClass       = "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-	dialogOverlayBaseClass     = "fixed inset-0 z-50 bg-black/80 fill-mode-forwards"
-	dialogHeaderBaseClass      = "flex flex-col space-y-1.5 text-center sm:text-left"
-	dialogFooterBaseClass      = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
-	dialogTitleBaseClass       = "text-lg font-semibold leading-none tracking-tight"
+	dialogContentBaseClass     = "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 outline-none sm:max-w-lg fill-mode-forwards"
+	dialogCloseBaseClass       = "absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-[3px] focus:ring-ring/50 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+	dialogOverlayBaseClass     = "fixed inset-0 z-50 bg-black/50 fill-mode-forwards"
+	dialogHeaderBaseClass      = "flex flex-col gap-2 text-center sm:text-left"
+	dialogFooterBaseClass      = "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"
+	dialogTitleBaseClass       = "text-lg font-semibold leading-none"
 	dialogDescriptionBaseClass = "text-sm text-muted-foreground"
 )
 
@@ -62,7 +62,7 @@ func Dialog(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-slot=\"dialog\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,7 +70,7 @@ func Dialog(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " x-data=\"{ shadcntempl_open: false }\" x-id=\"['shadcntempl-dialog-title', 'shadcntempl-dialog-description']\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -90,6 +90,7 @@ func Dialog(classes string, attrs templ.Attributes) templ.Component {
 var DialogTriggerAttrs = templ.Attributes{
 	"aria-haspopup":  "dialog",
 	":aria-expanded": "shadcntempl_open",
+	"data-slot":      "dialog-trigger",
 	"x-data":         true,
 	"x-on:click":     "shadcntempl_open = true",
 }
@@ -133,7 +134,7 @@ func DialogContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-cloak x-show=\"shadcntempl_open\" aria-hidden=\"true\" x-transition:enter=\"animate-in fade-in-0\" x-transition:leave=\"animate-out fade-out-0\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" data-slot=\"dialog-overlay\" x-cloak x-show=\"shadcntempl_open\" aria-hidden=\"true\" x-transition:enter=\"animate-in fade-in-0\" x-transition:leave=\"animate-out fade-out-0\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -155,7 +156,7 @@ func DialogContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" x-cloak x-show=\"shadcntempl_open\" x-on:mousedown.outside=\"shadcntempl_open = false\" x-trap.inert.noscroll=\"shadcntempl_open\" x-on:keydown.esc.window=\"shadcntempl_open = false\" role=\"dialog\" aria-modal=\"true\" x-transition:enter=\"animate-in fade-in-0 zoom-in-95 slide-in-from-top-[48%] slide-in-from-left-1/2\" x-transition:leave=\"animate-out fade-out-0 zoom-out-95 slide-out-to-top-[48%] slide-out-to-left-1/2\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" data-slot=\"dialog-content\" x-cloak x-show=\"shadcntempl_open\" x-on:mousedown.outside=\"shadcntempl_open = false\" x-trap.inert.noscroll=\"shadcntempl_open\" x-on:keydown.esc.window=\"shadcntempl_open = false\" role=\"dialog\" aria-modal=\"true\" :aria-labelledby=\"$id('shadcntempl-dialog-title')\" :aria-describedby=\"$id('shadcntempl-dialog-description')\" x-transition:enter=\"animate-in fade-in-0 zoom-in-95 slide-in-from-top-[48%] slide-in-from-left-1/2\" x-transition:leave=\"animate-out fade-out-0 zoom-out-95 slide-out-to-top-[48%] slide-out-to-left-1/2\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -189,7 +190,7 @@ func DialogContent(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" data-slot=\"dialog-close\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -259,7 +260,7 @@ func DialogHeader(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" data-slot=\"dialog-header\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -322,7 +323,7 @@ func DialogFooter(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" data-slot=\"dialog-footer\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -385,7 +386,7 @@ func DialogTitle(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" data-slot=\"dialog-title\" :id=\"$id('shadcntempl-dialog-title')\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -448,7 +449,7 @@ func DialogDescription(classes string, attrs templ.Attributes) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" data-slot=\"dialog-description\" :id=\"$id('shadcntempl-dialog-description')\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
