@@ -18,6 +18,7 @@ templ ResizablePanelGroup(direction string, classes string, attrs templ.Attribut
 		}
 	}}
 	<div
+		data-slot="resizable-panel-group"
 		class={ twmerge.Merge("flex h-full w-full", flexDir, classes) }
 		x-data="{ dragging: false, startX: 0, startY: 0, startSize: 0, resizeTarget: null }"
 		x-on:mousemove.window="
@@ -40,6 +41,7 @@ templ ResizablePanelGroup(direction string, classes string, attrs templ.Attribut
 // defaultSize is 0-100 (percentage of the group).
 templ ResizablePanel(defaultSize int, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="resizable-panel"
 		class={ twmerge.Merge("overflow-hidden", classes) }
 		style={ fmt.Sprintf("flex: 0 0 %d%%; width: %d%%;", defaultSize, defaultSize) }
 		{ attrs... }
@@ -52,11 +54,15 @@ templ ResizablePanel(defaultSize int, classes string, attrs templ.Attributes) {
 // withHandle shows the grip icon in the center of the handle.
 templ ResizableHandle(withHandle bool, vertical bool, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="resizable-handle"
+		role="separator"
+		tabindex="0"
+		aria-orientation={ resizableHandleOrientation(vertical) }
 		class={ twmerge.Merge(func() string {
 			if vertical {
-				return "relative flex h-1 w-full items-center justify-center bg-border cursor-row-resize hover:bg-primary/20 after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1"
+				return "relative flex h-1 w-full items-center justify-center bg-border cursor-row-resize hover:bg-primary/20 after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-ring focus-visible:ring-[3px] focus-visible:ring-offset-1 focus-visible:outline-hidden"
 			}
-			return "relative flex w-1 items-center justify-center bg-border cursor-col-resize hover:bg-primary/20 after:absolute after:inset-x-0 after:top-1/2 after:h-1 after:-translate-y-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1"
+			return "relative flex w-1 items-center justify-center bg-border cursor-col-resize hover:bg-primary/20 after:absolute after:inset-x-0 after:top-1/2 after:h-1 after:-translate-y-1/2 focus-visible:ring-ring focus-visible:ring-[3px] focus-visible:ring-offset-1 focus-visible:outline-hidden"
 		}(), classes) }
 		data-vertical={ fmt.Sprintf("%t", vertical) }
 		x-on:mousedown="
@@ -69,9 +75,16 @@ templ ResizableHandle(withHandle bool, vertical bool, classes string, attrs temp
 		{ attrs... }
 	>
 		if withHandle {
-			<div class="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-				@icons.GripVertical(icons.Props{Class: "h-2.5 w-2.5"})
+			<div class="z-10 flex h-4 w-3 items-center justify-center rounded-xs border bg-border">
+				@icons.GripVertical(icons.Props{Class: "size-2.5"})
 			</div>
 		}
 	</div>
+}
+
+func resizableHandleOrientation(vertical bool) string {
+	if vertical {
+		return "horizontal"
+	}
+	return "vertical"
 }

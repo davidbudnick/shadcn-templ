@@ -39,7 +39,7 @@ func Collapsible(defaultOpen bool, classes string, attrs templ.Attributes) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-slot=\"collapsible\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -65,9 +65,9 @@ func Collapsible(defaultOpen bool, classes string, attrs templ.Attributes) templ
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("{ shadcntempl_open: false, shadcntempl_disabled: %t }", boolAttr("disabled", attrs)))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("{ shadcntempl_open: %t, shadcntempl_disabled: %t }", defaultOpen, boolAttr("disabled", attrs)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/collapsible.templ`, Line: 12, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/collapsible.templ`, Line: 13, Col: 118}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -92,6 +92,7 @@ func Collapsible(defaultOpen bool, classes string, attrs templ.Attributes) templ
 // There is no element for collapsible trigger, just add these attributes to your component.
 var CollapsibleTriggerAttrs = templ.Attributes{
 	"x-data":         true,
+	"data-slot":      "collapsible-trigger",
 	"x-on:click":     "shadcntempl_open = ! shadcntempl_open",
 	":aria-expanded": "shadcntempl_open",
 	":data-state":    "shadcntempl_open ? 'open' : 'closed'",
@@ -124,7 +125,7 @@ func CollapsibleContent(classes string, attrs templ.Attributes) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div x-data x-show=\"shadcntempl_open\" :data-state=\"shadcntempl_open ? 'open' : 'closed'\" :data-disabled=\"shadcntempl_disabled\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div data-slot=\"collapsible-content\" x-data x-show=\"shadcntempl_open\" :data-state=\"shadcntempl_open ? 'open' : 'closed'\" :data-disabled=\"shadcntempl_disabled\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

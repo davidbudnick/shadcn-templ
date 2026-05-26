@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	breadcrumbListBaseClass      = "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5"
+	breadcrumbListBaseClass      = "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2.5"
 	breadcrumbItemBaseClass      = "inline-flex items-center gap-1.5"
 	breadcrumbSeparatorBaseClass = "[&>svg]:size-3.5"
 	breadcrumbLinkBaseClass      = "transition-colors hover:text-foreground"
@@ -14,6 +14,7 @@ const (
 
 templ Breadcrumb(classes string, attrs templ.Attributes) {
 	<nav
+		data-slot="breadcrumb"
 		aria-label="breadcrumb"
 		class={ twmerge.Merge(classes) }
 		{ attrs... }
@@ -24,6 +25,7 @@ templ Breadcrumb(classes string, attrs templ.Attributes) {
 
 templ BreadcrumbList(classes string, attrs templ.Attributes) {
 	<ol
+		data-slot="breadcrumb-list"
 		class={ twmerge.Merge(breadcrumbListBaseClass, classes) }
 		{ attrs... }
 	>
@@ -33,6 +35,7 @@ templ BreadcrumbList(classes string, attrs templ.Attributes) {
 
 templ BreadcrumbItem(classes string, attrs templ.Attributes) {
 	<li
+		data-slot="breadcrumb-item"
 		class={ twmerge.Merge(breadcrumbItemBaseClass, classes) }
 		{ attrs... }
 	>
@@ -42,19 +45,19 @@ templ BreadcrumbItem(classes string, attrs templ.Attributes) {
 
 templ BreadcrumbSeparator(classes string, attrs templ.Attributes) {
 	<li
+		data-slot="breadcrumb-separator"
 		role="presentation"
 		aria-hidden="true"
 		class={ twmerge.Merge(breadcrumbSeparatorBaseClass, classes) }
 		{ attrs... }
 	>
-		@icons.ChevronRight(icons.Props{
-			Class: "h-4 w-4",
-		})
+		@icons.ChevronRight(icons.Props{})
 	</li>
 }
 
 templ BreadcrumbLink(href templ.SafeURL, classes string, attrs templ.Attributes) {
 	<a
+		data-slot="breadcrumb-link"
 		class={ twmerge.Merge(breadcrumbLinkBaseClass, classes) }
 		href={ href }
 		{ attrs... }
@@ -66,6 +69,7 @@ templ BreadcrumbLink(href templ.SafeURL, classes string, attrs templ.Attributes)
 // BreadcrumbPage is the current (non-link) page in the trail.
 templ BreadcrumbPage(classes string, attrs templ.Attributes) {
 	<span
+		data-slot="breadcrumb-page"
 		role="link"
 		aria-disabled="true"
 		aria-current="page"
@@ -79,12 +83,13 @@ templ BreadcrumbPage(classes string, attrs templ.Attributes) {
 // BreadcrumbEllipsis collapses a long trail.
 templ BreadcrumbEllipsis(classes string, attrs templ.Attributes) {
 	<span
+		data-slot="breadcrumb-ellipsis"
 		role="presentation"
 		aria-hidden="true"
-		class={ twmerge.Merge("flex h-9 w-9 items-center justify-center", classes) }
+		class={ twmerge.Merge("flex size-9 items-center justify-center", classes) }
 		{ attrs... }
 	>
-		@icons.MoreHorizontal(icons.Props{Class: "h-4 w-4"})
+		@icons.MoreHorizontal(icons.Props{Class: "size-4"})
 		<span class="sr-only">More</span>
 	</span>
 }

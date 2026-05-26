@@ -7,9 +7,10 @@ import (
 
 templ Collapsible(defaultOpen bool, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="collapsible"
 		class={ twmerge.Merge(classes) }
 		{ attrs... }
-		x-data={ fmt.Sprintf("{ shadcntempl_open: false, shadcntempl_disabled: %t }", boolAttr("disabled", attrs)) }
+		x-data={ fmt.Sprintf("{ shadcntempl_open: %t, shadcntempl_disabled: %t }", defaultOpen, boolAttr("disabled", attrs)) }
 		:data-state="shadcntempl_open ? 'open' : 'closed'"
 		:data-disabled="shadcntempl_disabled"
 	>
@@ -20,6 +21,7 @@ templ Collapsible(defaultOpen bool, classes string, attrs templ.Attributes) {
 // There is no element for collapsible trigger, just add these attributes to your component.
 var CollapsibleTriggerAttrs = templ.Attributes{
 	"x-data":         true,
+	"data-slot":      "collapsible-trigger",
 	"x-on:click":     "shadcntempl_open = ! shadcntempl_open",
 	":aria-expanded": "shadcntempl_open",
 	":data-state":    "shadcntempl_open ? 'open' : 'closed'",
@@ -28,6 +30,7 @@ var CollapsibleTriggerAttrs = templ.Attributes{
 
 templ CollapsibleContent(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="collapsible-content"
 		x-data
 		x-show="shadcntempl_open"
 		:data-state="shadcntempl_open ? 'open' : 'closed'"

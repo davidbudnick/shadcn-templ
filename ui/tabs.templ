@@ -6,16 +6,20 @@ import (
 )
 
 const (
-	tabsListBaseClass    = "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground"
-	tabsTriggerBaseClass = "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow"
-	tabsContentBaseClass = "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+	tabsBaseClass        = "group/tabs flex flex-col gap-2"
+	tabsListBaseClass    = "group/tabs-list bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]"
+	tabsTriggerBaseClass = "data-[state=active]:bg-background data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring text-foreground/60 inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-all hover:text-foreground focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+	tabsContentBaseClass = "flex-1 outline-none"
 )
 
 templ Tabs(defaultValue, classes string, attrs templ.Attributes) {
 	<div
-		class={ twmerge.Merge(classes) }
+		data-slot="tabs"
+		data-orientation="horizontal"
+		class={ twmerge.Merge(tabsBaseClass, classes) }
 		{ attrs... }
 		x-data={ fmt.Sprintf("{ value: '%s' }", defaultValue) }
+		x-id="['tabs']"
 	>
 		{ children... }
 	</div>
@@ -23,6 +27,9 @@ templ Tabs(defaultValue, classes string, attrs templ.Attributes) {
 
 templ TabsList(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="tabs-list"
+		role="tablist"
+		aria-orientation="horizontal"
 		class={ twmerge.Merge(tabsListBaseClass, classes) }
 		{ attrs... }
 	>
@@ -32,16 +39,23 @@ templ TabsList(classes string, attrs templ.Attributes) {
 
 templ TabsTrigger(value, classes string, attrs templ.Attributes) {
 	<button
+		data-slot="tabs-trigger"
 		class={ twmerge.Merge(tabsTriggerBaseClass, classes) }
 		{ attrs... }
 		type="button"
 		role="tab"
+		:id={ fmt.Sprintf("$id('tabs') + '-trigger-%s'", value) }
+		:aria-controls={ fmt.Sprintf("$id('tabs') + '-content-%s'", value) }
 		:aria-selected={ fmt.Sprintf("value === '%s'", value) }
+		:tabindex={ fmt.Sprintf("value === '%s' ? 0 : -1", value) }
 		:data-state={ fmt.Sprintf("value === '%s' ? 'active' : 'inactive'", value) }
 		x-on:mousedown={ fmt.Sprintf("value = '%s'", value) }
-		x-on:keydown.space={ fmt.Sprintf("value = '%s'", value) }
-		x-on:keydown.enter={ fmt.Sprintf("value = '%s'", value) }
-		x-on:focus={ fmt.Sprintf("value = '%s'", value) }
+		x-on:keydown.space.prevent={ fmt.Sprintf("value = '%s'", value) }
+		x-on:keydown.enter.prevent={ fmt.Sprintf("value = '%s'", value) }
+		x-on:keydown.arrow-right.prevent="(() => { const t = [...$el.parentElement.querySelectorAll('[role=tab]:not([disabled])')]; const i = t.indexOf($el); const n = t[(i + 1) % t.length]; n.focus(); n.dispatchEvent(new MouseEvent('mousedown')); })()"
+		x-on:keydown.arrow-left.prevent="(() => { const t = [...$el.parentElement.querySelectorAll('[role=tab]:not([disabled])')]; const i = t.indexOf($el); const n = t[(i - 1 + t.length) % t.length]; n.focus(); n.dispatchEvent(new MouseEvent('mousedown')); })()"
+		x-on:keydown.home.prevent="(() => { const t = [...$el.parentElement.querySelectorAll('[role=tab]:not([disabled])')]; const n = t[0]; n.focus(); n.dispatchEvent(new MouseEvent('mousedown')); })()"
+		x-on:keydown.end.prevent="(() => { const t = [...$el.parentElement.querySelectorAll('[role=tab]:not([disabled])')]; const n = t[t.length - 1]; n.focus(); n.dispatchEvent(new MouseEvent('mousedown')); })()"
 	>
 		{ children... }
 	</button>
@@ -49,11 +63,14 @@ templ TabsTrigger(value, classes string, attrs templ.Attributes) {
 
 templ TabsContent(value, classes string, attrs templ.Attributes) {
 	<div
+		data-slot="tabs-content"
 		class={ twmerge.Merge(tabsContentBaseClass, classes) }
 		{ attrs... }
 		x-show={ fmt.Sprintf("value === '%s'", value) }
-    x-cloak
+		x-cloak
 		role="tabpanel"
+		:id={ fmt.Sprintf("$id('tabs') + '-content-%s'", value) }
+		:aria-labelledby={ fmt.Sprintf("$id('tabs') + '-trigger-%s'", value) }
 		tabindex="0"
 	>
 		{ children... }

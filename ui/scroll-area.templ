@@ -4,31 +4,33 @@ import "github.com/davidbudnick/shadcn-templ/internal/twmerge"
 
 const (
 	scrollAreaBaseClass      = "relative overflow-hidden"
-	scrollAreaViewportClass  = "h-full w-full rounded-[inherit] overflow-auto"
-	scrollAreaScrollbarClass = "flex touch-none select-none transition-colors"
+	scrollAreaViewportClass  = "size-full rounded-[inherit] overflow-auto transition-[color,box-shadow] outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-1"
+	scrollAreaScrollbarClass = "flex touch-none p-px transition-colors select-none"
 	scrollAreaThumbClass     = "relative flex-1 rounded-full bg-border"
 )
 
 // ScrollArea wraps content in a styled scrollable container.
 templ ScrollArea(classes string, attrs templ.Attributes) {
 	<div
+		data-slot="scroll-area"
 		class={ twmerge.Merge(scrollAreaBaseClass, classes) }
 		{ attrs... }
 	>
-		<div class={ scrollAreaViewportClass }>
+		<div data-slot="scroll-area-viewport" class={ scrollAreaViewportClass }>
 			{ children... }
 		</div>
 		@scrollAreaScrollbarVertical()
-		<div style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;"></div>
+		<div data-slot="scroll-area-corner" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;"></div>
 	</div>
 }
 
 templ scrollAreaScrollbarVertical() {
 	<div
+		data-slot="scroll-area-scrollbar"
 		data-orientation="vertical"
-		class={ twmerge.Merge(scrollAreaScrollbarClass, "h-full w-2.5 border-l border-l-transparent p-[1px]") }
+		class={ twmerge.Merge(scrollAreaScrollbarClass, "h-full w-2.5 border-l border-l-transparent") }
 		style="position: absolute; top: 0; right: 0; bottom: 0;"
 	>
-		<div class={ scrollAreaThumbClass }></div>
+		<div data-slot="scroll-area-thumb" class={ scrollAreaThumbClass }></div>
 	</div>
 }
