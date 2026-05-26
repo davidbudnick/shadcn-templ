@@ -37,7 +37,7 @@ func CardsExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-8\"><div class=\"grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-4 sm:p-6 lg:p-8\"><div class=\"grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1726,7 +1726,7 @@ func SettingsExample() templ.Component {
 			templ_7745c5c3_Var71 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "<div class=\"space-y-6 p-10 pb-16\" x-data=\"{ tab: 'profile' }\"><div class=\"space-y-0.5\"><h2 class=\"text-2xl font-bold tracking-tight\">Settings</h2><p class=\"text-muted-foreground\">Manage your account settings and set e-mail preferences.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "<div class=\"space-y-6 p-4 pb-16 sm:p-6 lg:p-10\" x-data=\"{ tab: 'profile' }\"><div class=\"space-y-0.5\"><h2 class=\"text-2xl font-bold tracking-tight\">Settings</h2><p class=\"text-muted-foreground\">Manage your account settings and set e-mail preferences.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1734,7 +1734,7 @@ func SettingsExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "<div class=\"flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0\"><aside class=\"lg:w-1/5\"><nav class=\"flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "<div class=\"flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0\"><aside class=\"lg:w-1/5\"><nav class=\"-mx-4 flex space-x-2 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-col lg:space-x-0 lg:space-y-1 lg:overflow-visible lg:px-0 lg:pb-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1853,7 +1853,7 @@ func settingsNavLink(id, label string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 88, "\" class=\"inline-flex h-9 items-center justify-start rounded-md px-4 py-2 text-sm font-medium transition-colors\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 88, "\" class=\"inline-flex h-9 shrink-0 items-center justify-start whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors lg:w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3208,7 +3208,7 @@ func MusicExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 162, "<div class=\"flex items-center justify-between\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 162, "<div class=\"flex flex-wrap items-center justify-between gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -3274,7 +3274,7 @@ func MusicExample() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = ui.TabsList("", nil).Render(templ.WithChildren(ctx, templ_7745c5c3_Var127), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ui.TabsList("max-w-full overflow-x-auto", nil).Render(templ.WithChildren(ctx, templ_7745c5c3_Var127), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -3682,7 +3682,7 @@ func MailExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 193, "</nav><div class=\"flex flex-col border-r\"><div class=\"flex items-center justify-between px-4 py-3\"><h1 class=\"text-xl font-bold\">Inbox</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 193, "</nav><div class=\"flex min-w-0 flex-col md:border-r\"><div class=\"flex flex-wrap items-center justify-between gap-2 px-4 py-3\"><h1 class=\"text-xl font-bold\">Inbox</h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

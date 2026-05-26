@@ -7,9 +7,9 @@ import (
 
 // TasksExample is the full-page Tasks example matching https://ui.shadcn.com/examples/tasks
 templ TasksExample() {
-	<div class="h-full flex-1 flex-col space-y-8 p-8 md:flex">
+	<div class="flex h-full flex-1 flex-col space-y-8 p-4 sm:p-6 lg:p-8">
 		<!-- Heading row -->
-		<div class="flex items-center justify-between space-y-2">
+		<div class="flex items-center justify-between gap-4 space-y-2">
 			<div>
 				<h2 class="text-2xl font-bold tracking-tight">Welcome back!</h2>
 				<p class="text-muted-foreground">Here's a list of your tasks for this month.</p>
@@ -22,8 +22,8 @@ templ TasksExample() {
 			}
 		</div>
 		<!-- Toolbar row -->
-		<div class="flex items-center justify-between">
-			<div class="flex flex-1 items-center space-x-2">
+		<div class="flex flex-wrap items-center justify-between gap-2">
+			<div class="flex flex-1 flex-wrap items-center gap-2">
 				@ui.Input("filter", ui.InputTypeText, "h-8 w-[150px] lg:w-[250px]", templ.Attributes{"placeholder": "Filter tasks..."})
 				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantOutline, ui.ButtonSizeSmall, "border-dashed", nil) {
 					@icons.PlusCircle(icons.Props{Class: "mr-2 h-4 w-4"})
@@ -90,9 +90,9 @@ templ TasksExample() {
 			}
 		}
 		<!-- Footer / Pagination row -->
-		<div class="flex items-center justify-between px-2">
+		<div class="flex flex-wrap items-center justify-between gap-4 px-2">
 			<p class="text-sm text-muted-foreground">0 of 100 row(s) selected.</p>
-			<div class="flex items-center space-x-6 lg:space-x-8">
+			<div class="flex flex-wrap items-center gap-x-6 gap-y-2 lg:gap-x-8">
 				<div class="flex items-center space-x-2">
 					<p class="text-sm font-medium">Rows per page</p>
 					<select

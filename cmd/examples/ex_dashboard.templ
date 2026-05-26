@@ -9,8 +9,8 @@ import (
 // (https://ui.shadcn.com/examples/dashboard).
 templ DashboardExample() {
 	@dashNav()
-	<div class="flex-1 space-y-4 p-8 pt-6">
-		<div class="flex items-center justify-between space-y-2">
+	<div class="flex-1 space-y-4 p-4 pt-6 sm:p-6 lg:p-8">
+		<div class="flex flex-wrap items-center justify-between gap-2 space-y-2">
 			<h2 class="text-3xl font-bold tracking-tight">Dashboard</h2>
 			<div class="flex items-center space-x-2">
 				@ui.Button(ui.ButtonTypeButton, ui.ButtonVariantDefault, ui.ButtonSizeDefault, "", nil) {
@@ -20,7 +20,7 @@ templ DashboardExample() {
 			</div>
 		</div>
 		@ui.Tabs("overview", "space-y-4", nil) {
-			@ui.TabsList("", nil) {
+			@ui.TabsList("max-w-full justify-start overflow-x-auto", nil) {
 				@ui.TabsTrigger("overview", "", nil) {
 					Overview
 				}
@@ -88,15 +88,15 @@ templ DashboardExample() {
 // brand | nav links | search input + avatar (ml-auto).
 templ dashNav() {
 	<div class="border-b">
-		<div class="flex h-16 items-center px-4">
-			<span class="font-bold">Acme Inc</span>
-			<nav class="mx-6 flex items-center space-x-4 text-sm font-medium lg:space-x-6">
-				<a href="#" class="transition-colors hover:text-primary">Overview</a>
-				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Customers</a>
-				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Products</a>
-				<a href="#" class="text-muted-foreground transition-colors hover:text-primary">Settings</a>
+		<div class="flex h-16 items-center gap-4 px-4">
+			<span class="shrink-0 font-bold">Acme Inc</span>
+			<nav class="flex items-center space-x-4 overflow-x-auto text-sm font-medium lg:space-x-6">
+				<a href="#" class="whitespace-nowrap transition-colors hover:text-primary">Overview</a>
+				<a href="#" class="whitespace-nowrap text-muted-foreground transition-colors hover:text-primary">Customers</a>
+				<a href="#" class="whitespace-nowrap text-muted-foreground transition-colors hover:text-primary">Products</a>
+				<a href="#" class="whitespace-nowrap text-muted-foreground transition-colors hover:text-primary">Settings</a>
 			</nav>
-			<div class="ml-auto flex items-center space-x-2">
+			<div class="ml-auto flex shrink-0 items-center space-x-2">
 				<div class="relative hidden md:block">
 					<span class="absolute left-2 top-2.5 text-muted-foreground">
 						@icons.Search(icons.Props{Class: "h-4 w-4"})
