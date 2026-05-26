@@ -441,7 +441,7 @@ func componentsMenuPanel() templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div x-show=\"open\" x-cloak x-transition class=\"absolute left-0 z-50 mt-2 w-[34rem] max-w-[calc(100vw-2rem)] rounded-md border bg-popover p-2 text-popover-foreground shadow-md\"><div class=\"grid max-h-[70vh] grid-cols-2 gap-0.5 overflow-y-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div x-show=\"open\" x-cloak x-transition class=\"absolute left-0 z-50 mt-2 w-[34rem] max-w-[calc(100vw_-_2rem)] rounded-md border bg-popover p-2 text-popover-foreground shadow-md\"><div class=\"grid max-h-[70vh] grid-cols-2 gap-0.5 overflow-y-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
